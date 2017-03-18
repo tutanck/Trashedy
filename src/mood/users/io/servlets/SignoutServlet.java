@@ -1,5 +1,9 @@
 package mood.users.io.servlets;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +20,11 @@ import mood.users.io.service.UserIO;
 @WebServlet(urlPatterns={"/signout"})
 public class SignoutServlet extends OnlineGetServlet {
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		super.epnIn= new HashSet<>(Arrays.asList(new String[]{"skey"}));}
 
 	@Override
 	public JSONObject doBusiness(

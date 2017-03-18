@@ -14,24 +14,38 @@ import tools.services.ServicesToolBox;
  * @author AJoan */
 public class UserSessionDB {
 
-	public static DBCollection collection = DBConnectionManager.getMongoDBCollection("session");
+	public static DBCollection collection = 
+			DBConnectionManager.getMongoDBCollection("session");
 
+	
+	/**
+	 * Returns the {uid}(user ID) associated to
+	 * the given {rawskey}(raw sessionKey) in params
+	 * @param token
+	 * @param did
+	 * @return */
 	public static String uid (
-			String token,
-			String did //deviceID
+			String rawskey
 			){
 		return (String) THINGS.getOne(
-				new JSONObject()
-				.put("skey", ServicesToolBox.scramble(token+did)),
+				JSONRefiner.wrap("skey", ServicesToolBox.scramble(rawskey)),
 				collection
 				).get("skey");
 	}
 
+	/**
+	 * Check if a session exists for a given {skey}(sessionKey) in params
+	 * @param params
+	 * @return
+	 * @throws DBException
+	 * @throws AbsentKeyException */
 	public static boolean sessionExists(
 			JSONObject params
 			) throws DBException, AbsentKeyException{
 		return THINGS.exists(
-				JSONRefiner.slice(params,new String[]{"skey"}), UserSessionDB.collection);
+				JSONRefiner.wrap(
+						"skey",ServicesToolBox.scramble(params.getString("skey"))),
+				UserSessionDB.collection);
 	}
 
 }

@@ -200,33 +200,29 @@ public class UserIO{
 			return JSONResponse.alert(ServiceCodes.INVALID_USERNAME_FORMAT);
 		}
 
-		if(!THINGS.exists(new JSONObject()
-				.put("_id", user.get("_id"))
+		if(!THINGS.exists(
+				JSONRefiner.wrap("_id", user.get("_id"))
 				.put("confirmed", true)
 				,collection))
 			return JSONResponse.alert(ServiceCodes.USER_NOT_CONFIRMED);
-
+		
+		//2 different devices can't be connected at the same time
+		THINGS.remove(
+				JSONRefiner.wrap("uid", user.get("_id"))
+				,session);
+		
 		String himitsu = ServicesToolBox.generateToken();
 
-		THINGS.add(new JSONObject()
-				.put("skey",ServicesToolBox.scramble(himitsu+params.getString("did")))
+		THINGS.add(
+				JSONRefiner.wrap("skey",ServicesToolBox.scramble(himitsu+params.getString("did")))
 				.put("uid", user.get("_id"))
 				,session);
 
 		return JSONResponse.answer(
-				new JSONObject()
-				.put("himitsu", himitsu)
+				JSONRefiner.wrap("himitsu", himitsu)
 				.put("username",user.get("username")),
 				ServiceCaller.whichServletIsAsking().hashCode());
 	}
-
-	
-	
-	
-	
-	
-	
-
 
 	
 	/**
@@ -242,9 +238,7 @@ public class UserIO{
 		THINGS.remove(new JSONObject()
 				.put("skey",
 						ServicesToolBox.scramble(
-								params.getString("token")
-								+
-								params.getString("did")
+								params.getString("skey")
 								)
 						),session);
 		return JSONResponse.answer(
@@ -253,6 +247,15 @@ public class UserIO{
 	}
 
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * @description send an email with MD5 generated temporary access key for access recover to the user
