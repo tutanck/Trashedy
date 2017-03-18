@@ -28,23 +28,23 @@ implements IJEEZServlet{
 	/**
 	 * The set of incoming parameters names required 
 	 * for the underlying service to work properly */
-	protected Set<String> epnIn=new HashSet<String>(); //Incoming expected parameters names
+	protected Set<String> expectedIn=new HashSet<String>(); //Incoming expected parameters names
 
 	/**
 	 * The set of outgoing parameters names required 
 	 * for the client to work properly */
-	protected Set<String> epnOut=new HashSet<String>(); //Outgoing expected parameters names
+	protected Set<String> expectedOut=new HashSet<String>(); //Outgoing expected parameters names
 
 	/**
 	 * The set of incoming additional parameters names  
 	 *  taken into account by the underlying service*/
-	protected Set<String> opnIn=new HashSet<String>(); //Incoming optional parameters names
+	protected Set<String> optionalIn=new HashSet<String>(); //Incoming optional parameters names
 
 	//N'est pas tres important cote server mais pour generer le client , c'est indispensable de savoir l'integalite des noms de params qu'ue servlet peut retourner (pour generer le reviver)
 	/**
 	 * The set of outgoing additional parameters names  
 	 *  taken into account by the underlying service*/
-	protected Set<String> opnOut=new HashSet<String>(); //Outgoing optional parameters names
+	protected Set<String> optionalOut=new HashSet<String>(); //Outgoing optional parameters names
 
 	protected boolean requireAuth =false;
 	
@@ -71,7 +71,7 @@ implements IJEEZServlet{
 
 		Map<String,String>requestParams=MapRefiner.refine(request.getParameterMap());
 
-		for(String expected : epnIn) {
+		for(String expected : expectedIn) {
 			System.out.println("requestParams : "+requestParams+" - expected : "+expected);
 			JSONObject res = paramIsValid(requestParams,expected,params,true);
 			if (!res.getBoolean("valid")){
@@ -82,7 +82,7 @@ implements IJEEZServlet{
 					params,(JSONObject) res.get("supportedParams"));
 		}
 
-		for(String optional : opnIn){
+		for(String optional : optionalIn){
 			JSONObject res = paramIsValid(requestParams,optional,params,false);
 			if (!res.getBoolean("valid")){
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL MISUSED");
@@ -238,7 +238,7 @@ implements IJEEZServlet{
 			JSONObject result
 			){
 		boolean resultWellFormed=true;
-		for(String expected : epnOut)
+		for(String expected : expectedOut)
 			if(!result.has(expected)){
 				resultWellFormed=false;
 				break;

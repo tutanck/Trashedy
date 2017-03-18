@@ -18,6 +18,7 @@ public abstract class OnlineGetServlet extends GetServlet{
 	public void init() throws ServletException {
 		super.init();
 		super.requireAuth=true;
+		super.expectedIn.add("skey");
 	}
 
 	@Override

@@ -1,13 +1,12 @@
-package mood.users.profile.servlets;
+package mood.users.search.servlets;
 
 import tools.servletspolicy.OnlineGetServlet;
 
 import org.json.JSONObject;
 
-import mood.users.profile.service.UserProfile;
+import mood.users.search.service.SearchUser;
 
 import java.util.Arrays;
-import java.util.HashSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,7 +24,8 @@ public class SearchUserServlet extends OnlineGetServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		super.epnIn=new HashSet<>(Arrays.asList(new String[]{"query"}));}
+		super.expectedIn.addAll(Arrays.asList(new String[]{"query"}));
+	}
 
 	@Override
 	public JSONObject doBusiness(
@@ -33,6 +33,6 @@ public class SearchUserServlet extends OnlineGetServlet {
 			HttpServletResponse response,
 			JSONObject params
 			)throws Exception {
-		return UserProfile.searchUser(params);
+		return SearchUser.searchUser(params);
 	}
 }

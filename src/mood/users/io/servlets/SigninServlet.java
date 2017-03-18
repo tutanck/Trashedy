@@ -11,7 +11,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.HashSet;
 
 
 /**
@@ -26,7 +25,8 @@ public class SigninServlet extends OfflinePostServlet{
 	@Override
 	public void init() throws ServletException { //did : deviceID
 		super.init();
-		super.epnIn=new HashSet<>(Arrays.asList(new String[]{"username","pass","did"}));}
+		super.expectedIn.addAll(Arrays.asList(new String[]{"username","pass","did"}));
+	}
 
 	@Override
 	public JSONObject doBusiness(

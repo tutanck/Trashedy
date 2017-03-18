@@ -1,8 +1,5 @@
 package mood.users.io.servlets;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +21,8 @@ public class ConfirmAccountServlet extends OfflinePostServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		super.epnIn= new HashSet<>(Arrays.asList(new String[]{"ckey"}));}
+		super.expectedIn.add("ckey");
+	}
 
 	@Override
 	public JSONObject doBusiness(

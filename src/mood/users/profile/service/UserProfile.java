@@ -8,12 +8,12 @@ import com.aj.utils.ServiceCaller;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
+import org.bson.types.ObjectId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import mood.users.io.db.UserIODB;
 import mood.users.io.db.UserSessionDB;
-import mood.users.places.db.UserPlacesDB;
 
 import tools.db.DBException;
 import tools.services.JSONResponse;
@@ -72,28 +72,36 @@ public class UserProfile{
 	 * @throws DBException
 	 * @throws JSONException 
 	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException */
+	 * @throws AbsentKeyException 
+	 * @throws InvalidKeyException */
 	public static JSONObject getProfile(
 			JSONObject params
-			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {	
-		JSONObject clean = JSONRefiner.clean(params, new String[]{"skey"});
+			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
+		DBObject user=null;
+		JSONObject profile=new JSONObject();
 		//Trick : like fb, an user can see his profile as someone else
 		//uther as a contraction of user-other (other user)
-		if(clean.has("uther")) 
-			clean.put("_id", params.get("uther"));
-		else
-			clean.put("_id",params.get("uid"));
+		if(params.has("uther")) 
+			THINGS.getOne(
+					JSONRefiner.renameJSONKeys(
+							JSONRefiner.slice(params, new String[]{"uther"}),
+							new String[]{"uther->_id"}), 
+					collection);
+		else{
+			user = THINGS.getOne(JSONRefiner.renameJSONKeys(
+					JSONRefiner.slice(UserSessionDB.clarifyParams(params), new String[]{"uid"}),
+					new String[]{"uid->_id"}),collection);
+			profile.put("self",true);
+		}
 
-		DBObject user=  THINGS.getOne(clean, collection);
 		return JSONResponse.answer(
-				new JSONObject()
+				profile
 				.put("username",user.get("username"))
 				.put("email",user.get("email"))
 				.put("firstname",user.get("firstname"))
 				.put("lastname",user.get("lastname"))
 				.put("birthdate",user.get("birthdate"))
-				.put("phone",user.get("phone"))
-				.put("places",UserPlacesDB.getPp(params.getString("uid"))),
+				.put("phone",user.get("phone")),
 				ServiceCaller.whichServletIsAsking().hashCode());
 	}
 
@@ -112,55 +120,21 @@ public class UserProfile{
 	public static JSONObject getShortInfos(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {		 
-
+		
 		DBObject user=  THINGS.getOne(
-				JSONRefiner.renameJSONKeys(
-						JSONRefiner.slice(params, new String[]{"uther"}),
-						new String[]{"uther->_id"}), 
+				JSONRefiner.wrap("_id",new ObjectId(params.getString("uther"))), 
 				collection);
 
 		return JSONResponse.answer(
-				new JSONObject()
-				.put("username",user.get("username"))
+				JSONRefiner.wrap("username",user.get("username"))
 				.put("firstname",user.get("firstname"))
 				.put("lastname",user.get("lastname")),
 				ServiceCaller.whichServletIsAsking().hashCode());
 	}
 
+	
 
-
-
-	/**
-	 * TODO
-	 * @param params
-	 * @return
-	 * @throws DBException
-	 * @throws JSONException
-	 * @throws ShouldNeverOccurException
-	 */
-	public static JSONObject searchUser(JSONObject params) 
-			throws DBException, JSONException, ShouldNeverOccurException {
-
-		/*JSONArray jar=new JSONArray();
-		UserDB.searchUser("",params.getString("query"));
-
-			while(rs.next()){
-				String type=FriendDB.status(
-						UserSession.sessionOwner(skey),rs.getString("uid"));	
-				jar.put(new JSONObject()
-						.put("uid",rs.getString("uid"))
-						.put("type",(type==null)?"user":type)
-						.put("username",rs.getString("username"))
-						.put("firstname",rs.getString("firstname"))
-						.put("lastname",rs.getString("lastname")));
-						}*/
-
-		return JSONResponse.answer(
-				new JSONObject().put("users",""/*jar*/), 
-				ServiceCaller.whichServletIsAsking().hashCode());
-	}
-
-
+	
 	public static void main(String[] args) throws DBException, JSONException {
 
 	}

@@ -1,7 +1,6 @@
 package mood.users.profile.servlets;
 
 import java.util.Arrays;
-import java.util.HashSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,7 +23,8 @@ public class GetShortInfosServlet extends OnlineGetServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		super.epnIn=new HashSet<>(Arrays.asList(new String[]{"uther"}));}
+		super.expectedIn.addAll(Arrays.asList(new String[]{"uther"}));
+	}
 
 	@Override
 	public JSONObject doBusiness(

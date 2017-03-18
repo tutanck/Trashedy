@@ -1,5 +1,8 @@
 package mood.users.profile.servlets;
 
+import java.util.Arrays;
+
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +19,12 @@ import mood.users.profile.service.UserProfile;
 @WebServlet(urlPatterns={"/user/profile"})
 public class GetProfileServlet extends OnlineGetServlet {
 	private static final long serialVersionUID = 1L;
+
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		super.optionalIn.addAll(Arrays.asList(new String[]{"uther"}));
+	}
 
 	@Override
 	public JSONObject doBusiness(

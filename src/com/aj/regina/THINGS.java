@@ -43,7 +43,7 @@ public class THINGS{
 	 * @param collection
 	 * @param caller
 	 * @throws DBException */
-	public static WriteResult updateOne(
+	public static WriteResult replaceOne(
 			JSONObject where,
 			JSONObject things,
 			DBCollection collection
@@ -66,7 +66,7 @@ public class THINGS{
 	 * @param collection
 	 * @param caller
 	 * @throws DBException */
-	public static WriteResult updateAll(
+	public static WriteResult replaceAll(
 			JSONObject where,
 			JSONObject things,
 			DBCollection collection,
@@ -82,6 +82,7 @@ public class THINGS{
 	}
 
 
+	//TODO faire un update et un upsert(add if not exists) : itere sur le json et remplace les value par des $set de values
 
 	/**TODO : update _date
 	 * @DESCRIPTION upsert {things} somewhere in the {collection} where {where} condition match

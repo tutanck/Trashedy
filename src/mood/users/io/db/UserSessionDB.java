@@ -20,22 +20,6 @@ public class UserSessionDB {
 	
 	/**
 	 * Returns the {uid}(user ID) associated to
-	 * the given {raw-skey}(raw sessionKey) in params
-	 * @param token
-	 * @param did
-	 * @return */
-	public static String uid (
-			String rawskey
-			){
-		return (String) THINGS.getOne(
-				JSONRefiner.wrap("skey", ServicesToolBox.scramble(rawskey)),
-				collection
-				).get("skey");
-	}
-
-	
-	/**
-	 * Returns the {uid}(user ID) associated to
 	 * the given {raw-skey}(raw sessionKey) in params 
 	 * and wrap it in the 'same' JSONObject containing others/previous params  
 	 * @param params
@@ -43,7 +27,11 @@ public class UserSessionDB {
 	public static JSONObject clarifyParams(
 			JSONObject params
 			){
-		return JSONRefiner.replace(params,"skey","uid",uid(params.getString("skey")));	
+		return JSONRefiner.replace(params,"skey","uid",
+				 THINGS.getOne(
+							JSONRefiner.wrap("skey",ServicesToolBox.scramble(params.getString("skey"))),
+							collection
+							).get("uid"));
 	}
 	
 	

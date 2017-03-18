@@ -123,7 +123,7 @@ public class UserIO{
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, JSONException, AbsentKeyException, InvalidKeyException{ 
 
-		WriteResult wr =THINGS.updateOne(
+		WriteResult wr =THINGS.replaceOne(
 				JSONRefiner.renameJSONKeys(params, new String[]{"ckey->confirmed"}), 
 				JSONRefiner.wrap("$set",JSONRefiner.wrap("confirmed", true)), 
 				collection);
@@ -276,7 +276,7 @@ public class UserIO{
 		//Generate temporary key (sequence of 32 hexadecimal digits) using MD5 hashes algorithm 
 		//reset password temporarily until user redefine it! 
 		String secret = ServicesToolBox.generateToken();
-		THINGS.updateOne(
+		THINGS.replaceOne(
 				JSONRefiner.wrap("pass", secret),
 				JSONRefiner.slice(params, new String[]{"email"}),
 				collection);

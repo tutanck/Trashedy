@@ -1,8 +1,5 @@
 package mood.users.io.servlets;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +22,8 @@ public class AccountRecoveryServlet extends OfflineGetServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		super.epnIn=new HashSet<>(Arrays.asList(new String[]{"email"}));}
+		super.expectedIn.add("email");
+	}
 
 	@Override
 	public JSONObject doBusiness(

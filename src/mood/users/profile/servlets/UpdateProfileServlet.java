@@ -24,8 +24,8 @@ public class UpdateProfileServlet extends OnlinePostServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		super.epnIn.addAll(new HashSet<>(Arrays.asList(new String[]{"username"})));
-		super.opnIn=new HashSet<>(Arrays.asList(new String[]{"phone","email","lastName","firstName","birthdate"}));	
+		super.expectedIn.addAll(new HashSet<>(Arrays.asList(new String[]{"username","email"})));
+		super.optionalIn.addAll(Arrays.asList(new String[]{"phone","lastname","firstname","birthdate"}));	
 	}
 
 	@Override
