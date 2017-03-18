@@ -6,7 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 
 import com.aj.jeez.PostServlet;
-import mood.users.db.UserSessionDB;
+
+import mood.users.io.db.UserSessionDB;
 
 /**
  * * @author Anagbla Joan */

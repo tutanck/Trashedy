@@ -89,19 +89,6 @@ public class ServicesToolBox {
 	 * @param token
 	 * @param id
 	 * @return */
-	public static String figureIDOut(
-			String token,
-			String id
-			){
-		return DigestUtils.shaHex(token+id);
-	}
-
-	/**
-	 * @description
-	 * Return a string corresponding to the chosen algorithm's encode
-	 * @param token
-	 * @param id
-	 * @return */
 	public static String scramble(
 			String string
 			){

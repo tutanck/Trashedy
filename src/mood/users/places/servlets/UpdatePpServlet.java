@@ -1,0 +1,35 @@
+package mood.users.places.servlets;
+
+import java.util.Arrays;
+import java.util.HashSet;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import tools.servletspolicy.OfflinePostServlet;
+
+import org.json.JSONObject;
+
+import mood.users.places.service.UserPlaces;
+
+@WebServlet(urlPatterns={"/pp/update"})
+public class UpdatePpServlet extends OfflinePostServlet {
+	private static final long serialVersionUID = 1L;
+	public UpdatePpServlet() {super();}
+
+	@Override
+	public void init() throws ServletException {
+		super.init();
+ 		super.epnIn=new HashSet<>(Arrays.asList(new String[]{"places"}));}
+
+	@Override
+	public JSONObject doBusiness(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			JSONObject params
+			)throws Exception {
+return UserPlaces.updatePp(params);
+	}
+}

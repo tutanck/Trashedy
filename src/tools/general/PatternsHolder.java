@@ -10,8 +10,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import mood.users.utils.InputType;
-
 /**
  * @author ANAGBLA  Joan */
 public class PatternsHolder {
@@ -108,6 +106,11 @@ public class PatternsHolder {
 				PatternsHolder.nums
 				).matcher(input).matches())
 			return InputType.NUMS;
+		
+		else if(Pattern.compile(
+				PatternsHolder.username
+				).matcher(input).matches())
+			return InputType.USERNAME;
 
 		else if(Pattern.compile(
 				PatternsHolder.aword
