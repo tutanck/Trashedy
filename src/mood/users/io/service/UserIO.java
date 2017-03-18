@@ -297,18 +297,7 @@ public class UserIO{
 
 
 	public static void main(String[] args) throws DBException, JSONException {
-		/*Map<String, String[]> test=new HashMap<>();
-		test.put("username", new String[]{"louis","hd"});
-		test.put("pass", new String[]{"fearness12","tove"});
-		test.put("email", new String[]{"tutanck@gmail.com"});
-		test.put("uid", new String[]{"hardtofindeuid"});
-		test.put("skey", new String[]{"hardtobrokekey"});
-		//		System.out.println("registration : "+registration(test)+"\n");
-		//System.out.println("login : "+login(test)+"\n");
-		//System.out.println("updateProfile : "+updateProfile(test)+"\n");
-		System.out.println("accessRecover : "+accessRecover("tutanck@gmail.com")+"\n");
-		//System.out.println("logout : "+logout(test)+"\n");*/
-		//searchUser("h","j");
+		 
 	}
 
 }

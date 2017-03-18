@@ -20,7 +20,7 @@ public class UserSessionDB {
 	
 	/**
 	 * Returns the {uid}(user ID) associated to
-	 * the given {rawskey}(raw sessionKey) in params
+	 * the given {raw-skey}(raw sessionKey) in params
 	 * @param token
 	 * @param did
 	 * @return */
@@ -33,6 +33,21 @@ public class UserSessionDB {
 				).get("skey");
 	}
 
+	
+	/**
+	 * Returns the {uid}(user ID) associated to
+	 * the given {raw-skey}(raw sessionKey) in params 
+	 * and wrap it in the 'same' JSONObject containing others/previous params  
+	 * @param params
+	 * @return */
+	public static JSONObject clarifyParams(
+			JSONObject params
+			){
+		return JSONRefiner.replace(params,"skey","uid",uid(params.getString("skey")));	
+	}
+	
+	
+	
 	/**
 	 * Check if a session exists for a given {skey}(sessionKey) in params
 	 * @param params

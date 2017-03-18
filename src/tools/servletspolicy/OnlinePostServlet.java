@@ -18,6 +18,7 @@ public abstract class OnlinePostServlet extends PostServlet{
 	public void init() throws ServletException {
 		super.init();
 		super.requireAuth=true;
+		super.epnIn.add("skey");
 	}
 
 	@Override

@@ -1,7 +1,5 @@
 package mood.users.profile.service;
 
-import java.util.List;
-
 import com.aj.regina.THINGS;
 import com.aj.utils.AbsentKeyException;
 import com.aj.utils.InvalidKeyException;
@@ -14,7 +12,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import mood.users.io.db.UserIODB;
+import mood.users.io.db.UserSessionDB;
 import mood.users.places.db.UserPlacesDB;
+
 import tools.db.DBException;
 import tools.services.JSONResponse;
 import tools.services.ServiceCodes;
@@ -28,9 +28,8 @@ import tools.services.ShouldNeverOccurException;
 public class UserProfile{
 
 	private static DBCollection collection = UserIODB.collection;
-	
-	
-	
+
+
 	/**
 	 * @description update user's profile
 	 * @param params
@@ -42,37 +41,24 @@ public class UserProfile{
 	public static JSONObject updateProfile(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {
-		String nexturl="/Momento/showprofile";
+		JSONObject clear = UserSessionDB.clarifyParams(params);
 
-		JSONObject clean = JSONRefiner.clean(params, new String[]{"skey"});
-
-		if(clean.has("email") && THINGS.exists(JSONRefiner.slice(clean,
-				new String[]{"email"})
-				.put("_id",
-						new JSONObject()
-						.put("$ne",params.get("uid")) )
+		if(clear.has("email") && THINGS.exists(
+				JSONRefiner.slice(clear,new String[]{"email"})
+				.put("_id",JSONRefiner.wrap("$ne",params.get("uid")))
 				,collection))
 			return JSONResponse.alert(ServiceCodes.EMAIL_IS_TAKEN);
 
-		if(clean.has("phone") && THINGS.exists(JSONRefiner.slice(clean,
-				new String[]{"phone"})
-				.put("_id",
-						new JSONObject()
-						.put("$ne",params.get("uid")))
+		if(clear.has("phone") && THINGS.exists(
+				JSONRefiner.slice(clear,new String[]{"phone"})
+				.put("_id",JSONRefiner.wrap("$ne",params.get("uid")))
 				,collection))
-			return JSONResponse.alert(ServiceCodes.PHONE_IS_TAKEN);
+			return JSONResponse.alert(ServiceCodes.PHONE_IS_TAKEN);	
 
-		//Branch the json (dissociate) like separating the yolk from the egg white
-		List<JSONObject> node = JSONRefiner.branch(clean, new String[]{"places"});	
-
-		//Update of user profile in users collection
-		THINGS.putOne(new JSONObject().put("_id",params.get("uid")),node.get(1),collection);
-
-		//UserPlacesProfile.updatePp(_id, node.get(0));//TODO 
+		THINGS.putOne(JSONRefiner.wrap("_id",params.get("uid")),clear,collection);
 
 		return JSONResponse.answer(
-				new JSONObject()
-				.put("nexturl",nexturl),
+				null,
 				ServiceCaller.whichServletIsAsking().hashCode());
 	}
 
@@ -176,7 +162,7 @@ public class UserProfile{
 
 
 	public static void main(String[] args) throws DBException, JSONException {
-		 
+
 	}
 
 }

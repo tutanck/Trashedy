@@ -67,6 +67,18 @@ public class JSONRefiner {
 				clean.remove(key);
 		return clean;
 	}
+	
+	
+	public static JSONObject replace(
+			JSONObject json,
+			String oldKey,
+			String newKey,
+			Object newValue
+			){
+		JSONObject newjson= new JSONObject(json.toMap());
+		newjson.remove(oldKey);
+		return newjson.put(newKey, newValue);
+	}
 
 
 	/**

@@ -22,7 +22,7 @@ public class UpdatePpServlet extends OfflinePostServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
- 		super.epnIn=new HashSet<>(Arrays.asList(new String[]{"places"}));}
+		super.epnIn=new HashSet<>(Arrays.asList(new String[]{"places"}));}
 
 	@Override
 	public JSONObject doBusiness(
@@ -30,6 +30,6 @@ public class UpdatePpServlet extends OfflinePostServlet {
 			HttpServletResponse response,
 			JSONObject params
 			)throws Exception {
-return UserPlaces.updatePp(params);
+		return UserPlaces.updatePp(params);
 	}
 }

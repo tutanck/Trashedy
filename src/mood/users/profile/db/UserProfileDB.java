@@ -4,7 +4,6 @@ import com.mongodb.DBCollection;
 import tools.db.DBConnectionManager;
 import tools.db.DBException;
 
-
 /**
  * @author AJoan */
 public class UserProfileDB {
@@ -17,5 +16,4 @@ public class UserProfileDB {
 			) throws DBException{
 		return "";
 	}
-
 }
