@@ -75,7 +75,6 @@ public class UserIO{
 				.put("confirmed", ckey)
 				.put("regdate", new Date()),
 				collection);
-
 		
 		//TODO utiliser un .property pour gerer le nom de racine de l app
 		String basedir = "http://localhost:8080/Essais0";
@@ -197,7 +196,7 @@ public class UserIO{
 
 		default:
 			System.out.println("username input format : "+InputType.UNKNOWN);//Debug
-			return JSONResponse.alert(ServiceCodes.INVALID_USERNAME_FORMAT);
+			return JSONResponse.alert(ServiceCodes.WRONG_LOGIN_PASSWORD);
 		}
 
 		if(!THINGS.exists(
@@ -273,12 +272,12 @@ public class UserIO{
 		if(!THINGS.exists(JSONRefiner.slice(params, new String[]{"email"}),collection))
 			return JSONResponse.alert(ServiceCodes.UNKNOWN_EMAIL_ADDRESS);
 
-		//Generate temporary key (sequence of 32 hexadecimal digits) using MD5 hashes algorithm 
+		//Generate temporary key (sequence of 32 hexadecimal digits)  
 		//reset password temporarily until user redefine it! 
 		String secret = ServicesToolBox.generateToken();
 		THINGS.replaceOne(
-				JSONRefiner.wrap("pass", secret),
 				JSONRefiner.slice(params, new String[]{"email"}),
+				JSONRefiner.wrap("pass", secret),
 				collection);
 
 		//Send an email to the applicant
