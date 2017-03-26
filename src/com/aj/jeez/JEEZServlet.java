@@ -68,8 +68,6 @@ implements IJEEZServlet{
 		response.setContentType("text/plain");
 
 		JSONObject params = new JSONObject();
-
-		System.out.println("requestParamsRAW : "+request.getParameterMap());
 		
 		Map<String,String>requestParams=MapRefiner.refine(request.getParameterMap());
 
@@ -224,8 +222,6 @@ implements IJEEZServlet{
 			}
 		}else //Copy the supported parameter as string into a restricted json (contains only tped epn and opn)
 			supportedParams.put(paramName, requestParams.get(paramName));
-
-		System.out.println();
 		
 		return new JSONObject()
 				.put("valid", true)

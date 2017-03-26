@@ -49,7 +49,29 @@ public class UserIO{
 	public static JSONObject checkUsername(
 			JSONObject params
 			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
+
+		JSONObject usernameCheck = checkUsernameCore(params);
+		if(usernameCheck!=null) return usernameCheck;
 		
+		return JSONResponse.answer(
+				null,			
+				ServiceCaller.whichServletIsAsking().hashCode()
+				);
+	}
+
+	
+	/**
+	 * Check if username's input is valid (internal service's core)
+	 * @param params
+	 * @return
+	 * @throws JSONException
+	 * @throws ShouldNeverOccurException
+	 * @throws DBException
+	 * @throws AbsentKeyException */
+	private static JSONObject checkUsernameCore(
+			JSONObject params
+			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
+
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidUsername(params.getString("username")))
 			return JSONResponse.alert(ServiceCodes.INVALID_USERNAME_FORMAT);
@@ -74,7 +96,29 @@ public class UserIO{
 	public static JSONObject checkEmail(
 			JSONObject params
 			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
+
+		JSONObject emailCheck = checkEmailCore(params);
+		if(emailCheck!=null) return emailCheck;
 		
+		return JSONResponse.answer(
+				null,			
+				ServiceCaller.whichServletIsAsking().hashCode()
+				);
+	}
+
+	
+	/**
+	 * Check if email's input is valid (internal service's core)
+	 * @param params
+	 * @return
+	 * @throws JSONException
+	 * @throws ShouldNeverOccurException
+	 * @throws DBException
+	 * @throws AbsentKeyException */
+	private static JSONObject checkEmailCore(
+			JSONObject params
+			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
+
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidEmail(params.getString("email")))
 			return JSONResponse.alert(ServiceCodes.INVALID_EMAIL_FORMAT);
@@ -85,28 +129,8 @@ public class UserIO{
 
 		return null; //all right
 	}
-	
-	
-	/**
-	 * Check if pass's input is valid 
-	 * @param params
-	 * @return
-	 * @throws JSONException
-	 * @throws ShouldNeverOccurException
-	 * @throws DBException
-	 * @throws AbsentKeyException */
-	public static JSONObject checkPass(
-			JSONObject params
-			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
-		
-		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
-		if(!PatternsHolder.isValidPass(params.getString("pass")))
-			return JSONResponse.alert(ServiceCodes.INVALID_PASS_FORMAT);
-		
-		return null; //all right
-	}	
-	
-	
+	 
+
 	/**
 	 * @description 
 	 * Users registration service : register a new user
@@ -119,16 +143,16 @@ public class UserIO{
 	public static JSONObject registration(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {
-		
-		JSONObject usernameCheck = checkUsername(params);
-		if(usernameCheck!=null) return usernameCheck;
-		
-		JSONObject emailCheck = checkEmail(params);
+
+		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
+		if(!PatternsHolder.isValidPass(params.getString("pass")))
+			return JSONResponse.alert(ServiceCodes.INVALID_PASS_FORMAT);
+
+		JSONObject emailCheck = checkEmailCore(params);
 		if(emailCheck!=null) return emailCheck;
-			
-		JSONObject passCheck = checkPass(params);
-		if(passCheck!=null)	return passCheck;
 		
+		JSONObject usernameCheck = checkUsernameCore(params);
+		if(usernameCheck!=null) return usernameCheck;
 
 		//--DB WRITEACTION
 		String ckey =ServicesToolBox.generateToken();
