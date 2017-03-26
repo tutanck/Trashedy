@@ -69,18 +69,23 @@ implements IJEEZServlet{
 
 		JSONObject params = new JSONObject();
 
+		System.out.println("requestParamsRAW : "+request.getParameterMap());
+		
 		Map<String,String>requestParams=MapRefiner.refine(request.getParameterMap());
 
 		for(String expected : expectedIn) {
 			System.out.println("requestParams : "+requestParams+" - expected : "+expected);
 			JSONObject res = paramIsValid(requestParams,expected,params,true);
 			if (!res.getBoolean("valid")){
+				System.out.print(" -> Not Valid");
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL MISUSED");
 				return null;
 			}
+			System.out.print(" -> Valid");
 			params = JSONRefiner.merge(
 					params,(JSONObject) res.get("supportedParams"));
 		}
+		System.out.println();
 
 		for(String optional : optionalIn){
 			JSONObject res = paramIsValid(requestParams,optional,params,false);
@@ -91,6 +96,7 @@ implements IJEEZServlet{
 			params = JSONRefiner.merge(
 					params,(JSONObject) res.get("supportedParams"));
 		}
+		System.out.println();
 		
 		if(requireAuth && !isAuth(request,params)){
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "USER UNAUTHENTICATED");

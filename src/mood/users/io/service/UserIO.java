@@ -36,8 +36,77 @@ public class UserIO{
 
 	private static DBCollection collection = UserIODB.collection;
 	private static DBCollection session = UserSessionDB.collection;
-	
 
+
+	/**
+	 * Check if username's input is valid 
+	 * @param params
+	 * @return
+	 * @throws JSONException
+	 * @throws ShouldNeverOccurException
+	 * @throws DBException
+	 * @throws AbsentKeyException */
+	public static JSONObject checkUsername(
+			JSONObject params
+			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
+		
+		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
+		if(!PatternsHolder.isValidUsername(params.getString("username")))
+			return JSONResponse.alert(ServiceCodes.INVALID_USERNAME_FORMAT);
+
+		//--DB VALIDATION
+		if(THINGS.exists(JSONRefiner.slice(params,new String[]{"username"}),collection))
+			return JSONResponse.alert(ServiceCodes.USERNAME_IS_TAKEN);		
+
+		return null; //all right
+	}
+
+
+
+	/**
+	 * Check if email's input is valid 
+	 * @param params
+	 * @return
+	 * @throws JSONException
+	 * @throws ShouldNeverOccurException
+	 * @throws DBException
+	 * @throws AbsentKeyException */
+	public static JSONObject checkEmail(
+			JSONObject params
+			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
+		
+		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
+		if(!PatternsHolder.isValidEmail(params.getString("email")))
+			return JSONResponse.alert(ServiceCodes.INVALID_EMAIL_FORMAT);
+
+		//--DB VALIDATION
+		if(THINGS.exists(JSONRefiner.slice(params,new String[]{"email"}),collection))
+			return JSONResponse.alert(ServiceCodes.EMAIL_IS_TAKEN);
+
+		return null; //all right
+	}
+	
+	
+	/**
+	 * Check if pass's input is valid 
+	 * @param params
+	 * @return
+	 * @throws JSONException
+	 * @throws ShouldNeverOccurException
+	 * @throws DBException
+	 * @throws AbsentKeyException */
+	public static JSONObject checkPass(
+			JSONObject params
+			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
+		
+		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
+		if(!PatternsHolder.isValidPass(params.getString("pass")))
+			return JSONResponse.alert(ServiceCodes.INVALID_PASS_FORMAT);
+		
+		return null; //all right
+	}	
+	
+	
 	/**
 	 * @description 
 	 * Users registration service : register a new user
@@ -50,23 +119,16 @@ public class UserIO{
 	public static JSONObject registration(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {
-
-		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
-		if(!PatternsHolder.isValidUsername(params.getString("username")))
-			return JSONResponse.alert(ServiceCodes.INVALID_USERNAME_FORMAT);
-
-		if(!PatternsHolder.isValidEmail(params.getString("email")))
-			return JSONResponse.alert(ServiceCodes.INVALID_EMAIL_FORMAT);
-
-		if(!PatternsHolder.isValidPass(params.getString("pass")))
-			return JSONResponse.alert(ServiceCodes.INVALID_PASS_FORMAT);
-
-		//--DB VALIDATION
-		if(THINGS.exists(JSONRefiner.slice(params,new String[]{"username"}),collection))
-			return JSONResponse.alert(ServiceCodes.USERNAME_IS_TAKEN);		
-
-		if(THINGS.exists(JSONRefiner.slice(params,new String[]{"email"}),collection))
-			return JSONResponse.alert(ServiceCodes.EMAIL_IS_TAKEN);
+		
+		JSONObject usernameCheck = checkUsername(params);
+		if(usernameCheck!=null) return usernameCheck;
+		
+		JSONObject emailCheck = checkEmail(params);
+		if(emailCheck!=null) return emailCheck;
+			
+		JSONObject passCheck = checkPass(params);
+		if(passCheck!=null)	return passCheck;
+		
 
 		//--DB WRITEACTION
 		String ckey =ServicesToolBox.generateToken();
@@ -75,7 +137,7 @@ public class UserIO{
 				.put("confirmed", ckey)
 				.put("regdate", new Date()),
 				collection);
-		
+
 		//TODO utiliser un .property pour gerer le nom de racine de l app
 		String basedir = "http://localhost:8080/Essais0";
 		//TODO recuperer dans @weservlet de la servlet associée le bout d'url "/account/confirm"
@@ -86,7 +148,7 @@ public class UserIO{
 					Lingua.get("welcomeMailSubject","fr-FR"),
 					Lingua.get("welcomeMailMessage","fr-FR")
 					+basedir+dir+"?ckey="+ckey);
-			
+
 		}catch (StringNotFoundException e) { 
 			System.out.println("Dictionary Error : Mail not sent : ");
 			e.printStackTrace();
@@ -126,10 +188,10 @@ public class UserIO{
 				JSONRefiner.renameJSONKeys(params, new String[]{"ckey->confirmed"}), 
 				JSONRefiner.wrap("$set",JSONRefiner.wrap("confirmed", true)), 
 				collection);
-		
+
 		if(wr.getN()<1)
 			return JSONResponse.alert(ServiceCodes.UNKNOWN_RESOURCE);
-		
+
 		//Better to throw an except and broke the server 
 		//so that an ISE is returned back to the client
 		//and we avoid more inconsistency damage/issues on the database
@@ -186,7 +248,7 @@ public class UserIO{
 
 		case USERNAME:
 			System.out.println("username input format : "+InputType.USERNAME);//Debug
-			
+
 			if(THINGS.exists(JSONRefiner.slice(
 					params,new String[]{"username", "pass"}),collection))
 				user = THINGS.getOne(JSONRefiner.slice(
@@ -204,12 +266,12 @@ public class UserIO{
 				.put("confirmed", true)
 				,collection))
 			return JSONResponse.alert(ServiceCodes.USER_NOT_CONFIRMED);
-		
+
 		//2 different devices can't be connected at the same time
 		THINGS.remove(
 				JSONRefiner.wrap("uid", user.get("_id"))
 				,session);
-		
+
 		String himitsu = ServicesToolBox.generateToken();
 
 		THINGS.add(
@@ -223,7 +285,7 @@ public class UserIO{
 				ServiceCaller.whichServletIsAsking().hashCode());
 	}
 
-	
+
 	/**
 	 * @description  Users logout service : Disconnects user from online mode
 	 * @param params
@@ -246,15 +308,15 @@ public class UserIO{
 	}
 
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
 
 	/**
 	 * @description send an email with MD5 generated temporary access key for access recover to the user
@@ -296,7 +358,7 @@ public class UserIO{
 
 
 	public static void main(String[] args) throws DBException, JSONException {
-		 
+
 	}
 
 }
