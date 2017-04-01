@@ -9,7 +9,7 @@ import tools.servletspolicy.OfflinePostServlet;
 
 import org.json.JSONObject;
 
-import mood.users.io.service.UserIO;
+import mood.users.io.services.ConfirmUserService;
 
 /**
  * * @author Anagbla Joan */
@@ -30,6 +30,6 @@ public class ConfirmAccountServlet extends OfflinePostServlet {
 			HttpServletResponse response,
 			JSONObject params
 			)throws Exception {
-		return UserIO.confirmUser(params);
+		return ConfirmUserService.confirmUser(params);
 	}
 }

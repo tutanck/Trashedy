@@ -11,7 +11,7 @@ import tools.servletspolicy.OfflinePostServlet;
 
 import org.json.JSONObject;
 
-import mood.users.io.service.UserIO;
+import mood.users.io.services.RegistrationService;
 
 /**
  * * @author Anagbla Joan */
@@ -33,6 +33,6 @@ public class SignupServlet extends OfflinePostServlet {
 			HttpServletResponse response, 
 			JSONObject params
 			)throws Exception {
-		return UserIO.registration(params);
+		return RegistrationService.registration(params);
 	}
 }

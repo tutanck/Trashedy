@@ -4,7 +4,7 @@ import tools.servletspolicy.OfflinePostServlet;
 
 import org.json.JSONObject;
 
-import mood.users.io.service.UserIO;
+import mood.users.io.services.LoginService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -34,6 +34,6 @@ public class SigninServlet extends OfflinePostServlet{
 			HttpServletResponse response,
 			JSONObject params
 			)throws Exception {
-		return  UserIO.login(params);
+		return  LoginService.login(params);
 	}
 }

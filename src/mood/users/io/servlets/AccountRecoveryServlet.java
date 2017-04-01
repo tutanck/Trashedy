@@ -9,7 +9,7 @@ import tools.servletspolicy.OfflineGetServlet;
 
 import org.json.JSONObject;
 
-import mood.users.io.service.UserIO;
+import mood.users.io.services.AccountRecoveryService;
 
 /**
  * * @author Anagbla Joan */
@@ -31,6 +31,6 @@ public class AccountRecoveryServlet extends OfflineGetServlet {
 			HttpServletResponse response,
 			JSONObject params
 			)throws Exception{
-		return  UserIO.accessRecovery(params);
+		return  AccountRecoveryService.accessRecovery(params);
 	}
 }

@@ -11,7 +11,7 @@ import tools.servletspolicy.OfflineGetServlet;
 
 import org.json.JSONObject;
 
-import mood.users.io.service.UserIO;
+import mood.users.io.services.CheckEmailService;
 
 /**
  * * @author Anagbla Joan */
@@ -33,6 +33,6 @@ public class CheckEmailServlet extends OfflineGetServlet {
 			HttpServletResponse response, 
 			JSONObject params
 			)throws Exception {
-		return UserIO.checkEmail(params);
+		return CheckEmailService.checkEmail(params);
 	}
 }

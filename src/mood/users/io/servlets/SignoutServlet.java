@@ -8,7 +8,7 @@ import tools.servletspolicy.OnlineGetServlet;
 
 import org.json.JSONObject;
 
-import mood.users.io.service.UserIO;
+import mood.users.io.services.LogoutService;
 
 /**
  * * @author Anagbla Joan */
@@ -23,6 +23,6 @@ public class SignoutServlet extends OnlineGetServlet {
 			HttpServletResponse response,
 			JSONObject params
 			)throws Exception {
-		return UserIO.logout(params);
+		return LogoutService.logout(params);
 	}
 }

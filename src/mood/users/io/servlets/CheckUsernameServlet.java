@@ -11,7 +11,7 @@ import tools.servletspolicy.OfflineGetServlet;
 
 import org.json.JSONObject;
 
-import mood.users.io.service.UserIO;
+import mood.users.io.services.CheckUsernameService;
 
 /**
  * * @author Anagbla Joan */
@@ -33,6 +33,6 @@ public class CheckUsernameServlet extends OfflineGetServlet {
 			HttpServletResponse response, 
 			JSONObject params
 			)throws Exception {
-		return UserIO.checkUsername(params);
+		return CheckUsernameService.checkUsername(params);
 	}
 }
