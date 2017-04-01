@@ -1,4 +1,4 @@
-package mood.users.io.services.core;
+package mood.users.io.core;
 
 import com.aj.regina.THINGS;
 import com.aj.utils.AbsentKeyException;
@@ -41,11 +41,11 @@ public class UserIOCore{
 
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidEmail(params.getString("email")))
-			return JSONResponse.alert(ServiceCodes.INVALID_EMAIL_FORMAT);
+			return JSONResponse.issue(ServiceCodes.INVALID_EMAIL_FORMAT);
 
 		//--DB VALIDATION
 		if(THINGS.exists(JSONRefiner.slice(params,new String[]{"email"}),collection))
-			return JSONResponse.alert(ServiceCodes.EMAIL_IS_TAKEN);
+			return JSONResponse.issue(ServiceCodes.EMAIL_IS_TAKEN);
 
 		return null; //all right
 	}
@@ -65,11 +65,11 @@ public class UserIOCore{
 	
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidUsername(params.getString("username")))
-			return JSONResponse.alert(ServiceCodes.INVALID_USERNAME_FORMAT);
+			return JSONResponse.issue(ServiceCodes.INVALID_USERNAME_FORMAT);
 	
 		//--DB VALIDATION
 		if(THINGS.exists(JSONRefiner.slice(params,new String[]{"username"}),collection))
-			return JSONResponse.alert(ServiceCodes.USERNAME_IS_TAKEN);		
+			return JSONResponse.issue(ServiceCodes.USERNAME_IS_TAKEN);		
 	
 		return null; //all right
 	}

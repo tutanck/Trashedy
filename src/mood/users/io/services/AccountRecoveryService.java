@@ -8,7 +8,7 @@ import com.aj.utils.AbsentKeyException;
 import com.aj.utils.JSONRefiner;
 import com.aj.utils.ServiceCaller;
 
-import mood.users.io.services.core.UserIOCore;
+import mood.users.io.core.UserIOCore;
 import tools.db.DBException;
 import tools.lingua.Lingua;
 import tools.lingua.StringNotFoundException;
@@ -34,7 +34,7 @@ public class AccountRecoveryService {
 	
 		//Verify if user email exists
 		if(!THINGS.exists(JSONRefiner.slice(params, new String[]{"email"}),UserIOCore.collection))
-			return JSONResponse.alert(ServiceCodes.UNKNOWN_EMAIL_ADDRESS);
+			return JSONResponse.issue(ServiceCodes.UNKNOWN_EMAIL_ADDRESS);
 	
 		//Generate temporary key (sequence of 32 hexadecimal digits)  
 		//reset password temporarily until user redefine it! 
@@ -53,8 +53,8 @@ public class AccountRecoveryService {
 			System.out.println("Dictionary Error : Mail not send");
 			e.printStackTrace();
 		}
-		return JSONResponse.answer(
-				null,			
+		return JSONResponse.reply(
+				null,null,
 				ServiceCaller.whichServletIsAsking().hashCode());
 	}
 

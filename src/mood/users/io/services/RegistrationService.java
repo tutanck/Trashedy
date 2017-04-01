@@ -10,7 +10,7 @@ import com.aj.utils.AbsentKeyException;
 import com.aj.utils.JSONRefiner;
 import com.aj.utils.ServiceCaller;
 
-import mood.users.io.services.core.UserIOCore;
+import mood.users.io.core.UserIOCore;
 import tools.db.DBException;
 import tools.general.PatternsHolder;
 import tools.lingua.Lingua;
@@ -38,7 +38,7 @@ public class RegistrationService {
 	
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidPass(params.getString("pass")))
-			return JSONResponse.alert(ServiceCodes.INVALID_PASS_FORMAT);
+			return JSONResponse.issue(ServiceCodes.INVALID_PASS_FORMAT);
 	
 		JSONObject emailCheck = UserIOCore.checkEmailCore(params);
 		if(emailCheck!=null) return emailCheck;
@@ -72,16 +72,12 @@ public class RegistrationService {
 			System.out.println("Mailing Error : Mail not sent : ");
 			e.printStackTrace();
 			//TODO ameliorer ste merde
-			return JSONResponse.answer(
-					JSONRefiner.wrap("url",basedir+dir+"?ckey="+ckey),			
-					ServiceCaller.whichServletIsAsking().hashCode()
-					);
+			return JSONResponse.reply(
+					JSONRefiner.wrap("url",basedir+dir+"?ckey="+ckey),	
+					null,ServiceCaller.whichServletIsAsking().hashCode());
 		}
 	
-		return JSONResponse.answer(
-				null,			
-				ServiceCaller.whichServletIsAsking().hashCode()
-				);
+		return JSONResponse.reply(null,null,ServiceCaller.whichServletIsAsking().hashCode());
 	}
 
 }

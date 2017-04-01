@@ -10,7 +10,7 @@ import com.aj.utils.JSONRefiner;
 import com.aj.utils.ServiceCaller;
 import com.mongodb.DBObject;
 
-import mood.users.io.services.core.UserIOCore;
+import mood.users.io.core.UserIOCore;
 import tools.db.DBException;
 import tools.general.InputType;
 import tools.general.PatternsHolder;
@@ -47,7 +47,7 @@ public class LoginService {
 					byEmail,new String[]{"email","pass"}),UserIOCore.collection))
 				user = THINGS.getOne(JSONRefiner.slice(	
 						byEmail,new String[]{"email"}),UserIOCore.collection);
-			else return JSONResponse.alert(ServiceCodes.WRONG_LOGIN_PASSWORD);
+			else return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
 			break;
 	
 		case NUMS:
@@ -59,7 +59,7 @@ public class LoginService {
 					byPhone,new String[]{"phone","pass"}),UserIOCore.collection))
 				user= THINGS.getOne(JSONRefiner.slice(
 						byPhone,new String[]{"phone"}),UserIOCore.collection);
-			else return JSONResponse.alert(ServiceCodes.WRONG_LOGIN_PASSWORD);
+			else return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
 			break;	 
 	
 		case USERNAME:
@@ -69,19 +69,19 @@ public class LoginService {
 					params,new String[]{"username", "pass"}),UserIOCore.collection))
 				user = THINGS.getOne(JSONRefiner.slice(
 						params,new String[]{"username"}),UserIOCore.collection);
-			else return JSONResponse.alert(ServiceCodes.WRONG_LOGIN_PASSWORD);
+			else return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
 			break;
 	
 		default:
 			System.out.println("username input format : "+InputType.UNKNOWN);//Debug
-			return JSONResponse.alert(ServiceCodes.WRONG_LOGIN_PASSWORD);
+			return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
 		}
 	
 		if(!THINGS.exists(
 				JSONRefiner.wrap("_id", user.get("_id"))
 				.put("confirmed", true)
 				,UserIOCore.collection))
-			return JSONResponse.alert(ServiceCodes.USER_NOT_CONFIRMED);
+			return JSONResponse.issue(ServiceCodes.USER_NOT_CONFIRMED);
 	
 		//2 different devices can't be connected at the same time
 		THINGS.remove(
@@ -95,10 +95,10 @@ public class LoginService {
 				.put("uid", user.get("_id"))
 				,UserIOCore.session);
 	
-		return JSONResponse.answer(
+		return JSONResponse.reply(
 				JSONRefiner.wrap("himitsu", himitsu)
 				.put("username",user.get("username")),
-				ServiceCaller.whichServletIsAsking().hashCode());
+				null,ServiceCaller.whichServletIsAsking().hashCode());
 	}
 
 }

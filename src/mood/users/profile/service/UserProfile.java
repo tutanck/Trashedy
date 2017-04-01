@@ -47,19 +47,17 @@ public class UserProfile{
 				JSONRefiner.slice(clear,new String[]{"email"})
 				.put("_id",JSONRefiner.wrap("$ne",params.get("uid")))
 				,collection))
-			return JSONResponse.alert(ServiceCodes.EMAIL_IS_TAKEN);
+			return JSONResponse.issue(ServiceCodes.EMAIL_IS_TAKEN);
 
 		if(clear.has("phone") && THINGS.exists(
 				JSONRefiner.slice(clear,new String[]{"phone"})
 				.put("_id",JSONRefiner.wrap("$ne",params.get("uid")))
 				,collection))
-			return JSONResponse.alert(ServiceCodes.PHONE_IS_TAKEN);	
+			return JSONResponse.issue(ServiceCodes.PHONE_IS_TAKEN);	
 
 		THINGS.putOne(JSONRefiner.wrap("_id",params.get("uid")),clear,collection);
 
-		return JSONResponse.answer(
-				null,
-				ServiceCaller.whichServletIsAsking().hashCode());
+		return JSONResponse.reply(null,null,ServiceCaller.whichServletIsAsking().hashCode());
 	}
 
 
@@ -94,14 +92,14 @@ public class UserProfile{
 			profile.put("self",true);
 		}
 
-		return JSONResponse.answer(
+		return JSONResponse.reply(
 				profile
 				.put("username",user.get("username"))
 				.put("email",user.get("email"))
 				.put("firstname",user.get("firstname"))
 				.put("lastname",user.get("lastname"))
 				.put("birthdate",user.get("birthdate"))
-				.put("phone",user.get("phone")),
+				.put("phone",user.get("phone")),null,
 				ServiceCaller.whichServletIsAsking().hashCode());
 	}
 
@@ -125,10 +123,10 @@ public class UserProfile{
 				JSONRefiner.wrap("_id",new ObjectId(params.getString("uther"))), 
 				collection);
 
-		return JSONResponse.answer(
+		return JSONResponse.reply(
 				JSONRefiner.wrap("username",user.get("username"))
 				.put("firstname",user.get("firstname"))
-				.put("lastname",user.get("lastname")),
+				.put("lastname",user.get("lastname")),null,
 				ServiceCaller.whichServletIsAsking().hashCode());
 	}
 

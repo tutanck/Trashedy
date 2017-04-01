@@ -35,9 +35,9 @@ public class SearchUser {
 							.put("lastname",rs.getString("lastname")));
 							}*/
 	
-			return JSONResponse.answer(
-					new JSONObject().put("users",""/*jar*/), 
-					ServiceCaller.whichServletIsAsking().hashCode());
+			return JSONResponse.reply(
+					new JSONObject().put("users",""/*jar*/),
+					null,ServiceCaller.whichServletIsAsking().hashCode());
 		}
 	
 }
