@@ -29,8 +29,8 @@ public class PatternsHolder {
 	public static String notNums="\\D+";
 	//.+@.+
 	public static String email=".+@.+";
-	private static final String pass = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,})";
-	private static final String username = "((?=.*[a-z])^[a-zA-Z](\\w{2,}))";
+	public static final String pass = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,})";
+	public static final String username = "((?=.*[a-z])^[a-zA-Z](\\w{2,}))";
 
 	public static final Map<String,String> accents = new HashMap<String, String>();
 	

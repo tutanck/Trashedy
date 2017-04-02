@@ -7,13 +7,12 @@ import com.aj.regina.THINGS;
 import com.aj.utils.AbsentKeyException;
 import com.aj.utils.InvalidKeyException;
 import com.aj.utils.JSONRefiner;
-import com.aj.utils.ServiceCaller;
+import com.aj.utils.Caller;
 import com.mongodb.DBObject;
 
 import mood.users.io.core.UserIOCore;
 import tools.db.DBException;
 import tools.general.InputType;
-import tools.general.PatternsHolder;
 import tools.services.JSONResponse;
 import tools.services.ServiceCodes;
 import tools.services.ServicesToolBox;
@@ -33,72 +32,46 @@ public class LoginService {
 	public static JSONObject login(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {
-	
+
 		DBObject user;
-	
-		switch (PatternsHolder.determineFormat(params.getString("username"))) {
-	
-		case EMAIL:
-			System.out.println("username input format : "+InputType.EMAIL);//Debug
-	
-			JSONObject byEmail= JSONRefiner.renameJSONKeys(params,new String[]{"username->email"});
-	
-			if (THINGS.exists(JSONRefiner.slice(
-					byEmail,new String[]{"email","pass"}),UserIOCore.collection))
-				user = THINGS.getOne(JSONRefiner.slice(	
-						byEmail,new String[]{"email"}),UserIOCore.collection);
-			else return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
-			break;
-	
-		case NUMS:
-			System.out.println("username input format : "+InputType.NUMS);//Debug
-	
-			JSONObject byPhone= JSONRefiner.renameJSONKeys(params,new String[]{"username->phone"});
-	
-			if (THINGS.exists(JSONRefiner.slice(
-					byPhone,new String[]{"phone","pass"}),UserIOCore.collection))
-				user= THINGS.getOne(JSONRefiner.slice(
-						byPhone,new String[]{"phone"}),UserIOCore.collection);
-			else return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
-			break;	 
-	
-		case USERNAME:
-			System.out.println("username input format : "+InputType.USERNAME);//Debug
-	
-			if(THINGS.exists(JSONRefiner.slice(
-					params,new String[]{"username", "pass"}),UserIOCore.collection))
-				user = THINGS.getOne(JSONRefiner.slice(
-						params,new String[]{"username"}),UserIOCore.collection);
-			else return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
-			break;
-	
-		default:
-			System.out.println("username input format : "+InputType.UNKNOWN);//Debug
-			return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
-		}
-	
+		InputType it = UserIOCore.determineFormat(params.getString("username"));
+		System.out.println("username input format : "+it);//Debug
+
+		JSONObject renamed= JSONRefiner.renameJSONKeys(params,new String[]{"username->"+it.toString()});
+		System.out.println("renamed: "+renamed);//Debug
+
+		if (THINGS.exists(JSONRefiner.slice(
+				renamed,new String[]{it.toString(),"pass"}),UserIOCore.collection))
+			user = THINGS.getOne(JSONRefiner.slice(	
+					renamed,new String[]{it.toString()}),UserIOCore.collection);
+		else return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
+
 		if(!THINGS.exists(
 				JSONRefiner.wrap("_id", user.get("_id"))
 				.put("confirmed", true)
 				,UserIOCore.collection))
 			return JSONResponse.issue(ServiceCodes.USER_NOT_CONFIRMED);
-	
+
 		//2 different devices can't be connected at the same time
 		THINGS.remove(
 				JSONRefiner.wrap("uid", user.get("_id"))
 				,UserIOCore.session);
-	
+
 		String himitsu = ServicesToolBox.generateToken();
-	
+
 		THINGS.add(
 				JSONRefiner.wrap("skey",ServicesToolBox.scramble(himitsu+params.getString("did")))
 				.put("uid", user.get("_id"))
 				,UserIOCore.session);
-	
+
 		return JSONResponse.reply(
 				JSONRefiner.wrap("himitsu", himitsu)
 				.put("username",user.get("username")),
-				null,ServiceCaller.whichServletIsAsking().hashCode());
+				null,Caller.whoIsAsking().hashCode());
+	}
+
+	public static void main(String[] args) throws JSONException, DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {
+		login(new JSONObject().put("username", "044747").put("pass","value"));
 	}
 
 }

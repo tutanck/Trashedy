@@ -2,8 +2,10 @@ package com.aj.regina;
 
 import java.util.Date;
 
-import com.aj.utils.ServiceCaller;
+import com.aj.utils.Caller;
 import com.mongodb.*;
+
+import org.bson.types.ObjectId;
 import org.json.JSONObject;
 import tools.db.DBException;
 
@@ -23,18 +25,18 @@ public class THINGS{
 	 * @param collection
 	 * @param caller
 	 * @throws DBException */
-	public static WriteResult add(
+	public static DBCommit add(
 			JSONObject things,
 			DBCollection collection
 	) throws DBException{
-		WriteResult wr = collection.insert(
-				dressJSON(things).append("_date",new Date())
-		);
-		logDBAction(things,collection,ServiceCaller.whoIsAskingClass(),DBAction.ADD);
-		return wr;
+		DBAction action = DBAction.ADD;
+		BasicDBObject doc = dressJSON(things).append("_date",new Date());
+		WriteResult wr = collection.insert(doc);
+		logDBAction(things,collection,Caller.whoIsAsking(),action);
+		return new DBCommit(collection,(ObjectId)doc.get("_id"),action, wr);
 	}
-
-
+	
+	
 
 	/**
 	 * @DESCRIPTION update {things} somewhere in the {collection} where {where} condition match
@@ -53,7 +55,7 @@ public class THINGS{
 				dressJSON(things),
 				false,false
 		);
-		logDBAction(things,collection,ServiceCaller.whoIsAskingClass(),DBAction.UPDATEONE);
+		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.UPDATEONE);
 		return wr;
 	}
 
@@ -101,7 +103,7 @@ public class THINGS{
 				dressJSON(things).append("_date",new Date()),
 				true,false
 		);
-		logDBAction(things,collection,ServiceCaller.whoIsAskingClass(),DBAction.PUTONE);
+		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.PUTONE);
 		return wr;
 	}
 
@@ -124,7 +126,7 @@ public class THINGS{
 				dressJSON(things).append("_date",new Date()),
 				true,true
 		);
-		logDBAction(things,collection,ServiceCaller.whoIsAskingClass(),DBAction.PUTALL);
+		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.PUTALL);
 		return wr;
 	}
 
@@ -144,7 +146,7 @@ public class THINGS{
 		boolean response = collection.find(
 				dressJSON(things)
 		).limit(1).hasNext(); //limit 1 is for optimisation : https://blog.serverdensity.com/checking-if-a-document-exists-mongodb-slow-findone-vs-find/
-		logDBAction(things,collection,ServiceCaller.whoIsAskingClass(),DBAction.EXISTS);
+		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.EXISTS);
 		return response;
 	}
 
@@ -162,7 +164,7 @@ public class THINGS{
 		DBObject dbo = collection.findOne(
 				dressJSON(things)
 		);
-		logDBAction(things,collection,ServiceCaller.whoIsAskingClass(),DBAction.GETONE);
+		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.GETONE);
 		return dbo;
 	}
 
@@ -181,7 +183,7 @@ public class THINGS{
 		DBCursor dbc = collection.find(
 				dressJSON(things)
 		);
-		logDBAction(things,collection,ServiceCaller.whoIsAskingClass(),DBAction.GET);
+		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.GET);
 		return dbc;
 	}
 
@@ -194,16 +196,18 @@ public class THINGS{
 	 * @param caller
 	 * @return
 	 * @throws DBException */
-	public static WriteResult remove(
+	public static DBCommit remove(
 			JSONObject things,
 			DBCollection collection
 	) throws DBException{
-		WriteResult wr = collection.remove(dressJSON(things));
-		logDBAction(things,collection,ServiceCaller.whoIsAskingClass(),DBAction.REMOVE);
-		return wr;
+		DBAction action = DBAction.REMOVE;
+		BasicDBObject doc = dressJSON(things);
+		WriteResult wr = collection.remove(doc);
+		logDBAction(things,collection,Caller.whoIsAsking(),action);
+		return new DBCommit(collection,(ObjectId)doc.get("_id"),action, wr);
 	}
 
-
+	
 	/**
 	 * @description 
 	 * Reformat a JSONObject into a BasicDBObject

@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import com.aj.regina.THINGS;
 import com.aj.utils.AbsentKeyException;
 import com.aj.utils.JSONRefiner;
-import com.aj.utils.ServiceCaller;
+import com.aj.utils.Caller;
 
 import mood.users.io.core.UserIOCore;
 import tools.db.DBException;
@@ -55,7 +55,7 @@ public class AccountRecoveryService {
 		}
 		return JSONResponse.reply(
 				null,null,
-				ServiceCaller.whichServletIsAsking().hashCode());
+				Caller.whoIsAsking().hashCode());
 	}
 
 }

@@ -7,7 +7,7 @@ import com.aj.regina.THINGS;
 import com.aj.utils.AbsentKeyException;
 import com.aj.utils.InvalidKeyException;
 import com.aj.utils.JSONRefiner;
-import com.aj.utils.ServiceCaller;
+import com.aj.utils.Caller;
 import com.mongodb.WriteResult;
 
 import mood.users.io.core.UserIOCore;
@@ -48,7 +48,7 @@ public class ConfirmUserService {
 	
 		return JSONResponse.reply(
 				null,null,
-				ServiceCaller.whichServletIsAsking().hashCode());
+				Caller.whoIsAsking().hashCode());
 	}
 
 }

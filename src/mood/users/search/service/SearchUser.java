@@ -3,7 +3,7 @@ package mood.users.search.service;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.utils.ServiceCaller;
+import com.aj.utils.Caller;
 
 import tools.db.DBException;
 import tools.services.JSONResponse;
@@ -37,7 +37,7 @@ public class SearchUser {
 	
 			return JSONResponse.reply(
 					new JSONObject().put("users",""/*jar*/),
-					null,ServiceCaller.whichServletIsAsking().hashCode());
+					null,Caller.whoIsAsking().hashCode());
 		}
 	
 }

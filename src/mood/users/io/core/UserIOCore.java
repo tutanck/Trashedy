@@ -5,11 +5,14 @@ import com.aj.utils.AbsentKeyException;
 import com.aj.utils.JSONRefiner;
 import com.mongodb.DBCollection;
 
+import java.util.regex.Pattern;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import mood.users.io.db.UserIODB;
 import mood.users.io.db.UserSessionDB;
+import tools.general.InputType;
 import tools.general.PatternsHolder;
 import tools.db.DBException;
 import tools.services.JSONResponse;
@@ -72,6 +75,27 @@ public class UserIOCore{
 			return JSONResponse.issue(ServiceCodes.USERNAME_IS_TAKEN);		
 	
 		return null; //all right
+	}
+	
+	
+	/**
+	 * Determine the input format among the values of the InputType enumeration
+	 * according to possible input formats for the UserIO service
+	 * other formats are ignored 
+	 * @param input
+	 * @return */
+	public static InputType determineFormat(String input){
+		if(Pattern.compile(
+				PatternsHolder.email
+				).matcher(input).matches())
+			return InputType.EMAIL;
+
+		else if(Pattern.compile(
+				PatternsHolder.nums
+				).matcher(input).matches())
+			return InputType.PHONE;
+
+		return InputType.USERNAME; 
 	}
 
 }

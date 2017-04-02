@@ -4,7 +4,7 @@ import com.aj.regina.THINGS;
 import com.aj.utils.AbsentKeyException;
 import com.aj.utils.InvalidKeyException;
 import com.aj.utils.JSONRefiner;
-import com.aj.utils.ServiceCaller;
+import com.aj.utils.Caller;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
@@ -57,7 +57,7 @@ public class UserProfile{
 
 		THINGS.putOne(JSONRefiner.wrap("_id",params.get("uid")),clear,collection);
 
-		return JSONResponse.reply(null,null,ServiceCaller.whichServletIsAsking().hashCode());
+		return JSONResponse.reply(null,null,Caller.whoIsAsking().hashCode());
 	}
 
 
@@ -100,7 +100,7 @@ public class UserProfile{
 				.put("lastname",user.get("lastname"))
 				.put("birthdate",user.get("birthdate"))
 				.put("phone",user.get("phone")),null,
-				ServiceCaller.whichServletIsAsking().hashCode());
+				Caller.whoIsAsking().hashCode());
 	}
 
 
@@ -127,7 +127,7 @@ public class UserProfile{
 				JSONRefiner.wrap("username",user.get("username"))
 				.put("firstname",user.get("firstname"))
 				.put("lastname",user.get("lastname")),null,
-				ServiceCaller.whichServletIsAsking().hashCode());
+				Caller.whoIsAsking().hashCode());
 	}
 
 	

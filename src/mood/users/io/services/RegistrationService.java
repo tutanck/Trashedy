@@ -5,16 +5,16 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.aj.regina.DBCommit;
 import com.aj.regina.THINGS;
 import com.aj.utils.AbsentKeyException;
 import com.aj.utils.JSONRefiner;
-import com.aj.utils.ServiceCaller;
+import com.aj.utils.Caller;
 
 import mood.users.io.core.UserIOCore;
 import tools.db.DBException;
 import tools.general.PatternsHolder;
 import tools.lingua.Lingua;
-import tools.lingua.StringNotFoundException;
 import tools.mailing.SendEmail;
 import tools.services.JSONResponse;
 import tools.services.ServiceCodes;
@@ -48,8 +48,8 @@ public class RegistrationService {
 	
 		//--DB WRITEACTION
 		String ckey =ServicesToolBox.generateToken();
-		THINGS.add(JSONRefiner.slice(params,
-				new String[]{"username","pass","email"})
+		DBCommit commit = THINGS.add(
+				JSONRefiner.slice(params,new String[]{"username","pass","email"})
 				.put("confirmed", ckey)
 				.put("regdate", new Date()),
 				UserIOCore.collection);
@@ -64,20 +64,12 @@ public class RegistrationService {
 					Lingua.get("welcomeMailSubject","fr-FR"),
 					Lingua.get("welcomeMailMessage","fr-FR")
 					+basedir+dir+"?ckey="+ckey);
-	
-		}catch (StringNotFoundException e) { 
-			System.out.println("Dictionary Error : Mail not sent : ");
-			e.printStackTrace();
 		}catch (Exception e) {
-			System.out.println("Mailing Error : Mail not sent : ");
-			e.printStackTrace();
-			//TODO ameliorer ste merde
-			return JSONResponse.reply(
-					JSONRefiner.wrap("url",basedir+dir+"?ckey="+ckey),	
-					null,ServiceCaller.whichServletIsAsking().hashCode());
+			commit.rollback(); //TODO a tester bcp
+			throw new RuntimeException(e);
 		}
 	
-		return JSONResponse.reply(null,null,ServiceCaller.whichServletIsAsking().hashCode());
+		return JSONResponse.reply(null,null,Caller.whoIsAsking().hashCode());
 	}
 
 }
