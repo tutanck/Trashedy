@@ -9,15 +9,19 @@ import com.aj.utils.JSONRefiner;
 import com.aj.utils.Caller;
 
 import mood.users.io.core.UserIOCore;
+
 import tools.db.DBException;
 import tools.lingua.Lingua;
-import tools.lingua.StringNotFoundException;
 import tools.mailing.SendEmail;
 import tools.services.JSONResponse;
+import tools.services.Safety;
 import tools.services.ServiceCodes;
 import tools.services.ServicesToolBox;
 import tools.services.ShouldNeverOccurException;
 
+
+/**
+ * @author Joan */
 public class AccountRecoveryService {
 
 	/**
@@ -32,7 +36,6 @@ public class AccountRecoveryService {
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {
 	
-		//Verify if user email exists
 		if(!THINGS.exists(JSONRefiner.slice(params, new String[]{"email"}),UserIOCore.collection))
 			return JSONResponse.issue(ServiceCodes.UNKNOWN_EMAIL_ADDRESS);
 	
@@ -44,18 +47,13 @@ public class AccountRecoveryService {
 				JSONRefiner.wrap("pass", secret),
 				UserIOCore.collection);
 	
-		//Send an email to the applicant
 		try {
-			SendEmail.sendMail(params.getString("email"),Lingua.get("NewAccessKeySentSubject","fr-FR"),
+			SendEmail.sendMail(params.getString("email"),
+					Lingua.get("NewAccessKeySentSubject","fr-FR"),
 					Lingua.get("NewAccessKeySentMessage","fr-FR")+ secret);
-		}
-		catch (StringNotFoundException e) { 
-			System.out.println("Dictionary Error : Mail not send");
-			e.printStackTrace();
-		}
-		return JSONResponse.reply(
-				null,null,
-				Caller.whoIsAsking().hashCode());
+		}catch (Exception e) {Safety.explode(e);}
+		
+		return JSONResponse.reply(null,null,Caller.signature());
 	}
 
 }

@@ -19,6 +19,8 @@ public class Caller {
 		}
 		return T[T.length-1].getClassName();
 	}
+	
+	public static int signature(){return whoIsAsking().hashCode();}
 
 
 	public static void main(String[] args) {

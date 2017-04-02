@@ -18,6 +18,8 @@ import tools.services.ServiceCodes;
 import tools.services.ServicesToolBox;
 import tools.services.ShouldNeverOccurException;
 
+/**
+ * @author Joan */
 public class LoginService {
 
 	/**
@@ -37,7 +39,7 @@ public class LoginService {
 		InputType it = UserIOCore.determineFormat(params.getString("username"));
 		System.out.println("username input format : "+it);//Debug
 
-		JSONObject renamed= JSONRefiner.renameJSONKeys(params,new String[]{"username->"+it.toString()});
+		JSONObject renamed = JSONRefiner.renameKeys(params,new String[]{"username->"+it.toString()});
 		System.out.println("renamed: "+renamed);//Debug
 
 		if (THINGS.exists(JSONRefiner.slice(
@@ -67,7 +69,7 @@ public class LoginService {
 		return JSONResponse.reply(
 				JSONRefiner.wrap("himitsu", himitsu)
 				.put("username",user.get("username")),
-				null,Caller.whoIsAsking().hashCode());
+				null,Caller.signature());
 	}
 
 	public static void main(String[] args) throws JSONException, DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {

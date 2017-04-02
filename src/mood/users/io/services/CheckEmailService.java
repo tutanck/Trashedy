@@ -11,6 +11,8 @@ import tools.db.DBException;
 import tools.services.JSONResponse;
 import tools.services.ShouldNeverOccurException;
 
+/**
+ * @author Joan */
 public class CheckEmailService {
 
 	/**
@@ -28,10 +30,7 @@ public class CheckEmailService {
 		JSONObject emailCheck = UserIOCore.checkEmailCore(params);
 		if(emailCheck!=null) return emailCheck;
 		
-		return JSONResponse.reply(
-				null,null,	
-				Caller.whoIsAsking().hashCode()
-				);
+		return JSONResponse.reply(null,null,Caller.signature());
 	}
 
 }

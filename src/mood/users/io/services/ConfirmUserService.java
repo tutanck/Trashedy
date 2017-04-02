@@ -16,6 +16,8 @@ import tools.services.JSONResponse;
 import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
 
+/**
+ * @author Joan */
 public class ConfirmUserService {
 
 	/**
@@ -33,7 +35,7 @@ public class ConfirmUserService {
 			) throws ShouldNeverOccurException, DBException, JSONException, AbsentKeyException, InvalidKeyException{ 
 	
 		WriteResult wr =THINGS.replaceOne(
-				JSONRefiner.renameJSONKeys(params, new String[]{"ckey->confirmed"}), 
+				JSONRefiner.renameKeys(params, new String[]{"ckey->confirmed"}), 
 				JSONRefiner.wrap("$set",JSONRefiner.wrap("confirmed", true)), 
 				UserIOCore.collection);
 	
@@ -46,9 +48,7 @@ public class ConfirmUserService {
 		if(wr.getN()>1)
 			throw new ShouldNeverOccurException("Inconsistent DBCollection : "+UserIOCore.collection);
 	
-		return JSONResponse.reply(
-				null,null,
-				Caller.whoIsAsking().hashCode());
+		return JSONResponse.reply(null,null,Caller.signature());
 	}
 
 }

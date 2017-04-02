@@ -17,10 +17,13 @@ import tools.general.PatternsHolder;
 import tools.lingua.Lingua;
 import tools.mailing.SendEmail;
 import tools.services.JSONResponse;
+import tools.services.Safety;
 import tools.services.ServiceCodes;
 import tools.services.ServicesToolBox;
 import tools.services.ShouldNeverOccurException;
 
+/**
+ * @author Joan */
 public class RegistrationService {
 
 	/**
@@ -35,17 +38,17 @@ public class RegistrationService {
 	public static JSONObject registration(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {
-	
+
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidPass(params.getString("pass")))
 			return JSONResponse.issue(ServiceCodes.INVALID_PASS_FORMAT);
-	
+
 		JSONObject emailCheck = UserIOCore.checkEmailCore(params);
 		if(emailCheck!=null) return emailCheck;
-		
+
 		JSONObject usernameCheck = UserIOCore.checkUsernameCore(params);
 		if(usernameCheck!=null) return usernameCheck;
-	
+
 		//--DB WRITEACTION
 		String ckey =ServicesToolBox.generateToken();
 		DBCommit commit = THINGS.add(
@@ -53,7 +56,7 @@ public class RegistrationService {
 				.put("confirmed", ckey)
 				.put("regdate", new Date()),
 				UserIOCore.collection);
-	
+
 		//TODO utiliser un .property pour gerer le nom de racine de l app
 		String basedir = "http://localhost:8080/Essais0";
 		//TODO recuperer dans @weservlet de la servlet associée le bout d'url "/account/confirm"
@@ -66,10 +69,10 @@ public class RegistrationService {
 					+basedir+dir+"?ckey="+ckey);
 		}catch (Exception e) {
 			commit.rollback(); //TODO a tester bcp
-			throw new RuntimeException(e);
+			Safety.explode(e);
 		}
-	
-		return JSONResponse.reply(null,null,Caller.whoIsAsking().hashCode());
+
+		return JSONResponse.reply(null,null,Caller.signature());
 	}
 
 }

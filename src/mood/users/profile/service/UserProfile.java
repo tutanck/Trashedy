@@ -81,12 +81,12 @@ public class UserProfile{
 		//uther as a contraction of user-other (other user)
 		if(params.has("uther")) 
 			THINGS.getOne(
-					JSONRefiner.renameJSONKeys(
+					JSONRefiner.renameKeys(
 							JSONRefiner.slice(params, new String[]{"uther"}),
 							new String[]{"uther->_id"}), 
 					collection);
 		else{
-			user = THINGS.getOne(JSONRefiner.renameJSONKeys(
+			user = THINGS.getOne(JSONRefiner.renameKeys(
 					JSONRefiner.slice(UserSessionDB.clarifyParams(params), new String[]{"uid"}),
 					new String[]{"uid->_id"}),collection);
 			profile.put("self",true);

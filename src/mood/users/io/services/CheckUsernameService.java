@@ -11,6 +11,8 @@ import tools.db.DBException;
 import tools.services.JSONResponse;
 import tools.services.ShouldNeverOccurException;
 
+/**
+ * @author Joan */
 public class CheckUsernameService {
 
 	/**
@@ -28,10 +30,7 @@ public class CheckUsernameService {
 		JSONObject usernameCheck = UserIOCore.checkUsernameCore(params);
 		if(usernameCheck!=null) return usernameCheck;
 		
-		return JSONResponse.reply(
-				null,null,			
-				Caller.whoIsAsking().hashCode()
-				);
+		return JSONResponse.reply(null,null,Caller.signature());
 	}
 
 }

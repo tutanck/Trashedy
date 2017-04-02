@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import com.aj.regina.THINGS;
 import com.aj.utils.Caller;
+import com.aj.utils.JSONRefiner;
 
 import mood.users.io.core.UserIOCore;
 import tools.db.DBException;
@@ -12,6 +13,8 @@ import tools.services.JSONResponse;
 import tools.services.ServicesToolBox;
 import tools.services.ShouldNeverOccurException;
 
+/**
+ * @author Joan */
 public class LogoutService {
 
 	/**
@@ -24,15 +27,11 @@ public class LogoutService {
 	public static JSONObject logout(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException {
-		THINGS.remove(new JSONObject()
-				.put("skey",
-						ServicesToolBox.scramble(
-								params.getString("skey")
-								)
-						),UserIOCore.session);
-		return JSONResponse.reply(
-				null,null,
-				Caller.whoIsAsking().hashCode());
+		THINGS.remove(JSONRefiner.wrap(
+				"skey",ServicesToolBox.scramble(params.getString("skey")))
+				,UserIOCore.session);
+		
+		return JSONResponse.reply(null,null,Caller.signature());
 	}
 
 }

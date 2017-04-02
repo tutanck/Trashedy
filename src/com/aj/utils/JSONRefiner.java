@@ -143,7 +143,7 @@ public class JSONRefiner {
 	 * @param keyMap
 	 * @return  
 	 * @throws AbsentKeyException */
-	public static JSONObject renameJSONKeys(
+	public static JSONObject renameKeys(
 			JSONObject json,
 			Map<String,String> keyMap
 			) throws AbsentKeyException{
@@ -171,7 +171,7 @@ public class JSONRefiner {
 	 * @return
 	 * @throws AbsentKeyException
 	 * @throws InvalidKeyException */
-	public static JSONObject renameJSONKeys(
+	public static JSONObject renameKeys(
 			JSONObject json,
 			String[] keyMapString
 			) throws AbsentKeyException, InvalidKeyException{
@@ -213,7 +213,7 @@ public class JSONRefiner {
 		kmap.put("lol1", "newlol1");
 		kmap.put("lol3", "newlol3");
 		//kmap.put("lol", "newlol"); //lol don't exist in jo --> except
-		System.out.println("aliasMap : "+renameJSONKeys(jo,kmap));
+		System.out.println("aliasMap : "+renameKeys(jo,kmap));
 		System.out.println("jo : "+jo+"\n");
 		
 		System.out.println("clean : "+clean(jo,new String[]{"lola"}));
