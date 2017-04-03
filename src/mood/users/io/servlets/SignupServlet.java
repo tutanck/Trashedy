@@ -19,7 +19,6 @@ import mood.users.io.services.RegistrationService;
 @WebServlet(urlPatterns={"/signup"})
 public class SignupServlet extends OfflinePostServlet {
 	private static final long serialVersionUID = 1L;
-	public SignupServlet() {super();}
 
 	@Override
 	public void init() throws ServletException {

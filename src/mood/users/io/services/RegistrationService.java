@@ -2,9 +2,12 @@ package mood.users.io.services;
 
 import java.util.Date;
 
+import javax.servlet.annotation.WebServlet;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.aj.jeez.codegen.WebService;
 import com.aj.regina.DBCommit;
 import com.aj.regina.THINGS;
 import com.aj.utils.AbsentKeyException;
@@ -21,6 +24,7 @@ import tools.services.Safety;
 import tools.services.ServiceCodes;
 import tools.services.ServicesToolBox;
 import tools.services.ShouldNeverOccurException;
+import tools.servletspolicy.OfflinePostServlet;
 
 /**
  * @author Joan */
@@ -35,6 +39,12 @@ public class RegistrationService {
 	 * @throws JSONException 
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
+
+	@WebService(
+			webServlet = @WebServlet(name="RegistrationServlet",urlPatterns={"/signup"}),
+			expectedIn={"username","pass","email"},
+			parent = OfflinePostServlet.class
+			)
 	public static JSONObject registration(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {

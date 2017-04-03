@@ -1,4 +1,4 @@
-package com.aj.jeez.test;
+package com.aj.jeez.testss;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

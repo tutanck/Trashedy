@@ -14,9 +14,6 @@ import org.json.JSONObject;
 import com.aj.utils.JSONRefiner;
 import com.aj.utils.MapRefiner;
 
-/*			TODO	##trouver un moyen pour les pb cause par le send de l'http error si cette methode est redefinie
-par l'user idem pour beforeBusiness  : au pire les passer en final */
-
 
 /**
  * * @author Anagbla Joan */
@@ -28,23 +25,23 @@ implements IJEEZServlet{
 	/**
 	 * The set of incoming parameters names required 
 	 * for the underlying service to work properly */
-	protected Set<String> expectedIn=new HashSet<String>(); //Incoming expected parameters names
+	protected final Set<String> expectedIn=new HashSet<String>(); //Incoming expected parameters names
 
 	/**
 	 * The set of outgoing parameters names required 
 	 * for the client to work properly */
-	protected Set<String> expectedOut=new HashSet<String>(); //Outgoing expected parameters names
+	protected final Set<String> expectedOut=new HashSet<String>(); //Outgoing expected parameters names
 
 	/**
 	 * The set of incoming additional parameters names  
 	 *  taken into account by the underlying service*/
-	protected Set<String> optionalIn=new HashSet<String>(); //Incoming optional parameters names
+	protected final Set<String> optionalIn=new HashSet<String>(); //Incoming optional parameters names
 
 	//N'est pas tres important cote server mais pour generer le client , c'est indispensable de savoir l'integalite des noms de params qu'ue servlet peut retourner (pour generer le reviver)
 	/**
 	 * The set of outgoing additional parameters names  
 	 *  taken into account by the underlying service*/
-	protected Set<String> optionalOut=new HashSet<String>(); //Outgoing optional parameters names
+	protected final Set<String> optionalOut=new HashSet<String>(); //Outgoing optional parameters names
 
 	protected boolean requireAuth =false;
 	
@@ -60,7 +57,7 @@ implements IJEEZServlet{
 	 * @param response
 	 * @return
 	 * @throws Exception */
-	protected JSONObject beforeBusiness(
+	protected final JSONObject beforeBusiness(
 			HttpServletRequest request,
 			HttpServletResponse response
 			)throws Exception {
@@ -120,14 +117,14 @@ implements IJEEZServlet{
 	 * @param result
 	 * @param debug
 	 * @throws IOException */
-	protected void afterBusiness(
+	protected final void afterBusiness(
 			HttpServletRequest request, //just a precaution (useless for now)
 			HttpServletResponse response,
 			JSONObject result
 			)throws Exception {
 
 		if(!resultWellFormed(result)) {
-			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE CURRENTLY UNAVAILABLE");
+			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARY UNAVAILABLE");
 			System.out.println("{result} should at least contain all keys in {epnOut}");
 			return;
 		}
