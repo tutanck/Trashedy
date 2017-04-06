@@ -8,7 +8,7 @@ import com.aj.jeez.PostServlet;
 
 /**
  * * @author Anagbla Joan */
-public abstract class OfflinePostServlet extends PostServlet{
+public class OfflinePostServlet extends PostServlet{
 	private static final long serialVersionUID = 1L;
 
 	@Override

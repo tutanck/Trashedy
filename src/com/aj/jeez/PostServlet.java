@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 /**
  * * @author Anagbla Joan */
-public abstract class PostServlet extends JEEZServlet{
+public class PostServlet extends JEEZServlet{
 	private static final long serialVersionUID = 1L;
 
 	@Override

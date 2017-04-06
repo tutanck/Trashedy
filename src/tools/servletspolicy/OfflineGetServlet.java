@@ -8,7 +8,7 @@ import com.aj.jeez.GetServlet;
 
 /**
  * * @author Anagbla Joan */
-public abstract class OfflineGetServlet extends GetServlet{
+public class OfflineGetServlet extends GetServlet{
 	private static final long serialVersionUID = 1L;
 
 	@Override

@@ -1,10 +1,13 @@
 package com.aj.jeez;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +16,7 @@ import org.json.JSONObject;
 
 import com.aj.utils.JSONRefiner;
 import com.aj.utils.MapRefiner;
+import com.aj.utils.Utils;
 
 
 /**
@@ -21,6 +25,10 @@ public abstract class JEEZServlet
 extends HttpServlet
 implements IJEEZServlet{
 	private static final long serialVersionUID = 1L;
+
+	private String serviceClassName;
+
+	private String serviceMethodName;
 
 	/**
 	 * The set of incoming parameters names required 
@@ -44,7 +52,49 @@ implements IJEEZServlet{
 	protected final Set<String> optionalOut=new HashSet<String>(); //Outgoing optional parameters names
 
 	protected boolean requireAuth =false;
-	
+
+	protected Set<Class<?>> testClasses = new HashSet<>() ;
+
+
+
+
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		String serviceClassParam=getInitParameter("serviceClass");
+		String serviceMethodParam=getInitParameter("serviceMethod");
+		this.serviceClassName=serviceClassParam;
+		this.serviceMethodName=serviceMethodParam;
+
+		String expectedInParam=getInitParameter("expectedIn");
+		String expectedOutParam=getInitParameter("expectedOut");
+		String optionalInParam=getInitParameter("optionalIn");
+		String optionalOutParam=getInitParameter("optionalOut");
+		String requireAuthParam=getInitParameter("requireAuth");
+		String testClassesParam=getInitParameter("testClasses");
+		System.out.println("JEEZServlet/doBusiness::getInitParameter(\"serviceClass\") = "+serviceClassParam);
+		System.out.println("JEEZServlet/doBusiness::getInitParameter(\"serviceMethod\") = "+serviceMethodParam);
+		System.out.println("JEEZServlet/doBusiness::getInitParameter(\"expectedIn\") = "+expectedInParam);
+		System.out.println("JEEZServlet/doBusiness::getInitParameter(\"expectedOut\") = "+expectedOutParam);
+		System.out.println("JEEZServlet/doBusiness::getInitParameter(\"optionalIn\") = "+optionalInParam);
+		System.out.println("JEEZServlet/doBusiness::getInitParameter(\"optionalOut\") = "+optionalOutParam);
+		System.out.println("JEEZServlet/doBusiness::getInitParameter(\"requireAuth\") = "+requireAuthParam);
+		System.out.println("JEEZServlet/doBusiness::getInitParameter(\"testClasses\") = "+testClassesParam);
+
+		this.expectedIn.addAll(Arrays.asList(Utils.split(expectedInParam)));
+		this.expectedOut.addAll(Arrays.asList(Utils.split(expectedOutParam)));
+		this.optionalIn.addAll(Arrays.asList(Utils.split(optionalInParam)));
+		this.optionalOut.addAll(Arrays.asList(Utils.split(optionalOutParam)));
+
+		this.requireAuth =Boolean.parseBoolean(requireAuthParam);
+		/*try {
+			for(String classQN : Utils.split(testClassesParam))
+				this.testClasses.add(Class.forName(classQN));
+		} catch (ClassNotFoundException e) {throw new RuntimeException(e);}
+*/
+		System.out.println("this.expectedIn : "+this.expectedIn);
+	}
+
 
 	/**
 	 * @description
@@ -61,11 +111,11 @@ implements IJEEZServlet{
 			HttpServletRequest request,
 			HttpServletResponse response
 			)throws Exception {
-		
+
 		response.setContentType("text/plain");
 
 		JSONObject params = new JSONObject();
-		
+
 		Map<String,String>requestParams=MapRefiner.refine(request.getParameterMap());
 
 		for(String expected : expectedIn) {
@@ -92,7 +142,7 @@ implements IJEEZServlet{
 					params,(JSONObject) res.get("supportedParams"));
 		}
 		System.out.println();
-		
+
 		if(requireAuth && !isAuth(request,params)){
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "USER UNAUTHENTICATED");
 			return null;
@@ -100,37 +150,11 @@ implements IJEEZServlet{
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "USER ALREADY AUTHENTICATED");
 			return null;
 		}
-		
+
 		return params;
 	}
 
 
-
-	/**
-	 * @description
-	 * Check if the result in the server response is sufficient and well formed (
-	 * 	contains all needed keys each of the right type (in the json result) 
-	 *  to considerate that the result match the service's postconditions.
-	 *  )  
-	 * @param request
-	 * @param response
-	 * @param result
-	 * @param debug
-	 * @throws IOException */
-	protected final void afterBusiness(
-			HttpServletRequest request, //just a precaution (useless for now)
-			HttpServletResponse response,
-			JSONObject result
-			)throws Exception {
-
-		if(!resultWellFormed(result)) {
-			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARY UNAVAILABLE");
-			System.out.println("{result} should at least contain all keys in {epnOut}");
-			return;
-		}
-		response.getWriter().print(result);
-	}	
-	
 
 	/**
 	 * @description
@@ -145,7 +169,7 @@ implements IJEEZServlet{
 		return request.getSession(false)==null;
 	}
 
-	
+
 
 	/**
 	 * @description
@@ -219,14 +243,41 @@ implements IJEEZServlet{
 			}
 		}else //Copy the supported parameter as string into a restricted json (contains only tped epn and opn)
 			supportedParams.put(paramName, requestParams.get(paramName));
-		
+
 		return new JSONObject()
 				.put("valid", true)
 				.put("supportedParams", supportedParams); //updated with the valid parameter added
 	}
-	
-	
+
+
 	/**
+	 * @description
+	 * Check if the result in the server response is sufficient and well formed (
+	 * 	contains all needed keys each of the right type (in the json result) 
+	 *  to considerate that the result match the service's postconditions.
+	 *  )  
+	 * @param request
+	 * @param response
+	 * @param result
+	 * @param debug
+	 * @throws IOException */
+	protected final void afterBusiness(
+			HttpServletRequest request, //just a precaution (useless for now)
+			HttpServletResponse response,
+			Object result
+			)throws Exception {
+
+		/*if(!resultWellFormed(result)) {
+			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARY UNAVAILABLE");
+			System.out.println("{result} should at least contain all keys in {epnOut}");
+			return;
+		}*/
+		response.getWriter().print(result);
+	}	
+
+
+
+	/** TODO later see what to do 
 	 * @description
 	 * Check if the result contains all epnOut's key 
 	 * and the corresponding values are properly typed
@@ -244,6 +295,18 @@ implements IJEEZServlet{
 			}
 
 		return resultWellFormed;
+	}
+
+
+	@Override
+	public Object doBusiness(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			JSONObject params
+			)throws Exception {
+		Class<?> serviceClass=Class.forName(this.serviceClassName);	
+		Method m = serviceClass.getMethod(this.serviceMethodName, new Class[]{JSONObject.class});
+		return m.invoke(serviceClass.newInstance(), new Object[]{params});
 	}
 
 }

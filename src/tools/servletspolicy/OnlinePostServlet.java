@@ -11,7 +11,7 @@ import mood.users.io.db.UserSessionDB;
 
 /**
  * * @author Anagbla Joan */
-public abstract class OnlinePostServlet extends PostServlet{
+public class OnlinePostServlet extends PostServlet{
 	private static final long serialVersionUID = 1L;
 
 	@Override

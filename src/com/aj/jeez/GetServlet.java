@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 /**
  * * @author Anagbla Joan */
-public abstract class GetServlet extends JEEZServlet{
+public class GetServlet extends JEEZServlet{
 	private static final long serialVersionUID = 1L;
 
 	@Override

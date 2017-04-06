@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * * @author Anagbla Joan */
 public interface IJEEZServlet {
 
-	public JSONObject doBusiness(
+	public Object doBusiness(
 			HttpServletRequest request,
 			HttpServletResponse response, 
 			JSONObject params

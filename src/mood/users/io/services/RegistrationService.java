@@ -39,12 +39,10 @@ public class RegistrationService {
 	 * @throws JSONException 
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
-
 	@WebService(
 			webServlet = @WebServlet(name="RegistrationServlet",urlPatterns={"/signup"}),
 			expectedIn={"username","pass","email"},
-			parent = OfflinePostServlet.class
-			)
+			parent = OfflinePostServlet.class)
 	public static JSONObject registration(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {
