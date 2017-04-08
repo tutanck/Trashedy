@@ -10,13 +10,13 @@ import java.util.*;
 public class MapRefiner {
 
 	/**
-	 * @description  reshape input map from Map<String,String[]> to Map<String,String>
-	 * by replacing the table of string by his first element 
-	 * @param patameterMap
+	 * Reshape the input map from Map<String,String[]> to Map<String,String>
+	 * by replacing the table of string map's value by his first element 
+	 * @param parametersMap
 	 * @return */
-	public static Map<String,String> refine(Map<String,String[]> patameterMap) {
+	public static Map<String,String> refine(Map<String,String[]> parametersMap) {
 		Map<String,String> simpleKeyValMap = new HashMap<String, String>();
-		for(Map.Entry<String,String[]> kv : patameterMap.entrySet())
+		for(Map.Entry<String,String[]> kv : parametersMap.entrySet())
 			simpleKeyValMap.put(kv.getKey(), kv.getValue()[0]);
 		return simpleKeyValMap;
 	}
