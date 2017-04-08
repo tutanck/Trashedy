@@ -1,7 +1,7 @@
 package com.aj.jeez;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -85,62 +85,79 @@ public abstract class JEEZServlet extends HttpServlet{
 
 
 	/**
-	 * The default initialization of the JEEZServlet.
-	 * This method favors the static template initialization
-	 * to the dynamic template initialization 
-	 * (using the annotation @WebService) */
+	 * Default initialization of the JEEZServlet's attributes.
+	 * This method favors the dynamic template initialization
+	 * (using the annotation @WebService parameters)
+	 * to the static template initialization
+	 * (direct setting from servlet class attributes)
+	 * Thus, dynamically adding a servlet via the
+	 * @WebService annotation will override default attributes
+	 * set in the sevlet policy (servlet's template) class
+	 * for {this} dynamically added servlet.
+	 * Anyway, if you specify an <init-param> in the web.xml
+	 * for a JEEZServlet's descendant JEEZ will not be able 
+	 * to modify the corresponding JEEZServlet's attribute */ 
 	@Override
 	public void init() throws ServletException {
 		super.init();
 
-		for(String paramName : jeezParamNames){
-			String paramValue = getInitParameter(paramName);
-			System.out.println("JEEZServlet/init::"
-					+" getInitParameter("+paramName+") = "+paramValue
-					+" - jeez."+paramName+" = ");
+		//Only useful in case of using the @WebService annotation else (should and will) not be executed
+		Enumeration<String> servletInitParamsNames = getInitParameterNames();
+		while(servletInitParamsNames.hasMoreElements()){ 
+			String paramName = servletInitParamsNames.nextElement();
+			System.err.println("JEEZ::::::::::::::"+paramName);//TODO REM
+			if(jeezParamNames.contains(paramName)){
+				String paramValue = getInitParameter(paramName);
+				System.out.print("JEEZServlet/init::"
+						+" getInitParameter("+paramName+") = "+paramValue
+						+" -bf jeez."+paramName+" = ");
 
-			switch (paramName) {
-			case "serviceClassName":
-				if(this.serviceClassName!=null)break;
-				this.serviceClassName=paramValue;
-				System.out.println("jeez.serviceClassName : "+this.serviceClassName);
-				break;
-			case "serviceMethodName":
-				if(this.serviceMethodName!=null)break;
-				this.serviceMethodName=paramValue;
-				System.out.println("jeez.serviceMethodName : "+this.serviceMethodName);
-				break;
-			case "requireAuth":
-				if(this.requireAuth!=null)break;
-				this.requireAuth = Boolean.parseBoolean(paramValue);
-				System.out.println("jeez.requireAuth : "+this.requireAuth);
-				break;	
-			case "expectedIn":
-				if(!this.expectedIn.isEmpty())break;
-				this.expectedIn.addAll(Arrays.asList(Utils.split(paramValue)));
-				System.out.println("jeez.expectedIn : "+this.expectedIn);
-				break;
-			case "expectedOut":
-				this.expectedOut.addAll(Arrays.asList(Utils.split(paramValue)));
-				System.out.println("jeez.expectedOut : "+this.expectedOut);
-				break;
-			case "optionalIn":
-				this.optionalIn.addAll(Arrays.asList(Utils.split(paramValue)));
-				System.out.println("jeez.optionalIn : "+this.optionalIn);
-				break;
-			case "optionalOut":
-				this.optionalOut.addAll(Arrays.asList(Utils.split(paramValue)));
-				System.out.println("jeez.optionalOut : "+this.optionalOut);
-				break;
-			case "testClasses":
-				/*try {
-				for(String classQN : Utils.split(testClassesParam))
-					this.testClasses.add(Class.forName(classQN));
-			} catch (ClassNotFoundException e) {throw new RuntimeException(e);}
-				 */
-				break;			 
-			default:; 
-			}
+				switch (paramName) {
+				case "serviceClassName":
+					System.out.print(this.serviceClassName);
+					this.serviceClassName=paramValue;
+					System.out.println(" -af jeez."+paramName+" : "+this.serviceClassName);
+					break;
+				case "serviceMethodName":
+					System.out.print(this.serviceMethodName);
+					this.serviceMethodName=paramValue;
+					System.out.println(" -af jeez."+paramName+" : "+this.serviceMethodName);
+					break;
+				case "requireAuth":
+					System.out.print(this.requireAuth);
+					this.requireAuth = Boolean.parseBoolean(paramValue);
+					System.out.println(" -af jeez."+paramName+" : "+this.requireAuth);
+					break;	
+				case "expectedIn":
+					System.out.print(this.expectedIn);
+					this.expectedIn.addAll(Utils.splitToSet(paramValue));
+					System.out.println(" -af jeez."+paramName+" : "+this.expectedIn);
+					break;
+				case "expectedOut":
+					System.out.print(this.expectedOut);
+					this.expectedOut.addAll(Utils.splitToSet(paramValue));
+					System.out.println(" -af jeez."+paramName+" : "+this.expectedOut);
+					break;
+				case "optionalIn":
+					System.out.print(this.optionalIn);
+					this.optionalIn.addAll(Utils.splitToSet(paramValue));
+					System.out.println(" -af jeez."+paramName+" : "+this.optionalIn);
+					break;
+				case "optionalOut":
+					System.out.print(this.optionalOut);
+					this.optionalOut.addAll(Utils.splitToSet(paramValue));
+					System.out.println(" -af jeez."+paramName+" : "+this.optionalOut);
+					break;
+				case "testClasses":
+					try {
+						for(String classQN : Utils.splitToSet(paramValue))
+							this.testClasses.addAll(Class.forName(classQN));
+					} catch (ClassNotFoundException e) {throw new RuntimeException(e);}
+
+					break;			 
+				default:; 
+				}
+			} 
 		}
 	}
 

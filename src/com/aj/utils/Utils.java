@@ -1,7 +1,9 @@
 package com.aj.utils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Utils {
@@ -17,39 +19,56 @@ public class Utils {
 			else
 				joined+=s;
 		return joined;
-		
 	}
-	
+
 	public static String join(
 			String... strings
 			) {
-		HashSet<String> stringSet = new HashSet<>();
+		Set<String> stringSet = new HashSet<>();
 		stringSet.addAll(Arrays.asList(strings));
 		return join(stringSet);
+	}
+
+	public static String joinClasses(Class<?>... classes) {
+		Set<String> classNames = new HashSet<>();
+		for(Class<?> c : classes)
+			classNames.add(c.getCanonicalName());
+		return join(classNames);
 	}
 
 	public static String[] split(
 			String string
 			) {
+		if(string.equals(""))
+			return new String[0];
 		return string.split("\\,");
 	}
 
-	
-	public static String joinClasses(Class<?>... testClasses) {
-		Set<String> classes =new HashSet<>();
-		for(Class<?> c:testClasses )
-		classes.add(c.getCanonicalName());
-			return join(classes);
+	public static Set<String> splitToSet(
+			String string
+			) {
+		String []strTab=split(string);
+		return strTab.length==0?
+				Collections.emptySet():new HashSet<String>(Arrays.asList(strTab));
 	}
-	
+
+	public static List<String> splitToList(
+			String string
+			) {
+		String []strTab=split(string);
+		return strTab.length==0?
+				Collections.emptyList():Arrays.asList(strTab);
+	}
+
+
 
 	public static void main(String[] args) {
-		System.out.println(Arrays.asList("".split("\\,")).size());
-		String joined =join("username","pass","email");
-		System.out.println(joined);
-		for(String s : split(joined))
-			System.out.print(s+" ");
+		System.out.println(splitToSet(join()).size()); //split an empty joined set of strings
+		System.out.println(join("username","pass","email"));
+		for(String s : split(join("username","pass","email")))
+			System.out.println(s+" ");
+		System.out.println(join(split(join("username","pass","email"))));
 	}
 
-	
+
 }
