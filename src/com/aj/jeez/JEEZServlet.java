@@ -24,12 +24,12 @@ import com.aj.utils.Utils;
  * * @author Anagbla Joan */
 public abstract class JEEZServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	
-	
+
+
 	/**
 	 * The set that contains all the names of parameters
 	 * JEEZ needs to initialize jeezServlets */
-	private final Map<String,Object> jeezParams = new HashMap<String,Object>();
+	private final Map<String,Object> jeezAttr = new HashMap<String,Object>();
 
 	/**
 	 * The qualified name of the class where to find 
@@ -71,17 +71,17 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * The set of test classes where to find 
 	 * the test methods to execute after business */
 	protected final Set<Class<?>> testClasses = new HashSet<Class<?>>() ;
-	
+
 	//initialization block 
 	{	//act as a global reference to the class attributes
-		jeezParams.put("expectedIn",this.serviceClassName);
-		jeezParams.put("serviceMethodName",this.serviceMethodName);
-		jeezParams.put("requireAuth",this.requireAuth);
-		jeezParams.put("expectedIn",this.expectedIn);
-		jeezParams.put("expectedOut",this.expectedOut);
-		jeezParams.put("optionalIn",this.optionalIn);
-		jeezParams.put("optionalOut",this.optionalOut);
-		jeezParams.put("testClasses",this.testClasses);
+		jeezAttr.put("expectedIn",this.serviceClassName);
+		jeezAttr.put("serviceMethodName",this.serviceMethodName);
+		jeezAttr.put("requireAuth",this.requireAuth);
+		jeezAttr.put("expectedIn",this.expectedIn);
+		jeezAttr.put("expectedOut",this.expectedOut);
+		jeezAttr.put("optionalIn",this.optionalIn);
+		jeezAttr.put("optionalOut",this.optionalOut);
+		jeezAttr.put("testClasses",this.testClasses);
 	}
 
 
@@ -121,11 +121,13 @@ public abstract class JEEZServlet extends HttpServlet{
 		while(servletInitParamsNames.hasMoreElements()){ 
 			String paramName = servletInitParamsNames.nextElement();
 			System.err.println("JEEZ::::::::::::::"+paramName);//TODO REM
-			if(jeezParams.contains(paramName)){
+			if(jeezAttr.containsKey(paramName)){
 				String paramValue = getInitParameter(paramName);
 				System.out.print("JEEZServlet/init::"
 						+" getInitParameter("+paramName+") = "+paramValue
 						+" -bf jeez."+paramName+" = ");
+
+
 
 				switch (paramName) {
 				case "serviceClassName":
@@ -143,10 +145,11 @@ public abstract class JEEZServlet extends HttpServlet{
 					this.requireAuth = Boolean.parseBoolean(paramValue);
 					System.out.println(" -af jeez."+paramName+" : "+this.requireAuth);
 					break;	
-				case "expectedIn":
-					System.out.print(this.expectedIn);
-					Utils.reSet(this.expectedIn, paramValue);
-					System.out.println(" -af jeez."+paramName+" : "+this.expectedIn);
+				default :
+					Set<String>attr=(Set<String>)jeezAttr.get(paramName);
+					System.out.print(attr);
+					Utils.reSet(attr, paramValue);
+					System.out.println(" -af jeez."+paramName+" : "+attr);
 					break;
 				case "expectedOut":
 					System.out.print(this.expectedOut);
@@ -175,7 +178,7 @@ public abstract class JEEZServlet extends HttpServlet{
 
 
 					break;			 
-				default:; 
+
 				}
 			} 
 		}
