@@ -45,6 +45,15 @@ public class ServletsManager {
 			sr.setInitParameter("requireAuth", ws.requireAuth()?"true":"false"); 
 			sr.setInitParameter("testClasses", Utils.joinClasses(ws.testClasses()));
 			
+			/**
+			 * TODO Returns: http://docs.oracle.com/javaee/6/api/javax/servlet/Registration.html#setInitParameters(java.util.Map)
+			 * setInitParameters
+java.util.Set<java.lang.String> setInitParameters(java.util.Map<java.lang.String,java.lang.String> initParameters)
+Sets the given initialization parameters on the Servlet or Filter that is represented by this Registration. 
+The given map of initialization parameters is processed by-value, i.e., for each initialization parameter contained in the map, this method calls setInitParameter(String,String). If that method would return false for any of the initialization parameters in the given map, no updates will be performed, and false will be returned. Likewise, if the map contains an initialization parameter with a null name or value, no updates will be performed, and an IllegalArgumentException will be thrown. 
+true if the update was successful, i.e., an initialization parameter with the given name did not already exist for the Servlet or Filter represented by this Registration, and false otherwise 
+			 */
+			
 			sr.setInitParameter("serviceClass", className);
 			sr.setInitParameter("serviceMethod", service.getName());
 			

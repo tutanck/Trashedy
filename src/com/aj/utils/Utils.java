@@ -11,7 +11,6 @@ public class Utils {
 			){
 		String joined="";
 		int i=0;
-		System.out.println(stringSet.size());
 		for(String s : stringSet)
 			if(i++<stringSet.size()-1)
 				joined+=s+",";
@@ -45,6 +44,7 @@ public class Utils {
 	
 
 	public static void main(String[] args) {
+		System.out.println(Arrays.asList("".split("\\,")).size());
 		String joined =join("username","pass","email");
 		System.out.println(joined);
 		for(String s : split(joined))
