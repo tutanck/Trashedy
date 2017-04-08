@@ -1,4 +1,4 @@
-package com.aj.jeez;
+package com.aj.jeez.policy;
 
 import java.io.IOException;
 
@@ -8,19 +8,22 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.aj.jeez.JEEZServlet;
+
+
 /**
  * * @author Anagbla Joan */
-public class GetServlet extends JEEZServlet{
+public class PostServlet extends JEEZServlet{
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void doGet(
+	protected void doPost(
 			HttpServletRequest request,
 			HttpServletResponse response
 			) throws ServletException, IOException {
 		try{
 			JSONObject params = beforeBusiness(request,response);
-			if(params!=null)
+			if(params!=null) 	
 				afterBusiness(
 						request,response,
 						doBusiness(request,response,params)
@@ -32,11 +35,11 @@ public class GetServlet extends JEEZServlet{
 	}
 
 	@Override
-	protected void doPost(
+	protected void doGet(
 			HttpServletRequest request,
 			HttpServletResponse response
 			) throws ServletException, IOException {
-		doGet(request, response);
+		doPost(request, response);
 	}
 
 }

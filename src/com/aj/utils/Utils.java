@@ -60,7 +60,26 @@ public class Utils {
 				Collections.emptyList():Arrays.asList(strTab);
 	}
 
+	public static Set<Class<?>> splitToClassSet(
+			String string
+			) throws ClassNotFoundException {
+			Set<Class<?>> classes = new HashSet<>();
+			for(String classQN : splitToSet(string))
+				classes.add(Class.forName(classQN));
+			return classes;
+	}
 
+	public static void reSet(Set<String>set,String paramListString){
+		Set<String> paramSet=splitToSet(paramListString);
+		if(!paramSet.isEmpty()){
+			set.clear();
+			set.addAll(paramSet);
+		}
+	}
+	
+	
+	
+	
 
 	public static void main(String[] args) {
 		System.out.println(splitToSet(join()).size()); //split an empty joined set of strings

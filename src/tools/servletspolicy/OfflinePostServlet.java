@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.PostServlet;
+import com.aj.jeez.policy.PostServlet;
 
 /**
  * * @author Anagbla Joan */

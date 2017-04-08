@@ -2,6 +2,7 @@ package com.aj.jeez;
 
 import java.lang.reflect.Method;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -23,23 +24,12 @@ import com.aj.utils.Utils;
  * * @author Anagbla Joan */
 public abstract class JEEZServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-
-
+	
+	
 	/**
 	 * The set that contains all the names of parameters
 	 * JEEZ needs to initialize jeezServlets */
-	protected final Set<String> jeezParamNames = new HashSet<String>();
-	{
-		jeezParamNames.add("serviceClassName");
-		jeezParamNames.add("serviceMethodName");
-		jeezParamNames.add("requireAuth");
-		jeezParamNames.add("expectedIn");
-		jeezParamNames.add("expectedOut");
-		jeezParamNames.add("optionalIn");
-		jeezParamNames.add("optionalOut");
-		jeezParamNames.add("testClasses");
-	}
-
+	private final Map<String,Object> jeezParams = new HashMap<String,Object>();
 
 	/**
 	 * The qualified name of the class where to find 
@@ -54,7 +44,7 @@ public abstract class JEEZServlet extends HttpServlet{
 	/**
 	 * Specify if the underlying service 
 	 * need to the user to be authenticated or not */
-	protected Boolean requireAuth = null;
+	protected Boolean requireAuth = false;
 
 	/**
 	 * The set of incoming parameters names required 
@@ -81,11 +71,24 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * The set of test classes where to find 
 	 * the test methods to execute after business */
 	protected final Set<Class<?>> testClasses = new HashSet<Class<?>>() ;
+	
+	//initialization block 
+	{	//act as a global reference to the class attributes
+		jeezParams.put("expectedIn",this.serviceClassName);
+		jeezParams.put("serviceMethodName",this.serviceMethodName);
+		jeezParams.put("requireAuth",this.requireAuth);
+		jeezParams.put("expectedIn",this.expectedIn);
+		jeezParams.put("expectedOut",this.expectedOut);
+		jeezParams.put("optionalIn",this.optionalIn);
+		jeezParams.put("optionalOut",this.optionalOut);
+		jeezParams.put("testClasses",this.testClasses);
+	}
 
 
 
 	/**
-	 * Default initialization of the JEEZServlet's attributes.
+	 * Default initialization of the JEEZServlet attributes.
+	 * -----------------------------------------------------------
 	 * This method favors the dynamic template initialization
 	 * (using the annotation @WebService parameters)
 	 * to the static template initialization
@@ -93,20 +96,32 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * Thus, dynamically adding a servlet via the
 	 * @WebService annotation will override default attributes
 	 * set in the sevlet policy (servlet's template) class
-	 * for {this} dynamically added servlet.
+	 * for {this} dynamically added servlet with the attributes 
+	 * specified in the @WebService annotation.
+	 * -----------------------------------------------------------
+	 * However, if an attribute is not specified 
+	 * in the @WebService annotation
+	 * this attribute will not be modified in the servlet 
+	 * and will keep its policy's default value.
+	 * -----------------------------------------------------------
 	 * Anyway, if you specify an <init-param> in the web.xml
 	 * for a JEEZServlet's descendant JEEZ will not be able 
-	 * to modify the corresponding JEEZServlet's attribute */ 
+	 * to modify the corresponding JEEZServlet's attribute. 
+	 * -----------------------------------------------------------
+	 * This entire method is only useful in case of
+	 * using the @WebService annotation 
+	 * else (should and will) not be executed.
+	 * It will update (set and override) JEEZServlet attributes
+	 * present in the @WebService annotations*/
 	@Override
 	public void init() throws ServletException {
 		super.init();
 
-		//Only useful in case of using the @WebService annotation else (should and will) not be executed
 		Enumeration<String> servletInitParamsNames = getInitParameterNames();
 		while(servletInitParamsNames.hasMoreElements()){ 
 			String paramName = servletInitParamsNames.nextElement();
 			System.err.println("JEEZ::::::::::::::"+paramName);//TODO REM
-			if(jeezParamNames.contains(paramName)){
+			if(jeezParams.contains(paramName)){
 				String paramValue = getInitParameter(paramName);
 				System.out.print("JEEZServlet/init::"
 						+" getInitParameter("+paramName+") = "+paramValue
@@ -130,29 +145,34 @@ public abstract class JEEZServlet extends HttpServlet{
 					break;	
 				case "expectedIn":
 					System.out.print(this.expectedIn);
-					this.expectedIn.addAll(Utils.splitToSet(paramValue));
+					Utils.reSet(this.expectedIn, paramValue);
 					System.out.println(" -af jeez."+paramName+" : "+this.expectedIn);
 					break;
 				case "expectedOut":
 					System.out.print(this.expectedOut);
-					this.expectedOut.addAll(Utils.splitToSet(paramValue));
+					Set<String> eOut=Utils.splitToSet(paramValue);
+					if(!eOut.isEmpty()){
+						this.expectedOut.clear();
+						this.expectedOut.addAll(eOut);
+					}
 					System.out.println(" -af jeez."+paramName+" : "+this.expectedOut);
 					break;
 				case "optionalIn":
 					System.out.print(this.optionalIn);
-					this.optionalIn.addAll(Utils.splitToSet(paramValue));
+					Set<String> oIn=Utils.splitToSet(paramValue);
+					if(!oIn.isEmpty())
+						this.optionalIn.addAll(oIn);
 					System.out.println(" -af jeez."+paramName+" : "+this.optionalIn);
 					break;
 				case "optionalOut":
 					System.out.print(this.optionalOut);
-					this.optionalOut.addAll(Utils.splitToSet(paramValue));
+					Set<String> oOut=Utils.splitToSet(paramValue);
+					if(!oOut.isEmpty())
+						this.optionalOut.addAll(oOut);
 					System.out.println(" -af jeez."+paramName+" : "+this.optionalOut);
 					break;
 				case "testClasses":
-					try {
-						for(String classQN : Utils.splitToSet(paramValue))
-							this.testClasses.addAll(Class.forName(classQN));
-					} catch (ClassNotFoundException e) {throw new RuntimeException(e);}
+
 
 					break;			 
 				default:; 
@@ -397,6 +417,6 @@ public abstract class JEEZServlet extends HttpServlet{
 		Class<?> serviceClass=Class.forName(this.serviceClassName);	
 		Method m = serviceClass.getMethod(this.serviceMethodName, new Class[]{JSONObject.class});
 		return m.invoke(serviceClass.newInstance(), new Object[]{params});
-	}
+	}	 
 
 }

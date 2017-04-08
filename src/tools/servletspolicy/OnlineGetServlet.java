@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.GetServlet;
+import com.aj.jeez.policy.GetServlet;
 
 import mood.users.io.db.UserSessionDB;
 
