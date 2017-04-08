@@ -29,7 +29,9 @@ public class Utils {
 		return join(stringSet);
 	}
 
-	public static String joinClasses(Class<?>... classes) {
+	public static String joinClasses(
+			Class<?>... classes
+			) {
 		Set<String> classNames = new HashSet<>();
 		for(Class<?> c : classes)
 			classNames.add(c.getCanonicalName());
@@ -69,7 +71,10 @@ public class Utils {
 			return classes;
 	}
 
-	public static void reSet(Set<String>set,String paramListString){
+	public static void reSet(
+			Set<String>set,
+			String paramListString
+			){
 		Set<String> paramSet=splitToSet(paramListString);
 		if(!paramSet.isEmpty()){
 			set.clear();
@@ -77,6 +82,16 @@ public class Utils {
 		}
 	}
 	
+	public static void reSetClasses(
+			Set<Class<?>>set,
+			String paramListString
+			) throws ClassNotFoundException{
+		Set<Class<?>> paramSet=splitToClassSet(paramListString);
+		if(!paramSet.isEmpty()){
+			set.clear();
+			set.addAll(paramSet);
+		}
+	}
 	
 	
 	

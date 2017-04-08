@@ -34,17 +34,17 @@ public abstract class JEEZServlet extends HttpServlet{
 	/**
 	 * The qualified name of the class where to find 
 	 * the serice's method to call */
-	protected String serviceClassName=null; 
+	protected String serviceClass=null; 
 
 	/**
 	 * The qualified name of the serice's method 
 	 * to be called */
-	protected String serviceMethodName=null;
+	protected String serviceMethod=null;
 
 	/**
 	 * Specify if the underlying service 
 	 * need to the user to be authenticated or not */
-	protected Boolean requireAuth = false;
+	protected boolean requireAuth = false;
 
 	/**
 	 * The set of incoming parameters names required 
@@ -74,9 +74,9 @@ public abstract class JEEZServlet extends HttpServlet{
 
 	//initialization block 
 	{	//act as a global reference to the class attributes
-		jeezAttr.put("expectedIn",this.serviceClassName);
-		jeezAttr.put("serviceMethodName",this.serviceMethodName);
-		jeezAttr.put("requireAuth",this.requireAuth);
+		jeezAttr.put("serviceClass",null); //null reference : used only for containing the key
+		jeezAttr.put("serviceMethod",null); //null reference : used only for containing the key
+		jeezAttr.put("requireAuth",null); //null reference : used only for containing the key
 		jeezAttr.put("expectedIn",this.expectedIn);
 		jeezAttr.put("expectedOut",this.expectedOut);
 		jeezAttr.put("optionalIn",this.optionalIn);
@@ -120,65 +120,47 @@ public abstract class JEEZServlet extends HttpServlet{
 		Enumeration<String> servletInitParamsNames = getInitParameterNames();
 		while(servletInitParamsNames.hasMoreElements()){ 
 			String paramName = servletInitParamsNames.nextElement();
-			System.err.println("JEEZ::::::::::::::"+paramName);//TODO REM
+			System.err.println("JEEZ just found in ServletConfig init parameter : '"+paramName+"'");
 			if(jeezAttr.containsKey(paramName)){
 				String paramValue = getInitParameter(paramName);
 				System.out.print("JEEZServlet/init::"
 						+" getInitParameter("+paramName+") = "+paramValue
-						+" -bf jeez."+paramName+" = ");
-
-
+						+" - bf jeez."+paramName+" = ");
 
 				switch (paramName) {
-				case "serviceClassName":
-					System.out.print(this.serviceClassName);
-					this.serviceClassName=paramValue;
-					System.out.println(" -af jeez."+paramName+" : "+this.serviceClassName);
+				case "serviceClass":
+					System.out.print(this.serviceClass);
+					this.serviceClass=paramValue;
+					System.out.println(" - af jeez."+paramName+" : "+this.serviceClass);
 					break;
-				case "serviceMethodName":
-					System.out.print(this.serviceMethodName);
-					this.serviceMethodName=paramValue;
-					System.out.println(" -af jeez."+paramName+" : "+this.serviceMethodName);
+				case "serviceMethod":
+					System.out.print(this.serviceMethod);
+					this.serviceMethod=paramValue;
+					System.out.println(" -af jeez."+paramName+" : "+this.serviceMethod);
 					break;
 				case "requireAuth":
 					System.out.print(this.requireAuth);
 					this.requireAuth = Boolean.parseBoolean(paramValue);
 					System.out.println(" -af jeez."+paramName+" : "+this.requireAuth);
 					break;	
-				default :
-					Set<String>attr=(Set<String>)jeezAttr.get(paramName);
-					System.out.print(attr);
-					Utils.reSet(attr, paramValue);
-					System.out.println(" -af jeez."+paramName+" : "+attr);
-					break;
-				case "expectedOut":
-					System.out.print(this.expectedOut);
-					Set<String> eOut=Utils.splitToSet(paramValue);
-					if(!eOut.isEmpty()){
-						this.expectedOut.clear();
-						this.expectedOut.addAll(eOut);
-					}
-					System.out.println(" -af jeez."+paramName+" : "+this.expectedOut);
-					break;
-				case "optionalIn":
-					System.out.print(this.optionalIn);
-					Set<String> oIn=Utils.splitToSet(paramValue);
-					if(!oIn.isEmpty())
-						this.optionalIn.addAll(oIn);
-					System.out.println(" -af jeez."+paramName+" : "+this.optionalIn);
-					break;
-				case "optionalOut":
-					System.out.print(this.optionalOut);
-					Set<String> oOut=Utils.splitToSet(paramValue);
-					if(!oOut.isEmpty())
-						this.optionalOut.addAll(oOut);
-					System.out.println(" -af jeez."+paramName+" : "+this.optionalOut);
-					break;
 				case "testClasses":
-
-
-					break;			 
-
+					Set<Class<?>>attrClss=(Set<Class<?>>)jeezAttr.get(paramName);
+					System.out.print(attrClss);
+					try {//TODO 
+						Utils.reSetClasses(attrClss, paramValue);
+					} catch (ClassNotFoundException e) {						
+						//Should Never occur ("parameters types have to be checked at deployment time")
+						throw new RuntimeException(e);
+					}
+					System.out.println(" -af jeez."+paramName+" : "+attrClss);
+					break;	 			
+				default : //No worries we are covered by the above if-clause that checks it's a jeezAttr 
+					@SuppressWarnings("unchecked")
+					Set<String>attrStr=(Set<String>)jeezAttr.get(paramName);
+					System.out.print(attrStr);
+					Utils.reSet(attrStr, paramValue);
+					System.out.println(" -af jeez."+paramName+" : "+attrStr);
+					break;		
 				}
 			} 
 		}
@@ -224,28 +206,26 @@ public abstract class JEEZServlet extends HttpServlet{
 		for(String expected : expectedIn) {
 			JSONObject res = paramIsValid(requestParams,expected,params,true);
 			if (!res.getBoolean("valid")){
-				System.out.print(" -> Not Valid");
+				System.out.println(" -> Not Valid");
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL MISUSED");
 				return null;
 			}
-			System.out.print(" -> Valid");
+			System.out.println(" -> Valid");
 			params = JSONRefiner.merge(
 					params,(JSONObject) res.get("supportedParams"));
 		}
-		System.out.println();
 
 		for(String optional : optionalIn){
 			JSONObject res = paramIsValid(requestParams,optional,params,false);
 			if (!res.getBoolean("valid")){
-				System.out.print(" -> Not Valid");
+				System.out.println(" -> Not Valid");
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL MISUSED");
 				return null;
 			}
-			System.out.print(" -> Valid");
+			System.out.println(" -> Valid");
 			params = JSONRefiner.merge(
 					params,(JSONObject) res.get("supportedParams"));
 		}
-		System.out.println();
 
 		if(requireAuth && !isAuth(request,params)){
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "USER UNAUTHENTICATED");
@@ -285,7 +265,7 @@ public abstract class JEEZServlet extends HttpServlet{
 		//name:string --> {[0]:name(paramName) , [1]:string(paramType)}
 		String[] typedParameterNameTab = typedParameterName.split("\\:");
 		String paramName = typedParameterNameTab[0].trim();
-		System.out.print(" paramName : "+paramName);
+		System.out.print("    --->paramName : "+paramName);
 
 		//availability test
 		if(!requestParams.containsKey(paramName)
@@ -337,7 +317,7 @@ public abstract class JEEZServlet extends HttpServlet{
 					case "string" :
 						supportedParams.put(paramName, requestParams.get(paramName));
 						break;
-
+						//TODO
 						//Should Never occur ("parameters types have to be checked at deployment time")
 					default: throw new JEEZException(
 							"Unsupported type for expected parameter "+paramName+": "+paramType+". "
@@ -415,10 +395,10 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletRequest request,
 			HttpServletResponse response,
 			JSONObject params
-			)throws Exception {
-		System.out.println("JEEZServlet/doBusiness:: static call of "+this.serviceClassName+"."+this.serviceMethodName+"({...})");
-		Class<?> serviceClass=Class.forName(this.serviceClassName);	
-		Method m = serviceClass.getMethod(this.serviceMethodName, new Class[]{JSONObject.class});
+			)throws Exception {		
+		System.out.println("JEEZServlet/doBusiness:: static call of : "+this.serviceClass+"."+this.serviceMethod+"("+params+")");
+		Class<?> serviceClass=Class.forName(this.serviceClass);	
+		Method m = serviceClass.getMethod(this.serviceMethod, new Class[]{JSONObject.class});
 		return m.invoke(serviceClass.newInstance(), new Object[]{params});
 	}	 
 
