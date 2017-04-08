@@ -7,8 +7,7 @@ import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
 import javax.servlet.annotation.WebServlet;
-
-import com.aj.jeez.JEEZServlet;
+import javax.servlet.http.HttpServlet;
 
 /**
  * @author AJoan */
@@ -20,7 +19,9 @@ public @interface WebService {
 	
    WebServlet webServlet();
    
-   Class<? extends JEEZServlet> parent() ; 
+   Class<? extends HttpServlet> policy() ; 
+   
+   boolean requireAuth() default false;
    
    String [] expectedIn()default {}; 
    
@@ -29,8 +30,6 @@ public @interface WebService {
    String [] optionalIn()default {};
    
    String [] optionalOut()default {};
-   
-   boolean requireAuth() default false;
    
    Class<?>[] testClasses()default {};
 }

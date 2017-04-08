@@ -7,11 +7,22 @@ import javax.servlet.ServletContext;
 
 import com.aj.jeez.codegen.exceptions.ClassPathScannerNotConfiguredException;
 
+/**
+ * The ClassPathScanner is configurable a built class (.class extension) finder.
+ * @author Joan */
 public class ClassPathScanner {	 
 
 	static String rootPackageName;
 	static String classesPath;
 	
+	/**
+	 * Return All the classes qualified names 
+	 * found in the {classesPath}/{rootPackageName}
+	 * @param packagePath
+	 * @param context
+	 * @param classesQNSet
+	 * @return
+	 * @throws ClassPathScannerNotConfiguredException */
 	static Set<String> getClassesQualifiedNames(
 			String packagePath,
 			ServletContext context,
@@ -36,6 +47,11 @@ public class ClassPathScanner {
 		return classesQNSet;
 	}
 
+	/**
+	 * Allow to know if the ClassPathScanner is initialized :
+	 * i.e. if the {classesPath} and {rootPackageName} 
+	 * attributes are both initialized(not null)
+	 * @throws ClassPathScannerNotConfiguredException */
 	static void isConfigured() throws ClassPathScannerNotConfiguredException {
 		if(classesPath==null)
 		throw new ClassPathScannerNotConfiguredException("classesPath is not configured");
@@ -43,6 +59,11 @@ public class ClassPathScanner {
 			throw new ClassPathScannerNotConfiguredException("packageName is not configured");
 	}
 	
+	/**
+	 * Allow to configure the ClassPathScanner by setting
+	 * both the classesPath} and {rootPackageName} attributes
+	 * @param classesPath
+	 * @param packageName */
 	static void configure(
 			String classesPath,
 			String packageName

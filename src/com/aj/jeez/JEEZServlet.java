@@ -298,26 +298,21 @@ public abstract class JEEZServlet extends HttpServlet{
 					case "int":
 						supportedParams.put(paramName, Integer.parseInt(requestParams.get(paramName)));
 						break;
-
 					case "long":
 						supportedParams.put(paramName, Long.parseLong(requestParams.get(paramName)));
 						break;
-
 					case "float":
 						supportedParams.put(paramName, Float.parseFloat(requestParams.get(paramName)));
 						break;
-
 					case "double":
 						supportedParams.put(paramName, Double.parseDouble(requestParams.get(paramName)));
 						break;
-
 					case "boolean":
 						String boolStr=requestParams.get(paramName);
 						if(!boolStr.equals("true") || !boolStr.equals("false"))
 							throw new IllegalArgumentException(paramName+"'s value: "+boolStr+" is not a boolean value");
 						supportedParams.put(paramName, Boolean.parseBoolean(requestParams.get(paramName)));
 						break;
-
 					case "string" :
 						supportedParams.put(paramName, requestParams.get(paramName));
 						break;

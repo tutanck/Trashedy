@@ -33,10 +33,10 @@ public class ServletsManager {
 		for(Method service : classServices.getValue()){
 			WebService ws = service.getAnnotation(WebService.class);
 			// Register Servlet
-			if(Modifier.isAbstract(ws.parent().getModifiers()))
+			if(Modifier.isAbstract(ws.policy().getModifiers()))
 				throw new WebServiceAnnotationMisuseException("Dynamic sevlet parent : '"+className+"' must not be abstract");
 			
-			ServletRegistration sr = sc.addServlet(ws.webServlet().name(),ws.parent());
+			ServletRegistration sr = sc.addServlet(ws.webServlet().name(),ws.policy());
 			sr.addMapping(ws.webServlet().urlPatterns());
 			sr.setInitParameter("expectedIn", Utils.join(ws.expectedIn()));
 			sr.setInitParameter("expectedOut", Utils.join(ws.expectedOut()));
