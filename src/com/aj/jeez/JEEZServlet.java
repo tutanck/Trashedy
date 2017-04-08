@@ -1,5 +1,6 @@
 package com.aj.jeez;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -21,6 +22,15 @@ import com.aj.utils.Utils;
 
 
 /**
+ * Abstract servlet-template as a basis for all the JEEZServlets policies.
+ * JEEZServlet defines some useful default methods that can help to connect the services layer
+ * outside of the server to any client that uses HTTP requests to communicate with the exposed services.
+ * This class is abstract and must be extended and override a least one HTTP doMethod
+ * (doGet,doPost,doPut,doDelete) to be usable.
+ * Its descendants can as well be used as : 
+ * -a real servlet 
+ * -or just as a template used by the @WebService annotation to dynamically add servlets that will follow the template with specific configuration for each of them
+ * -or both : in that case each dynamically created servlet will override the default template configuration with its specific parameters specified in the annotation. 
  * * @author Anagbla Joan */
 public abstract class JEEZServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
@@ -74,16 +84,15 @@ public abstract class JEEZServlet extends HttpServlet{
 
 	//initialization block 
 	{	//act as a global reference to the class attributes
-		jeezAttr.put("serviceClass",null); //null reference : used only for containing the key
-		jeezAttr.put("serviceMethod",null); //null reference : used only for containing the key
-		jeezAttr.put("requireAuth",null); //null reference : used only for containing the key
+		jeezAttr.put("serviceClass",this.serviceClass); 
+		jeezAttr.put("serviceMethod",this.serviceMethod);
+		jeezAttr.put("requireAuth",this.requireAuth); 
 		jeezAttr.put("expectedIn",this.expectedIn);
 		jeezAttr.put("expectedOut",this.expectedOut);
 		jeezAttr.put("optionalIn",this.optionalIn);
 		jeezAttr.put("optionalOut",this.optionalOut);
 		jeezAttr.put("testClasses",this.testClasses);
 	}
-
 
 
 	/**
@@ -120,46 +129,41 @@ public abstract class JEEZServlet extends HttpServlet{
 		Enumeration<String> servletInitParamsNames = getInitParameterNames();
 		while(servletInitParamsNames.hasMoreElements()){ 
 			String paramName = servletInitParamsNames.nextElement();
-			System.err.println("JEEZ just found in ServletConfig init parameter : '"+paramName+"'");
+			System.out.println("JEEZ just found in ServletConfig an init parameter named '"+paramName+"'.");
 			if(jeezAttr.containsKey(paramName)){
 				String paramValue = getInitParameter(paramName);
-				System.out.print("JEEZServlet/init::"
-						+" getInitParameter("+paramName+") = "+paramValue
-						+" - bf jeez."+paramName+" = ");
+				System.out.println("   --->JEEZServlet/init::");
+				System.out.println("       *getInitParameter('"+paramName+"') = '"+paramValue+"'");
+				System.out.println("       *bf::jeez."+paramName+" = "+jeezAttr.get(paramName));
 
 				switch (paramName) {
 				case "serviceClass":
-					System.out.print(this.serviceClass);
 					this.serviceClass=paramValue;
-					System.out.println(" - af jeez."+paramName+" : "+this.serviceClass);
+					System.out.println("       *af::jeez."+paramName+" = "+this.serviceClass);
 					break;
 				case "serviceMethod":
-					System.out.print(this.serviceMethod);
 					this.serviceMethod=paramValue;
-					System.out.println(" -af jeez."+paramName+" : "+this.serviceMethod);
+					System.out.println("       *af::jeez."+paramName+" = "+this.serviceMethod);
 					break;
 				case "requireAuth":
-					System.out.print(this.requireAuth);
 					this.requireAuth = Boolean.parseBoolean(paramValue);
-					System.out.println(" -af jeez."+paramName+" : "+this.requireAuth);
+					System.out.println("       *af::jeez."+paramName+" = "+this.requireAuth);
 					break;	
 				case "testClasses":
 					Set<Class<?>>attrClss=(Set<Class<?>>)jeezAttr.get(paramName);
-					System.out.print(attrClss);
-					try {//TODO 
+					try {//TODO tester puis mettre un unchecked
 						Utils.reSetClasses(attrClss, paramValue);
 					} catch (ClassNotFoundException e) {						
-						//Should Never occur ("parameters types have to be checked at deployment time")
+						//Should Never occur ("classes presence has to be checked at deployment time")
 						throw new RuntimeException(e);
 					}
-					System.out.println(" -af jeez."+paramName+" : "+attrClss);
+					System.out.println("       *af::jeez."+paramName+" = "+jeezAttr.get(paramName));
 					break;	 			
 				default : //No worries we are covered by the above if-clause that checks it's a jeezAttr 
 					@SuppressWarnings("unchecked")
 					Set<String>attrStr=(Set<String>)jeezAttr.get(paramName);
-					System.out.print(attrStr);
 					Utils.reSet(attrStr, paramValue);
-					System.out.println(" -af jeez."+paramName+" : "+attrStr);
+					System.out.println("       *af::jeez."+paramName+" = "+jeezAttr.get(paramName));
 					break;		
 				}
 			} 
@@ -401,5 +405,33 @@ public abstract class JEEZServlet extends HttpServlet{
 		Method m = serviceClass.getMethod(this.serviceMethod, new Class[]{JSONObject.class});
 		return m.invoke(serviceClass.newInstance(), new Object[]{params});
 	}	 
-
+	
+	
+	/**
+	 * Default common operations for all doMethods as basis : 
+	 * beginning by beforeBusiness operation,
+	 * if all is right :
+	 *  then executes the doBusiness operation
+	 *  and finally executes tests through the afterBusiness operation
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException */
+	protected final void doDefault(
+			HttpServletRequest request,
+			HttpServletResponse response
+			) throws IOException  {
+		try{
+			JSONObject params = beforeBusiness(request,response);
+			if(params!=null)
+				afterBusiness(
+						request,response,
+						doBusiness(request,response,params)
+						);
+		}catch (Exception e){
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "AN INTERNAL SERVER ERROR OCCURRED");
+		}
+	}
+	
 }

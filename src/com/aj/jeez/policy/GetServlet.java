@@ -6,8 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
 import com.aj.jeez.JEEZServlet;
 
 /**
@@ -20,21 +18,27 @@ public class GetServlet extends JEEZServlet{
 			HttpServletRequest request,
 			HttpServletResponse response
 			) throws ServletException, IOException {
-		try{
-			JSONObject params = beforeBusiness(request,response);
-			if(params!=null)
-				afterBusiness(
-						request,response,
-						doBusiness(request,response,params)
-						);
-		}catch (Exception e){
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "AN INTERNAL SERVER ERROR OCCURRED");
-		}
+		doDefault(request, response);
 	}
 
 	@Override
 	protected void doPost(
+			HttpServletRequest request,
+			HttpServletResponse response
+			) throws ServletException, IOException {
+		doGet(request, response);
+	}
+	
+	@Override
+	protected void doPut(
+			HttpServletRequest request,
+			HttpServletResponse response
+			) throws ServletException, IOException {
+		doGet(request, response);
+	}
+	
+	@Override
+	protected void doDelete(
 			HttpServletRequest request,
 			HttpServletResponse response
 			) throws ServletException, IOException {
