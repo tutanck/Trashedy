@@ -2,7 +2,7 @@ package com.aj.regina;
 
 import org.bson.types.ObjectId;
 
-import com.aj.utils.JSONRefiner;
+import com.aj.tools.JSONRefiner;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 

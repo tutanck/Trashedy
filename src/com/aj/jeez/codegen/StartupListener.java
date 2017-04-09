@@ -8,13 +8,18 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import com.aj.jeez.exceptions.JEEZException;
+import com.aj.tools.PropertiesIO;
+
 
 @WebListener 
 public class StartupListener
 implements ServletContextListener{
 
-	private String classesPath="/WEB-INF/classes/";
-	private String packageName="";
+	private final String propFile="jeez.properties";
+	private final String defaultClassPath="/WEB-INF/classes/";
+	private String classPath=defaultClassPath;
+	private String rootPackage="";
 
 	//Run this before web application is started
 	@Override
@@ -23,12 +28,25 @@ implements ServletContextListener{
 		System.out.println("StartupListener--> ServletContextListener started");
 		System.out.println("-------------------------------------------------");
 
-		ClassPathScanner.configure(classesPath, packageName);
-
-		Set<String> classesQNSet;
-		Map<Class<?>,Set<Method>> servicesMap;
-
 		try {
+			PropertiesIO propIO=new PropertiesIO(propFile);
+
+			if(!propIO.exist("rootpackage"))
+				throw new JEEZException("The 'rootpackage' property must be defined in a '"+propFile+"' at the root of the project");
+
+			rootPackage=propIO.get("rootpackage");
+
+			if(propIO.exist("classpath"))
+				classPath=propIO.get("classpath");
+			else
+				propIO.put("classpath->"+classPath);
+
+			ClassPathScanner.configure(classPath, rootPackage);
+
+			Set<String> classesQNSet;
+			Map<Class<?>,Set<Method>> servicesMap;
+
+
 			classesQNSet = ClassPathScanner.getClassesQualifiedNames(sce.getServletContext());
 			System.out.println("StartupListener/contextInitialized:: classes qualified names list : ");//debug
 			for(String classQN :classesQNSet)

@@ -4,8 +4,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.aj.regina.THINGS;
-import com.aj.utils.Caller;
-import com.aj.utils.JSONRefiner;
+import com.aj.tools.Caller;
+import com.aj.tools.JSONRefiner;
 
 import mood.users.io.core.UserIOCore;
 import tools.db.DBException;

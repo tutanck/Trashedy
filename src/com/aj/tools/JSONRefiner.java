@@ -1,4 +1,4 @@
-package com.aj.utils;
+package com.aj.tools;
 
 import org.json.JSONObject;
 
@@ -9,8 +9,7 @@ import java.util.*;
 //TODO relire attentivement tt repose su ca
 public class JSONRefiner {	
 
-	/**
-	 * @description 
+	/** 
 	 * Return an JSONObject equivalent of the {map}
 	 * @param map
 	 * @return */
@@ -19,25 +18,43 @@ public class JSONRefiner {
 			){
 		return new JSONObject(map);
 	}
-	
-	
+
+
+	/**
+	 * Wrap a key-value into a JSONObject and return it
+	 * @param key
+	 * @param value
+	 * @return */
 	public static JSONObject wrap(String key, Object value){
 		return new JSONObject().put(key, value);
 	}
 
 
+	public static JSONObject wrap(
+			String...keyValString
+			) throws InvalidKeyException{
+		JSONObject jo = new JSONObject();
+		for(String keyEntry : keyValString){
+			if(!keyEntry.contains("->")) 
+				throw new 
+				InvalidKeyException("The key entry '"+keyEntry+"' does not contains the universal seprator '->'");
+			String [] entry= keyEntry.split("->");
+			jo.put(entry[0].trim(),entry[1].trim());
+		}
+		return jo;
+	}
+
+
 	/**
-	 * @description
 	 * Return a sliced json according to the subset of {subKeys}
-	 * The sliced json is a copy of the {whole} json and does not undergo any changes.
-	 * 
+	 * The sliced json is a copy of the {whole} json that does not undergo any changes.
 	 * @param whole
 	 * @param subKeys
 	 * @return 
 	 * @throws AbsentKeyException */
 	public static JSONObject slice(
 			JSONObject whole,
-			String[]subKeys
+			String...subKeys
 			) throws AbsentKeyException{
 		JSONObject sliced= new JSONObject();
 		for(String key : new HashSet<String>(Arrays.asList(subKeys)))
@@ -48,27 +65,32 @@ public class JSONRefiner {
 		return sliced;
 	}
 
-	
+
 	/**
-	 * @description
-	 * Return a sliced json according to the subset of {subKeys}
-	 * The sliced json is a copy of the {whole} json and does not undergo any changes.
-	 * 
+	 * Return a json that does not contain the subset of {subKeys}
+	 * The returned json is a copy of the {whole} json that does not undergo any changes.
 	 * @param whole
 	 * @param subKeys
 	 * @return */
 	public static JSONObject clean(
 			JSONObject whole,
-			String[]subKeys
-			) throws AbsentKeyException{
+			String...subKeys
+			){
 		JSONObject clean= new JSONObject(whole.toMap());
 		for(String key : new HashSet<String>(Arrays.asList(subKeys)))
-			if(whole.has(key))
-				clean.remove(key);
+			clean.remove(key);
 		return clean;
 	}
-	
-	
+
+
+	/**
+	 * Remove the entry identified by {oldKey} in the {json} if it exists.
+	 * Then put a new entry key-value : {newKey}-{newValue}
+	 * @param json
+	 * @param oldKey
+	 * @param newKey
+	 * @param newValue
+	 * @return */
 	public static JSONObject replace(
 			JSONObject json,
 			String oldKey,
@@ -82,7 +104,6 @@ public class JSONRefiner {
 
 
 	/**
-	 * @Description 
 	 * Subdivide a json's {trunc} in two json's branches following {subKeys} keys
 	 * One branch will contains all entries whose key is in {subKeys}
 	 * The other branch will contains all entries in initial {trunc} except whose key is in {subKeys}
@@ -92,7 +113,7 @@ public class JSONRefiner {
 	 * @throws AbsentKeyException */
 	public static List<JSONObject> branch(
 			JSONObject trunk,
-			String[]subKeys
+			String...subKeys
 			) throws AbsentKeyException{
 		JSONObject branch0 = new JSONObject();
 		JSONObject branch1 = new JSONObject(trunk.toMap());
@@ -110,11 +131,12 @@ public class JSONRefiner {
 		node.add(1,branch1);
 		return node;
 	}
-	
-	
+
+
 	/**
-	 * @description
 	 * Merge to JSONObject together
+	 * Be careful : values in {branch2} will override 
+	 * values in {branch1} for the keys present in the two branches
 	 * @param branch1
 	 * @param branch2
 	 * @return */
@@ -126,19 +148,17 @@ public class JSONRefiner {
 
 		for(String key : branch2.keySet())
 			trunk.put(key, branch2.get(key));
-		 
+
 		return trunk;
 	}
 
-	
-	
+
+
 	/**
-	 * @Description
 	 * Rename {json}'s keys by replacing them 
 	 * by the associated value in the {keyMap} without
 	 * changing the associated values in the {json}.
 	 * No change is performed on the keys that are not in {keyMap}.
-	 * 
 	 * @param json
 	 * @param keyMap
 	 * @return  
@@ -157,15 +177,13 @@ public class JSONRefiner {
 			AbsentKeyException("The key '"+key+"' does not exist in '"+json+"'");
 		return aliasJSON;
 	}
-	
-	
+
+
 	/**
-	 * @Description
 	 * Rename {json}'s keys by replacing them 
 	 * by the associated value in the {keyMapString} without
 	 * changing the associated values in the {json}.
 	 * No change is performed on the keys that are not in {keyMapString}.
-	 * 
 	 * @param json
 	 * @param keyMapString
 	 * @return
@@ -173,7 +191,7 @@ public class JSONRefiner {
 	 * @throws InvalidKeyException */
 	public static JSONObject renameKeys(
 			JSONObject json,
-			String[] keyMapString
+			String...keyMapString
 			) throws AbsentKeyException, InvalidKeyException{
 		JSONObject aliasJSON = new JSONObject(json.toMap());
 		for(String keyEntry : keyMapString){
@@ -195,7 +213,7 @@ public class JSONRefiner {
 
 
 
-	public static void main(String[] args) throws AbsentKeyException {
+	public static void main(String... args) throws AbsentKeyException {
 		JSONObject jo = new JSONObject()
 				.put("lola","lola")
 				.put("lol0","oui")
@@ -203,10 +221,10 @@ public class JSONRefiner {
 				.put("lol2",true)
 				.put("lol3",12);
 
-		System.out.println("sliced : "+slice(jo, new String[]{"lol1","lol3"}));
+		System.out.println("sliced : "+slice(jo,"lol1","lol3"));
 		System.out.println("jo : "+jo+"\n");
 
-		System.out.println("node : "+branch(jo,new String[]{"lol1","lol2"}));
+		System.out.println("node : "+branch(jo,"lol1","lol2"));
 		System.out.println("jo : "+jo+"\n");	
 
 		Map<String, String> kmap=new HashMap<>();
@@ -215,8 +233,8 @@ public class JSONRefiner {
 		//kmap.put("lol", "newlol"); //lol don't exist in jo --> except
 		System.out.println("aliasMap : "+renameKeys(jo,kmap));
 		System.out.println("jo : "+jo+"\n");
-		
-		System.out.println("clean : "+clean(jo,new String[]{"lola"}));
+
+		System.out.println("clean : "+clean(jo,"lola"));
 		System.out.println("jo : "+jo+"\n");
 	}
 }

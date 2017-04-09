@@ -10,7 +10,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
 import com.aj.jeez.codegen.exceptions.WebServiceAnnotationMisuseException;
-import com.aj.utils.Utils;
+import com.aj.tools.Utils;
 
 public class ServletsManager {
 
