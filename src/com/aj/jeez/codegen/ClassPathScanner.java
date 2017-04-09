@@ -1,5 +1,6 @@
 package com.aj.jeez.codegen;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -9,67 +10,87 @@ import com.aj.jeez.codegen.exceptions.ClassPathScannerNotConfiguredException;
 
 /**
  * The ClassPathScanner is configurable a built class (.class extension) finder.
- * @author Joan */
+ * @author ANAGBLA Joan */
 public class ClassPathScanner {	 
 
-	static String rootPackageName;
-	static String classesPath;
+	private static String classPath;
+	private static String rootPackageQN; //ex: com.aj.mood
+	private static String rootPackagePath; //ex: com/aj/mood
 	
 	/**
-	 * Return All the classes qualified names 
-	 * found in the {classesPath}/{rootPackageName}
+	 * Return all the classes qualified names 
+	 * found in the {classPath}/{rootPackageName}
 	 * @param packagePath
 	 * @param context
 	 * @param classesQNSet
 	 * @return
 	 * @throws ClassPathScannerNotConfiguredException */
 	static Set<String> getClassesQualifiedNames(
-			String packagePath,
-			ServletContext context,
-			Set<String> classesQNSet
+			ServletContext context
 			)throws ClassPathScannerNotConfiguredException {
 		
 		isConfigured();
 		
-		String rootPackageRelativePath = rootPackageName.replace(".", "/");
-
+		System.out.println("ClassPathScanner/getClassesQualifiedNames:: start browsing classes... ");//debug
+		Set<String> clssStrSet= getClassesQNRec(classPath+rootPackageQN, context, new HashSet<>());
+		System.out.println("ClassPathScanner/getClassesQualifiedNames:: found "+clssStrSet.size()+" class files. ");//debug
+		return clssStrSet;
+	}
+	
+	
+	
+	/**
+	 * Browse recursively then return all the classes qualified names 
+	 * found in the {classPath}/{rootPackageName}
+	 * @param packagePath
+	 * @param context
+	 * @param classesQNSet
+	 * @return */
+	private static Set<String> getClassesQNRec(
+			String packagePath,
+			ServletContext context,
+			Set<String> classesQNSet){
 		Set<String> resourceSet = context.getResourcePaths(packagePath);
-		System.out.println("ClassPathScanner/getClassFiles::resourceSet('"+classesPath+rootPackageName+"') = "+resourceSet);//debug
+		System.out.println("ClassPathScanner/getClassesQNRec::resourceSet('"+packagePath+"') = "+resourceSet);//debug
 		if (resourceSet != null) 
 			for (Iterator<String> iterator = resourceSet.iterator(); iterator.hasNext();) {
 				String resourcePath = (String) iterator.next();
 				if (resourcePath.endsWith(".class")){
-					String classRelativePath = resourcePath.substring(resourcePath.indexOf(rootPackageRelativePath));
+					String classRelativePath = resourcePath.substring(resourcePath.indexOf(rootPackagePath));
 					classesQNSet.add(classRelativePath.replace("/", ".").substring(0,classRelativePath.indexOf(".class")));
 				}else 
-					getClassesQualifiedNames(resourcePath, context, classesQNSet);	
+					getClassesQNRec(resourcePath, context, classesQNSet);	
 			}
 		return classesQNSet;
 	}
+	
+		
 
 	/**
 	 * Allow to know if the ClassPathScanner is initialized :
-	 * i.e. if the {classesPath} and {rootPackageName} 
+	 * i.e. if the {classPath} and {rootPackageName} 
 	 * attributes are both initialized(not null)
 	 * @throws ClassPathScannerNotConfiguredException */
 	static void isConfigured() throws ClassPathScannerNotConfiguredException {
-		if(classesPath==null)
-		throw new ClassPathScannerNotConfiguredException("classesPath is not configured");
-		if(rootPackageName==null)
-			throw new ClassPathScannerNotConfiguredException("packageName is not configured");
+		if(classPath==null || classPath.length()==0)
+		throw new ClassPathScannerNotConfiguredException("classPath is not configured");
+		if(rootPackageQN==null || rootPackageQN.length()==0)
+			throw new ClassPathScannerNotConfiguredException("rootPackageName is not configured");
 	}
 	
 	/**
 	 * Allow to configure the ClassPathScanner by setting
-	 * both the classesPath} and {rootPackageName} attributes
-	 * @param classesPath
-	 * @param packageName */
+	 * both the {classPath} and {rootPackageName} attributes
+	 * @param classPath
+	 * @param rootPackageName */
 	static void configure(
-			String classesPath,
-			String packageName
+			String classPath,
+			String rootPackageName
 			) {
-		ClassPathScanner.classesPath=classesPath;
-		ClassPathScanner.rootPackageName=packageName;
+		ClassPathScanner.classPath=classPath;
+		ClassPathScanner.rootPackageQN=rootPackageName;
+		ClassPathScanner.rootPackagePath = 
+				ClassPathScanner.rootPackageQN.replace(".", "/");
 	}
 
 }
