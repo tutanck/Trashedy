@@ -1,8 +1,11 @@
 package mood.users.io.services;
 
+import javax.servlet.annotation.WebServlet;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.aj.jeez.codegen.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.AbsentKeyException;
 import com.aj.tools.Caller;
@@ -10,13 +13,14 @@ import com.aj.tools.InvalidKeyException;
 import com.aj.tools.JSONRefiner;
 import com.mongodb.DBObject;
 
-import mood.users.io.core.UserIOCore;
+import mood.users.io.services.core.UserIOCore;
 import tools.db.DBException;
 import tools.general.InputType;
 import tools.services.JSONResponse;
 import tools.services.ServiceCodes;
 import tools.services.ServicesToolBox;
 import tools.services.ShouldNeverOccurException;
+import tools.servletspolicy.OfflinePostServlet;
 
 /**
  * @author Joan */
@@ -31,6 +35,10 @@ public class LoginService {
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
+	@WebService(
+			webServlet = @WebServlet(name="LoginService", urlPatterns={"/signin"}),
+			expectedIn={"username","pass","did"},
+			policy=OfflinePostServlet.class)
 	public static JSONObject login(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {

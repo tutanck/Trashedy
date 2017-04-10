@@ -1,17 +1,21 @@
 package mood.users.io.services;
 
+import javax.servlet.annotation.WebServlet;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.aj.jeez.codegen.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
 import com.aj.tools.JSONRefiner;
 
-import mood.users.io.core.UserIOCore;
+import mood.users.io.services.core.UserIOCore;
 import tools.db.DBException;
 import tools.services.JSONResponse;
 import tools.services.ServicesToolBox;
 import tools.services.ShouldNeverOccurException;
+import tools.servletspolicy.OnlinePostServlet;
 
 /**
  * @author Joan */
@@ -24,6 +28,10 @@ public class LogoutService {
 	 * @throws DBException 
 	 * @throws JSONException 
 	 * @throws ShouldNeverOccurException */
+	
+	@WebService(
+			webServlet = @WebServlet(name="LogoutService", urlPatterns={"/signout"}),
+			policy=OnlinePostServlet.class)
 	public static JSONObject logout(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException {

@@ -14,7 +14,7 @@ import com.aj.tools.AbsentKeyException;
 import com.aj.tools.Caller;
 import com.aj.tools.JSONRefiner;
 
-import mood.users.io.core.UserIOCore;
+import mood.users.io.services.core.UserIOCore;
 import tools.db.DBException;
 import tools.general.PatternsHolder;
 import tools.lingua.Lingua;
@@ -40,8 +40,8 @@ public class RegistrationService {
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(name="RegistrationServlet",urlPatterns={"/signup"}),
-			expectedIn={"username:string","pass:","email:int"},
+			webServlet = @WebServlet(name="RegistrationService",urlPatterns={"/signup"}),
+			expectedIn={"username","pass","email"},
 			policy = OfflinePostServlet.class)
 	public static JSONObject registration(
 			JSONObject params

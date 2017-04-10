@@ -1,4 +1,4 @@
-package mood.users.io.core;
+package mood.users.io.services.core;
 
 import com.aj.regina.THINGS;
 import com.aj.tools.AbsentKeyException;

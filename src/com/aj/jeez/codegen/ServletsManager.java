@@ -8,9 +8,11 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
+import javax.servlet.annotation.WebServlet;
 
 import com.aj.jeez.JEEZServlet;
 import com.aj.jeez.codegen.exceptions.ParameterTypingException;
+import com.aj.jeez.codegen.exceptions.ServletInstantiationExceptionAdvise;
 import com.aj.jeez.codegen.exceptions.WebServiceAnnotationMisuseException;
 import com.aj.tools.Utils;
 
@@ -19,7 +21,7 @@ public class ServletsManager {
 	public static void assignServlets(
 			ServletContext sc,
 			Map<Class<?>, Set<Method>> servicesMap
-			) throws WebServiceAnnotationMisuseException, ParameterTypingException, ClassNotFoundException{
+			) throws WebServiceAnnotationMisuseException, ParameterTypingException, ClassNotFoundException, ServletInstantiationExceptionAdvise{
 		for(Entry<Class<?>, Set<Method>> classServices : servicesMap.entrySet())
 			assignServlet(sc,classServices);
 	}
@@ -28,7 +30,7 @@ public class ServletsManager {
 	public static void assignServlet(
 			ServletContext sc,
 			Entry<Class<?>, Set<Method>> classServices
-			) throws WebServiceAnnotationMisuseException, ParameterTypingException, ClassNotFoundException{
+			) throws WebServiceAnnotationMisuseException, ParameterTypingException, ClassNotFoundException, ServletInstantiationExceptionAdvise{
 		Class<?> clazz = classServices.getKey();
 		String className = clazz.getCanonicalName();
 
@@ -38,19 +40,30 @@ public class ServletsManager {
 			if(Modifier.isAbstract(ws.policy().getModifiers()))
 				throw new WebServiceAnnotationMisuseException("Dynamic sevlet policy class : '"+className+"' must not be abstract");
 
-			ServletRegistration sr = sc.addServlet(ws.webServlet().name(),ws.policy());
-			sr.addMapping(ws.webServlet().urlPatterns());
-			//TODO completude http://docs.oracle.com/javaee/6/api/javax/servlet/annotation/WebServlet.html
+			//TODO COMPLETUDE webServlet http://docs.oracle.com/javaee/6/api/javax/servlet/annotation/WebServlet.html
+			WebServlet webServlet = ws.webServlet();
 
+			if(webServlet.name().length()==0)
+				throw new WebServiceAnnotationMisuseException("Servlet name must not be empty. Caused by : Unable to add servlet definition due to invalid servlet name []");
+
+			ServletRegistration sr = sc.addServlet(webServlet.name(),ws.policy());
+			try{
+				sr.addMapping(webServlet.urlPatterns());
+			}catch(NullPointerException npe)
+			{
+				npe.printStackTrace();
+				throw new ServletInstantiationExceptionAdvise
+				("Advise : Check if two differents servlets have the same name in @WebServlet annotation.");
+			}
 			//Static parameters typing test 
-			StaticTypeControler.paramsAreValid(className,ws.webServlet().name(),ws.expectedIn());
-			StaticTypeControler.paramsAreValid(className,ws.webServlet().name(),ws.expectedOut());
-			StaticTypeControler.paramsAreValid(className,ws.webServlet().name(),ws.optionalIn());
-			StaticTypeControler.paramsAreValid(className,ws.webServlet().name(),ws.optionalOut());
+			StaticTypeControler.paramsAreValid(className,webServlet.name(),ws.expectedIn());
+			StaticTypeControler.paramsAreValid(className,webServlet.name(),ws.expectedOut());
+			StaticTypeControler.paramsAreValid(className,webServlet.name(),ws.optionalIn());
+			StaticTypeControler.paramsAreValid(className,webServlet.name(),ws.optionalOut());
 
 			String clazzSetStr="";
 			int i=0;
-			
+
 			//test classes presence test by a mockable instantiation and listing/setting
 			Class<?>[]clazzTab = ws.testClasses();
 			for(Class<?> testClazz : clazzTab){
@@ -62,7 +75,6 @@ public class ServletsManager {
 			}
 
 			if(JEEZServlet.class.isAssignableFrom(ws.policy())){
-				System.out.println("Yay! '"+ws.policy()+"' is a JEEZServlet :)");
 				sr.setInitParameter("expectedIn", Utils.join(ws.expectedIn()));
 				sr.setInitParameter("expectedOut", Utils.join(ws.expectedOut()));
 				sr.setInitParameter("optionalIn", Utils.join(ws.optionalIn()));
@@ -70,7 +82,6 @@ public class ServletsManager {
 				sr.setInitParameter("requireAuth", ws.requireAuth()?"true":"false"); 
 				sr.setInitParameter("testClasses", clazzSetStr);
 			}
-
 
 
 			/**
@@ -84,8 +95,6 @@ true if the update was successful, i.e., an initialization parameter with the gi
 
 			sr.setInitParameter("serviceClass", className);
 			sr.setInitParameter("serviceMethod", service.getName());
-
-			//TODO COMPLETUDE webServlet
 		}
 	}
 }

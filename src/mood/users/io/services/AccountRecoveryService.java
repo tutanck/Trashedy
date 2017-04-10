@@ -1,15 +1,17 @@
 package mood.users.io.services;
 
+import javax.servlet.annotation.WebServlet;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.aj.jeez.codegen.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.AbsentKeyException;
 import com.aj.tools.Caller;
 import com.aj.tools.JSONRefiner;
 
-import mood.users.io.core.UserIOCore;
-
+import mood.users.io.services.core.UserIOCore;
 import tools.db.DBException;
 import tools.lingua.Lingua;
 import tools.mailing.SendEmail;
@@ -18,6 +20,7 @@ import tools.services.Safety;
 import tools.services.ServiceCodes;
 import tools.services.ServicesToolBox;
 import tools.services.ShouldNeverOccurException;
+import tools.servletspolicy.OfflinePostServlet;
 
 
 /**
@@ -32,6 +35,10 @@ public class AccountRecoveryService {
 	 * @throws JSONException 
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
+	@WebService(
+			webServlet = @WebServlet(name="AccountRecoveryService", urlPatterns={"/account/recover"}),
+			expectedIn={"email"},
+			policy=OfflinePostServlet.class)
 	public static JSONObject accessRecovery(
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {
