@@ -41,7 +41,7 @@ public class RegistrationService {
 	 * @throws AbsentKeyException */
 	@WebService(
 			webServlet = @WebServlet(name="RegistrationServlet",urlPatterns={"/signup"}),
-			expectedIn={"username","pass","email"},
+			expectedIn={"username:string","pass:","email:int"},
 			policy = OfflinePostServlet.class)
 	public static JSONObject registration(
 			JSONObject params
