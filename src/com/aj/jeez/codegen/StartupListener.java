@@ -19,7 +19,7 @@ implements ServletContextListener{
 	private final String propFile="jeez.properties";
 	private final String defaultClassPath="/WEB-INF/classes/";
 	private String classPath=defaultClassPath;
-	private String rootPackage="";
+	private String rootPackage="mood";
 
 	//Run this before web application is started
 	@Override
@@ -29,7 +29,7 @@ implements ServletContextListener{
 		System.out.println("-------------------------------------------------");
 
 		try {
-			PropertiesIO propIO=new PropertiesIO(propFile);
+			/*PropertiesIO propIO=new PropertiesIO(propFile);
 
 			if(!propIO.exist("rootpackage"))
 				throw new JEEZException("The 'rootpackage' property must be defined in a '"+propFile+"' at the root of the project");
@@ -39,13 +39,12 @@ implements ServletContextListener{
 			if(propIO.exist("classpath"))
 				classPath=propIO.get("classpath");
 			else
-				propIO.put("classpath->"+classPath);
+				propIO.put("classpath->"+classPath);*/
 
 			ClassPathScanner.configure(classPath, rootPackage);
 
 			Set<String> classesQNSet;
 			Map<Class<?>,Set<Method>> servicesMap;
-
 
 			classesQNSet = ClassPathScanner.getClassesQualifiedNames(sce.getServletContext());
 			System.out.println("StartupListener/contextInitialized:: classes qualified names list : ");//debug

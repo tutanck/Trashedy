@@ -1,5 +1,6 @@
 package com.aj.tools;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,11 +14,16 @@ import org.json.JSONObject;
 public class PropertiesIO {
 
 	private String fileName;
+	private File file;
 
 	public PropertiesIO(
 			String fileName
-			) {
+			) throws IOException {
 		this.fileName=fileName;
+		file=new File(this.fileName);
+		if(!file.exists())
+			file.createNewFile();
+		System.out.println("PropertiesIO/PropertiesIO :: File created at "+file.getAbsolutePath());
 	}
 
 
@@ -44,6 +50,30 @@ public class PropertiesIO {
 		}
 	}
 
+	
+	
+	
+	/**
+	 * Primitive : Read the property file
+	 * @return
+	 * @throws IOException */
+	public JSONObject in(
+			) throws IOException {
+		Properties prop = new Properties();
+		InputStream input = null;
+
+		try {
+			input = new FileInputStream(fileName);
+			prop.load(input);
+			return new JSONObject(prop);
+		} finally {
+			if (input != null) 
+				try {input.close();}
+			catch (IOException e) {e.printStackTrace();}
+		}
+	}
+	
+	
 
 
 	/**
@@ -104,28 +134,7 @@ public class PropertiesIO {
 	}
 
 
-
-	/**
-	 * Primitive : Read the property file
-	 * @return
-	 * @throws IOException */
-	public JSONObject in(
-			) throws IOException {
-		Properties prop = new Properties();
-		InputStream input = null;
-
-		try {
-			input = new FileInputStream("jeez.properties");
-			prop.load(input);
-			return new JSONObject(prop);
-		} finally {
-			if (input != null) 
-				try {input.close();}
-			catch (IOException e) {e.printStackTrace();}
-		}
-	}
-
-
+	
 	/**
 	 * Return all properties identified by their {propertyNames}
 	 * @param propertyNames
@@ -168,18 +177,18 @@ public class PropertiesIO {
 		try {
 			return in().toString();
 		} catch (IOException e) {
-			return super.toString();
+			return super.toString()+": related property file '"+fileName+"' not found";
 		}
 	}
 
 	public String getFileName() {return fileName;}
 
 	public static void main(String[] args) throws JSONException, IOException, AbsentKeyException, InvalidKeyException {
-		/*PropertiesIO jeez=new PropertiesIO("jeez.properties");
+		PropertiesIO jeez=new PropertiesIO("jeez.properties");
 		jeez.clear();
 		jeez.put(JSONRefiner.wrap("rootpackage->mood"));
-		*/
-		PropertiesIO io=new PropertiesIO("test.properties");
+		
+		/*PropertiesIO io=new PropertiesIO("test.properties");
 		System.out.println(io);
 		io.put("lol->lol");
 		io.clear();
@@ -195,7 +204,7 @@ public class PropertiesIO {
 		System.out.println(io.getEntry("lol1"));
 		System.out.println(io.get("lol1"));
 		System.out.println(io);
-		System.out.println(io.get("lol"));
+		System.out.println(io.get("lol"));*/
 	}
 
 }
