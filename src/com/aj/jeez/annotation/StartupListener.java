@@ -1,4 +1,4 @@
-package com.aj.jeez.codegen;
+package com.aj.jeez.annotation;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;

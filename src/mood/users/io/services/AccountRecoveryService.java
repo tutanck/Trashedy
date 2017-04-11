@@ -5,7 +5,7 @@ import javax.servlet.annotation.WebServlet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.codegen.WebService;
+import com.aj.jeez.annotation.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.AbsentKeyException;
 import com.aj.tools.Caller;
@@ -36,7 +36,7 @@ public class AccountRecoveryService {
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(name="AccountRecoveryService", urlPatterns={"/account/recover"}),
+			webServlet = @WebServlet(urlPatterns={"/account/recover"}),
 			expectedIn={"email"},
 			policy=OfflinePostServlet.class)
 	public static JSONObject accessRecovery(

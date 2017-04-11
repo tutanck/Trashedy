@@ -5,7 +5,7 @@ import javax.servlet.annotation.WebServlet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.codegen.WebService;
+import com.aj.jeez.annotation.WebService;
 import com.aj.tools.AbsentKeyException;
 import com.aj.tools.Caller;
 
@@ -28,7 +28,7 @@ public class CheckUsernameService {
 	 * @throws DBException
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(name="CheckUsernameService", urlPatterns={"/check/username"}),
+			webServlet = @WebServlet(urlPatterns={"/check/username"}),
 			expectedIn={"username"},
 			policy=OfflineGetServlet.class)
 	public static JSONObject checkUsername(

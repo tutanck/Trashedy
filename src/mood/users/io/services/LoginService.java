@@ -5,7 +5,7 @@ import javax.servlet.annotation.WebServlet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.codegen.WebService;
+import com.aj.jeez.annotation.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.AbsentKeyException;
 import com.aj.tools.Caller;
@@ -36,7 +36,7 @@ public class LoginService {
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
 	@WebService(
-			webServlet = @WebServlet(name="LoginService", urlPatterns={"/signin"}),
+			webServlet = @WebServlet(urlPatterns={"/signin"}),
 			expectedIn={"username","pass","did"},
 			policy=OfflinePostServlet.class)
 	public static JSONObject login(

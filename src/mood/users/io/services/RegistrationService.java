@@ -7,7 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.codegen.WebService;
+import com.aj.jeez.annotation.WebService;
 import com.aj.regina.DBCommit;
 import com.aj.regina.THINGS;
 import com.aj.tools.AbsentKeyException;
@@ -40,7 +40,7 @@ public class RegistrationService {
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(name="RegistrationService",urlPatterns={"/signup"}),
+			webServlet = @WebServlet(urlPatterns={"/signup"}),
 			expectedIn={"username","pass","email"},
 			policy = OfflinePostServlet.class)
 	public static JSONObject registration(

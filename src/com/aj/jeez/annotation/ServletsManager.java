@@ -1,4 +1,4 @@
-package com.aj.jeez.codegen;
+package com.aj.jeez.annotation;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -11,9 +11,9 @@ import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebServlet;
 
 import com.aj.jeez.JEEZServlet;
-import com.aj.jeez.codegen.exceptions.ParameterTypingException;
-import com.aj.jeez.codegen.exceptions.ServletInstantiationExceptionAdvise;
-import com.aj.jeez.codegen.exceptions.WebServiceAnnotationMisuseException;
+import com.aj.jeez.annotation.exceptions.ParameterTypingException;
+import com.aj.jeez.annotation.exceptions.ServletInstantiationExceptionAdvise;
+import com.aj.jeez.annotation.exceptions.WebServiceAnnotationMisuseException;
 import com.aj.tools.Utils;
 
 public class ServletsManager {
@@ -42,18 +42,22 @@ public class ServletsManager {
 
 			//TODO COMPLETUDE webServlet http://docs.oracle.com/javaee/6/api/javax/servlet/annotation/WebServlet.html
 			WebServlet webServlet = ws.webServlet();
+			
+			String servletID = webServlet.name();
 
-			if(webServlet.name().length()==0)
-				throw new WebServiceAnnotationMisuseException("Servlet name must not be empty. Caused by : Unable to add servlet definition due to invalid servlet name []");
-
-			ServletRegistration sr = sc.addServlet(webServlet.name(),ws.policy());
+			if(servletID.length()==0){
+				servletID=className+"."+service.getName()+"Servlet";
+				System.out.println("Empty Servlet name : JEEZ will choose a name.. what about '"+servletID+"'");
+			}
+			
+			ServletRegistration sr = sc.addServlet(servletID,ws.policy());
 			try{
 				sr.addMapping(webServlet.urlPatterns());
 			}catch(NullPointerException npe)
 			{
 				npe.printStackTrace();
 				throw new ServletInstantiationExceptionAdvise
-				("Advise : Check if two differents servlets have the same name in @WebServlet annotation.");
+				("Advise : Check if two differents servlets have the same name.");
 			}
 			//Static parameters typing test 
 			StaticTypeControler.paramsAreValid(className,webServlet.name(),ws.expectedIn());

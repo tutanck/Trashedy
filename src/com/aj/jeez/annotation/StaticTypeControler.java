@@ -1,6 +1,6 @@
-package com.aj.jeez.codegen;
+package com.aj.jeez.annotation;
 
-import com.aj.jeez.codegen.exceptions.ParameterTypingException;
+import com.aj.jeez.annotation.exceptions.ParameterTypingException;
 
 public class StaticTypeControler {
 

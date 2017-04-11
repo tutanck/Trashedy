@@ -5,7 +5,7 @@ import javax.servlet.annotation.WebServlet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.codegen.WebService;
+import com.aj.jeez.annotation.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
 import com.aj.tools.JSONRefiner;
@@ -30,7 +30,7 @@ public class LogoutService {
 	 * @throws ShouldNeverOccurException */
 	
 	@WebService(
-			webServlet = @WebServlet(name="LogoutService", urlPatterns={"/signout"}),
+			webServlet = @WebServlet(urlPatterns={"/signout"}),
 			policy=OnlinePostServlet.class)
 	public static JSONObject logout(
 			JSONObject params

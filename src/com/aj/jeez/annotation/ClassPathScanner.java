@@ -1,4 +1,4 @@
-package com.aj.jeez.codegen;
+package com.aj.jeez.annotation;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -6,7 +6,7 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
-import com.aj.jeez.codegen.exceptions.ClassPathScannerNotConfiguredException;
+import com.aj.jeez.annotation.exceptions.ClassPathScannerNotConfiguredException;
 
 /**
  * The ClassPathScanner is configurable a built class (.class extension) finder.

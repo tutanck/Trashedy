@@ -1,4 +1,4 @@
-package com.aj.jeez.codegen;
+package com.aj.jeez.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
