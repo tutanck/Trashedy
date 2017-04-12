@@ -47,13 +47,14 @@ public class LoginService {
 		InputType it = UserIOCore.determineFormat(params.getString("username"));
 		System.out.println("username input format : "+it);//Debug
 
-		JSONObject renamed = JSONRefiner.renameKeys(params,new String[]{"username->"+it.toString()});
+		JSONObject renamed = JSONRefiner.renameKeys(params,"username->"+it.toString());
 		System.out.println("renamed: "+renamed);//Debug
 
-		if (THINGS.exists(JSONRefiner.slice(
-				renamed,new String[]{it.toString(),"pass"}),UserIOCore.collection))
-			user = THINGS.getOne(JSONRefiner.slice(	
-					renamed,new String[]{it.toString()}),UserIOCore.collection);
+		if (THINGS.exists(
+				JSONRefiner.slice(renamed,it.toString(),"pass")
+				,UserIOCore.collection))
+			user = THINGS.getOne(JSONRefiner.slice(renamed,it.toString())
+					,UserIOCore.collection);
 		else return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
 
 		if(!THINGS.exists(

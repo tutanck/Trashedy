@@ -43,14 +43,14 @@ public class AccountRecoveryService {
 			JSONObject params
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {
 	
-		if(!THINGS.exists(JSONRefiner.slice(params, new String[]{"email"}),UserIOCore.collection))
+		if(!THINGS.exists(JSONRefiner.slice(params,"email"),UserIOCore.collection))
 			return JSONResponse.issue(ServiceCodes.UNKNOWN_EMAIL_ADDRESS);
 	
 		//Generate temporary key (sequence of 32 hexadecimal digits)  
 		//reset password temporarily until user redefine it! 
 		String secret = ServicesToolBox.generateToken();
 		THINGS.replaceOne(
-				JSONRefiner.slice(params, new String[]{"email"}),
+				JSONRefiner.slice(params,"email"),
 				JSONRefiner.wrap("pass", secret),
 				UserIOCore.collection);
 	

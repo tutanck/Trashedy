@@ -60,7 +60,7 @@ public class RegistrationService {
 		//--DB WRITEACTION
 		String ckey =ServicesToolBox.generateToken();
 		DBCommit commit = THINGS.add(
-				JSONRefiner.slice(params,new String[]{"username","pass","email"})
+				JSONRefiner.slice(params,"username","pass","email")
 				.put("confirmed", ckey)
 				.put("regdate", new Date()),
 				UserIOCore.collection);

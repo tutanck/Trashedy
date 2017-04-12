@@ -34,10 +34,9 @@ public class CheckEmailService {
 	public static JSONObject checkEmail(
 			JSONObject params
 			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
-	
 		JSONObject emailCheck = UserIOCore.checkEmailCore(params);
-		if(emailCheck!=null) return emailCheck;
-		
+		if(emailCheck!=null) 
+			return emailCheck;
 		return JSONResponse.reply(null,null,Caller.signature());
 	}
 

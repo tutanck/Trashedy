@@ -27,7 +27,7 @@ public class JSONResponse {
 		return new JSONObject()
 				.put("status",ServiceCodes._KANPEKI)
 				.put("rpcode",replycode)
-				.put("message",message)
+				.put("message",message)//warning or whatever
 				.put("result",result);
 	}
 
@@ -36,22 +36,21 @@ public class JSONResponse {
 	/**
 	 * @description 
 	 * Return a predefined JSONObject containing 
-	 * the issue's {iscode},
+	 * the issue's {issuecode},
 	 * and the {status} code [_ISSUE]
 	 * 
 	 * @param status
 	 * @param result
 	 * @param message
-	 * @param replycode
+	 * @param issue
 	 * @return 
 	 * @throws ShouldNeverOccurException */
 	public static JSONObject issue(
-			int replycode
+			int issue
 			)throws JSONException, ShouldNeverOccurException{
-
 		return new JSONObject()
 				.put("status",ServiceCodes._ISSUE)
-				.put("iscode",replycode);
+				.put("issue",issue);
 	}
 
 }

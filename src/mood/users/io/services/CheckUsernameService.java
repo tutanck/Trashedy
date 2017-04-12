@@ -34,10 +34,9 @@ public class CheckUsernameService {
 	public static JSONObject checkUsername(
 			JSONObject params
 			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
-
 		JSONObject usernameCheck = UserIOCore.checkUsernameCore(params);
-		if(usernameCheck!=null) return usernameCheck;
-
+		if(usernameCheck!=null) 
+			return usernameCheck;
 		return JSONResponse.reply(null,null,Caller.signature());
 	}
 

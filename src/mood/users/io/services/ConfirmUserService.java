@@ -43,7 +43,7 @@ public class ConfirmUserService {
 			) throws ShouldNeverOccurException, DBException, JSONException, AbsentKeyException, InvalidKeyException{ 
 	
 		WriteResult wr =THINGS.replaceOne(
-				JSONRefiner.renameKeys(params, new String[]{"ckey->confirmed"}), 
+				JSONRefiner.renameKeys(params,"ckey->confirmed"), 
 				JSONRefiner.wrap("$set",JSONRefiner.wrap("confirmed", true)), 
 				UserIOCore.collection);
 	
