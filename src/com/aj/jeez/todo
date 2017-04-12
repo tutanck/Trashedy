@@ -1,11 +1,5 @@
-jeez 
-absolumet verifier le typage static des epn opn  au deployment (servlet add)
+jeez :: todo
 
-tests 
-check ke les class existent
-
-.property pr le root pkg name & le clssPath
+tests/@checkout
 
 completude webservlet
-
-tester iof JeezServlet or not

@@ -1,4 +1,4 @@
-package com.aj.jeez.annotation.exceptions;
+package com.aj.jeez.annotations.exceptions;
 
 public class ClassPathScannerNotConfiguredException extends Exception {
 

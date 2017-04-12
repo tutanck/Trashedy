@@ -1,6 +1,7 @@
 package com.aj.jeez;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -15,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.aj.jeez.annotations.core.CheckoutsRadar;
+import com.aj.jeez.annotations.exceptions.CheckoutAnnotationMisuseException;
 import com.aj.jeez.exceptions.JEEZException;
 import com.aj.tools.Mr;
 import com.aj.tools.Utils;
@@ -80,7 +83,9 @@ public abstract class JEEZServlet extends HttpServlet{
 	/**
 	 * The set of test classes where to find 
 	 * the test methods to execute after business */
-	protected final Set<Class<?>> testClasses = new HashSet<Class<?>>() ;
+	protected final Set<Class<?>> testClasses = new HashSet<Class<?>>();
+
+	private Map<Class<?>,Set<Method>> checkouts;
 
 	//initialization block 
 	{	//act as a global reference to the class attributes
@@ -122,7 +127,7 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * else (should and will) not be executed.
 	 * It will update (set and override) JEEZServlet attributes
 	 * present in the @WebService annotations*/
-	@Override
+	@Override @SuppressWarnings("unchecked")
 	public void init() throws ServletException {
 		super.init();
 
@@ -150,19 +155,16 @@ public abstract class JEEZServlet extends HttpServlet{
 					System.out.println("       *af::jeez."+paramName+" = "+this.requireAuth);
 					break;	
 				case "testClasses":
-					Set<Class<?>>attrClss=(Set<Class<?>>)jeezAttr.get(paramName);
-					try {//TODO tester puis mettre un unchecked
-						Utils.reSetClasses(attrClss, paramValue);
-					} catch (ClassNotFoundException e) {						
-						//Should Never occur ("classes presence has to be checked at deployment time")
+					try {//TODO tester 
+						Utils.reSetClasses((Set<Class<?>>)jeezAttr.get(paramName), paramValue);
+						checkouts = CheckoutsRadar.findAnnotatedServices(testClasses);
+					} catch (ClassNotFoundException | CheckoutAnnotationMisuseException e) {						
 						throw new RuntimeException(e);
 					}
 					System.out.println("       *af::jeez."+paramName+" = "+jeezAttr.get(paramName));
 					break;	 			
 				default : //No worries we are covered by the above if-clause that checks it's a jeezAttr 
-					@SuppressWarnings("unchecked")
-					Set<String>attrStr=(Set<String>)jeezAttr.get(paramName);
-					Utils.reSet(attrStr, paramValue);
+					Utils.reSet((Set<String>)jeezAttr.get(paramName), paramValue);
 					System.out.println("       *af::jeez."+paramName+" = "+jeezAttr.get(paramName));
 					break;		
 				}
@@ -316,7 +318,6 @@ public abstract class JEEZServlet extends HttpServlet{
 					case "string" :
 						supportedParams.put(paramName, requestParams.get(paramName));
 						break;
-						//TODO
 						//Should Never occur ("parameters types have to be checked at deployment time")
 					default: throw new JEEZException(
 							"Unsupported type for expected parameter "+paramName+": "+paramType+". "
@@ -362,23 +363,27 @@ public abstract class JEEZServlet extends HttpServlet{
 
 
 
-	/** TODO later see what to do 
+	/** 
 	 * Check if the result contains all epnOut's key 
 	 * and the corresponding values are properly typed
 	 * @param result
-	 * @return */
-	protected boolean resultIsOK(
+	 * @return 
+	 * @throws InstantiationException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException */
+	protected boolean resultIsOK(//TODO tester
 			Object result
-			){
-		boolean isOK=true;
-		//TODO execute tests
-		/*for(String expected : expectedOut)
-			if(!result.has(expected)){
-				isOK=false;
-				break;
-			}*/
-
-		return isOK;
+			) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException{
+		for(Map.Entry<Class<?>,Set<Method>> entry: this.checkouts.entrySet()){
+			Class<?> testClass=entry.getKey();	
+			for(Method checkout : entry.getValue()){
+				System.out.println("JEEZServlet/resultIsOK:: static call of : "+testClass+"."+checkout+"("+result+")");
+				if(!(boolean)checkout.invoke(testClass.newInstance(), new Object[]{result}))
+					return false;
+			}
+		}
+		return true;
 	}
 
 
@@ -400,8 +405,8 @@ public abstract class JEEZServlet extends HttpServlet{
 		Method m = serviceClass.getMethod(this.serviceMethod, new Class[]{JSONObject.class});
 		return m.invoke(serviceClass.newInstance(), new Object[]{params});
 	}	 
-	
-	
+
+
 	/**
 	 * Default common operations for all doMethods as basis : 
 	 * beginning by beforeBusiness operation,
@@ -428,5 +433,5 @@ public abstract class JEEZServlet extends HttpServlet{
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "AN INTERNAL SERVER ERROR OCCURRED");
 		}
 	}
-	
+
 }

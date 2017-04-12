@@ -1,4 +1,4 @@
-package com.aj.jeez.annotations;
+package com.aj.jeez.annotations.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -9,18 +9,19 @@ import java.util.Set;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.exceptions.WebServiceAnnotationMisuseException;
+import com.aj.jeez.annotations.WebService;
+import com.aj.jeez.annotations.exceptions.WebServiceAnnotationMisuseException;
 
 /**
  * The ServicesRadar is a service finder from built classes (.class extension).
- * It scans the class and the methods annotated with the @WebService annotation.   
+ * It scans the class and returns the methods annotated with the @WebService annotation.   
  * @author Joan */
-public class ServicesRadar {
+public class WebServicesRadar {
 
 	/**
 	 * Return a map containing all the methods 
-	 * annotated with the @WebService for each class 
-	 * in the classes obtained after 
+	 * annotated with the @WebService annotation 
+	 * for each class in the classes obtained after 
 	 * performing a 'Class.forName'' operation 
 	 * on each class name contained in the {classesQNSet}
 	 * @param classesQNSet
@@ -41,7 +42,7 @@ public class ServicesRadar {
 	
 	/**
 	 * Find all the methods annotated with the 
-	 * @WebService in the class obtained after 
+	 * @WebService annotation in the class obtained after 
 	 * performing a 'Class.forName'({classQN})
 	 * @param classQN
 	 * @return

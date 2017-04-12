@@ -1,4 +1,4 @@
-package com.aj.jeez.annotations;
+package com.aj.jeez.annotations.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -11,9 +11,10 @@ import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebServlet;
 
 import com.aj.jeez.JEEZServlet;
-import com.aj.jeez.annotation.exceptions.ParameterTypingException;
-import com.aj.jeez.annotation.exceptions.ServletInstantiationExceptionAdvise;
-import com.aj.jeez.annotation.exceptions.WebServiceAnnotationMisuseException;
+import com.aj.jeez.annotations.WebService;
+import com.aj.jeez.annotations.exceptions.ParameterTypingException;
+import com.aj.jeez.annotations.exceptions.ServletInstantiationExceptionAdvise;
+import com.aj.jeez.annotations.exceptions.WebServiceAnnotationMisuseException;
 import com.aj.tools.Utils;
 
 public class ServletsManager {
