@@ -5,9 +5,9 @@ import javax.servlet.annotation.WebServlet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.WebService;
-import com.aj.tools.AbsentKeyException;
+import com.aj.jeez.annotations.WebService;
 import com.aj.tools.Caller;
+import com.aj.tools.jr.AbsentKeyException;
 
 import mood.users.io.services.core.UserIOCore;
 import tools.db.DBException;
@@ -18,6 +18,7 @@ import tools.servletspolicy.OfflineGetServlet;
 /**
  * @author Joan */
 public class CheckUsernameService {
+	public final static String url="/check/username";
 
 	/**
 	 * Check if username's input is valid 
@@ -28,7 +29,7 @@ public class CheckUsernameService {
 	 * @throws DBException
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={"/check/username"}),
+			webServlet = @WebServlet(urlPatterns={url}),
 			expectedIn={"username"},
 			policy=OfflineGetServlet.class)
 	public static JSONObject checkUsername(

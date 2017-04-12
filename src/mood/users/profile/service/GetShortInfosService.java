@@ -1,11 +1,11 @@
 package mood.users.profile.service;
 
-import com.aj.jeez.annotation.WebService;
+import com.aj.jeez.annotations.WebService;
 import com.aj.regina.THINGS;
-import com.aj.tools.AbsentKeyException;
 import com.aj.tools.Caller;
 import com.aj.tools.InvalidKeyException;
-import com.aj.tools.JSONRefiner;
+import com.aj.tools.jr.AbsentKeyException;
+import com.aj.tools.jr.JR;
 import com.mongodb.DBObject;
 
 import javax.servlet.annotation.WebServlet;
@@ -23,6 +23,7 @@ import tools.servletspolicy.OnlineGetServlet;
 /**
  * @author AJoan */
  public class GetShortInfosService{
+	 public final static String url="/user/infos";
  
 	/**
 	 * @description 
@@ -35,7 +36,7 @@ import tools.servletspolicy.OnlineGetServlet;
 	 * @throws InvalidKeyException 
 	 * @throws AbsentKeyException */
 	 @WebService(
-				webServlet = @WebServlet(urlPatterns={"/user/infos"}),
+				webServlet = @WebServlet(urlPatterns={url}),
 				expectedIn={"uther"},
 				policy = OnlineGetServlet.class)
 	public static JSONObject getShortInfos(
@@ -43,11 +44,11 @@ import tools.servletspolicy.OnlineGetServlet;
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {		 
 		
 		DBObject user=  THINGS.getOne(
-				JSONRefiner.wrap("_id",new ObjectId(params.getString("uther"))), 
+				JR.wrap("_id",new ObjectId(params.getString("uther"))), 
 				UserProfileCore.collection);
 
 		return JSONResponse.reply(
-				JSONRefiner.wrap("username",user.get("username"))
+				JR.wrap("username",user.get("username"))
 				.put("firstname",user.get("firstname"))
 				.put("lastname",user.get("lastname")),null,
 				Caller.signature());

@@ -1,8 +1,8 @@
 package mood.users.io.services.core;
 
 import com.aj.regina.THINGS;
-import com.aj.tools.AbsentKeyException;
-import com.aj.tools.JSONRefiner;
+import com.aj.tools.jr.AbsentKeyException;
+import com.aj.tools.jr.JR;
 import com.mongodb.DBCollection;
 
 import java.util.regex.Pattern;
@@ -47,7 +47,7 @@ public class UserIOCore{
 			return JSONResponse.issue(ServiceCodes.INVALID_EMAIL_FORMAT);
 
 		//--DB VALIDATION
-		if(THINGS.exists(JSONRefiner.slice(params,"email"),collection))
+		if(THINGS.exists(JR.slice(params,"email"),collection))
 			return JSONResponse.issue(ServiceCodes.EMAIL_IS_TAKEN);
 
 		return null; //all right
@@ -71,7 +71,7 @@ public class UserIOCore{
 			return JSONResponse.issue(ServiceCodes.INVALID_USERNAME_FORMAT);
 	
 		//--DB VALIDATION
-		if(THINGS.exists(JSONRefiner.slice(params,"username"),collection))
+		if(THINGS.exists(JR.slice(params,"username"),collection))
 			return JSONResponse.issue(ServiceCodes.USERNAME_IS_TAKEN);		
 	
 		return null; //all right

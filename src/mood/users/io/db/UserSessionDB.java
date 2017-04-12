@@ -4,8 +4,8 @@ import org.json.JSONObject;
 
 import com.mongodb.DBCollection;
 import com.aj.regina.THINGS;
-import com.aj.tools.AbsentKeyException;
-import com.aj.tools.JSONRefiner;
+import com.aj.tools.jr.AbsentKeyException;
+import com.aj.tools.jr.JR;
 
 import tools.db.DBConnectionManager;
 import tools.db.DBException;
@@ -28,9 +28,9 @@ public class UserSessionDB {
 	public static JSONObject clarifyParams(
 			JSONObject params
 			){
-		return JSONRefiner.replace(params,"skey","uid",
+		return JR.replace(params,"skey","uid",
 				 THINGS.getOne(
-							JSONRefiner.wrap("skey",ServicesToolBox.scramble(params.getString("skey"))),
+							JR.wrap("skey",ServicesToolBox.scramble(params.getString("skey"))),
 							collection
 							).get("uid"));
 	}
@@ -47,7 +47,7 @@ public class UserSessionDB {
 			JSONObject params
 			) throws DBException, AbsentKeyException{
 		return THINGS.exists(
-				JSONRefiner.wrap(
+				JR.wrap(
 						"skey",ServicesToolBox.scramble(params.getString("skey"))),
 				UserSessionDB.collection);
 	}

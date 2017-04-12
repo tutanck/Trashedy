@@ -5,12 +5,12 @@ import javax.servlet.annotation.WebServlet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.WebService;
+import com.aj.jeez.annotations.WebService;
 import com.aj.regina.THINGS;
-import com.aj.tools.AbsentKeyException;
 import com.aj.tools.Caller;
 import com.aj.tools.InvalidKeyException;
-import com.aj.tools.JSONRefiner;
+import com.aj.tools.jr.AbsentKeyException;
+import com.aj.tools.jr.JR;
 import com.mongodb.WriteResult;
 
 import mood.users.io.services.core.UserIOCore;
@@ -23,6 +23,7 @@ import tools.servletspolicy.OfflinePostServlet;
 /**
  * @author Joan */
 public class ConfirmUserService {
+	public final static String url="/account/confirm";
 
 	/**
 	 * @description 
@@ -35,7 +36,7 @@ public class ConfirmUserService {
 	 * @throws InvalidKeyException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={"/account/confirm"}),
+			webServlet = @WebServlet(urlPatterns={url}),
 			expectedIn={"ckey"},
 			policy=OfflinePostServlet.class)
 	public static JSONObject confirmUser(
@@ -43,8 +44,8 @@ public class ConfirmUserService {
 			) throws ShouldNeverOccurException, DBException, JSONException, AbsentKeyException, InvalidKeyException{ 
 	
 		WriteResult wr =THINGS.replaceOne(
-				JSONRefiner.renameKeys(params,"ckey->confirmed"), 
-				JSONRefiner.wrap("$set",JSONRefiner.wrap("confirmed", true)), 
+				JR.renameKeys(params,"ckey->confirmed"), 
+				JR.wrap("$set",JR.wrap("confirmed", true)), 
 				UserIOCore.collection);
 	
 		if(wr.getN()<1)

@@ -1,4 +1,4 @@
-package com.aj.jeez.annotation;
+package com.aj.jeez.annotations;
 
 import com.aj.jeez.annotation.exceptions.ParameterTypingException;
 

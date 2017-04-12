@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.aj.jeez.exceptions.JEEZException;
-import com.aj.tools.JSONRefiner;
-import com.aj.tools.MapRefiner;
+import com.aj.tools.Mr;
 import com.aj.tools.Utils;
+import com.aj.tools.jr.JR;
 
 
 /**
@@ -203,7 +203,7 @@ public abstract class JEEZServlet extends HttpServlet{
 
 		JSONObject params = new JSONObject();
 
-		Map<String,String>requestParams=MapRefiner.refine(request.getParameterMap());
+		Map<String,String>requestParams=Mr.refine(request.getParameterMap());
 
 		System.out.println("JEEZServlet/beforeBusiness:: requestParams : "+requestParams+" - expectedIn : "+expectedIn +" - expectedOut : "+expectedOut);
 
@@ -215,7 +215,7 @@ public abstract class JEEZServlet extends HttpServlet{
 				return null;
 			}
 			System.out.println(" -> Valid");
-			params = JSONRefiner.merge(
+			params = JR.merge(
 					params,(JSONObject) res.get("supportedParams"));
 		}
 
@@ -227,7 +227,7 @@ public abstract class JEEZServlet extends HttpServlet{
 				return null;
 			}
 			System.out.println(" -> Valid");
-			params = JSONRefiner.merge(
+			params = JR.merge(
 					params,(JSONObject) res.get("supportedParams"));
 		}
 

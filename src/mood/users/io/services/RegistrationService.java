@@ -7,18 +7,18 @@ import javax.servlet.annotation.WebServlet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.WebService;
+import com.aj.jeez.annotations.WebService;
 import com.aj.regina.DBCommit;
 import com.aj.regina.THINGS;
-import com.aj.tools.AbsentKeyException;
 import com.aj.tools.Caller;
-import com.aj.tools.JSONRefiner;
+import com.aj.tools.jr.AbsentKeyException;
+import com.aj.tools.jr.JR;
 
 import mood.users.io.services.core.UserIOCore;
 import tools.db.DBException;
 import tools.general.PatternsHolder;
 import tools.lingua.Lingua;
-import tools.mailing.SendEmail;
+import tools.mailing.Email;
 import tools.services.JSONResponse;
 import tools.services.Safety;
 import tools.services.ServiceCodes;
@@ -29,6 +29,7 @@ import tools.servletspolicy.OfflinePostServlet;
 /**
  * @author Joan */
 public class RegistrationService {
+	public final static String url="/signup";
 
 	/**
 	 * @description 
@@ -40,7 +41,7 @@ public class RegistrationService {
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={"/signup"}),
+			webServlet = @WebServlet(urlPatterns={url}),
 			expectedIn={"username","pass","email"},
 			policy = OfflinePostServlet.class)
 	public static JSONObject registration(
@@ -60,21 +61,20 @@ public class RegistrationService {
 		//--DB WRITEACTION
 		String ckey =ServicesToolBox.generateToken();
 		DBCommit commit = THINGS.add(
-				JSONRefiner.slice(params,"username","pass","email")
+				JR.slice(params,"username","pass","email")
 				.put("confirmed", ckey)
 				.put("regdate", new Date()),
 				UserIOCore.collection);
 
 		//TODO utiliser un .property pour gerer le nom de racine de l app
 		String basedir = "http://localhost:8080/Essais0";
-		//TODO recuperer dans @weservlet de la servlet associée le bout d'url "/account/confirm"
-		String dir= "/account/confirm";
+	
 		try {
-			SendEmail.sendMail(
+			Email.send(
 					params.getString("email"),
 					Lingua.get("welcomeMailSubject","fr-FR"),
 					Lingua.get("welcomeMailMessage","fr-FR")
-					+basedir+dir+"?ckey="+ckey);
+					+basedir+AccountRecoveryService.url+"?ckey="+ckey);
 		}catch (Exception e) {
 			commit.rollback(); //TODO a tester bcp
 			Safety.explode(e);

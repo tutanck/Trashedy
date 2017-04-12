@@ -2,7 +2,7 @@ package com.aj.regina;
 
 import org.bson.types.ObjectId;
 
-import com.aj.tools.JSONRefiner;
+import com.aj.tools.jr.JR;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 
@@ -30,7 +30,7 @@ public class DBCommit {
 
 	public WriteResult rollback() throws DBException{
 		switch (action) {
-		case ADD : return THINGS.remove(JSONRefiner.wrap("_id",thingID),coll).getWriteResult();
+		case ADD : return THINGS.remove(JR.wrap("_id",thingID),coll).getWriteResult();
 		default: throw new IllegalArgumentException();
 		}
 	}

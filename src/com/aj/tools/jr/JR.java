@@ -1,13 +1,15 @@
-package com.aj.tools;
+package com.aj.tools.jr;
 
 import org.json.JSONObject;
 
+import com.aj.tools.InvalidKeyException;
+
 import java.util.*;
 
-/**
+/**JR : JSONRefiner
  * @author ANAGBLA Joan */
 //TODO relire attentivement tt repose su ca
-public class JSONRefiner {	
+public class JR {	
 
 	/** 
 	 * Return an JSONObject equivalent of the {map}

@@ -1,4 +1,4 @@
-package com.aj.jeez.annotation;
+package com.aj.jeez.annotations;
 
 import java.util.HashSet;
 import java.util.Iterator;

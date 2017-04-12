@@ -11,6 +11,9 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.aj.tools.jr.AbsentKeyException;
+import com.aj.tools.jr.JR;
+
 public class PropertiesIO {
 
 	private String fileName;
@@ -84,7 +87,7 @@ public class PropertiesIO {
 	public JSONObject put(
 			JSONObject properties
 			) throws IOException {
-		return out(JSONRefiner.merge(in(),properties));
+		return out(JR.merge(in(),properties));
 	}
 
 
@@ -120,7 +123,7 @@ public class PropertiesIO {
 	public JSONObject remove(
 			String... propertyNames
 			) throws IOException, AbsentKeyException {
-		return out(JSONRefiner.clean(in(), propertyNames));
+		return out(JR.clean(in(), propertyNames));
 	}
 
 
@@ -145,14 +148,14 @@ public class PropertiesIO {
 			String... propertyNames
 			) throws IOException, AbsentKeyException {
 		JSONObject prop=in();
-		return JSONRefiner.slice(prop, propertyNames);
+		return JR.slice(prop, propertyNames);
 	}
 	
 	public String get(
 			String propertyName
 			) throws IOException, AbsentKeyException {
 		JSONObject prop=in();
-		return JSONRefiner.slice(prop, propertyName).getString(propertyName);
+		return JR.slice(prop, propertyName).getString(propertyName);
 	}
 
 
@@ -186,7 +189,7 @@ public class PropertiesIO {
 	public static void main(String[] args) throws JSONException, IOException, AbsentKeyException, InvalidKeyException {
 		PropertiesIO jeez=new PropertiesIO("jeez.properties");
 		jeez.clear();
-		jeez.put(JSONRefiner.wrap("rootpackage->mood"));
+		jeez.put(JR.wrap("rootpackage->mood"));
 		
 		/*PropertiesIO io=new PropertiesIO("test.properties");
 		System.out.println(io);

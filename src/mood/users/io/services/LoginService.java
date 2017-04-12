@@ -5,12 +5,12 @@ import javax.servlet.annotation.WebServlet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.WebService;
+import com.aj.jeez.annotations.WebService;
 import com.aj.regina.THINGS;
-import com.aj.tools.AbsentKeyException;
 import com.aj.tools.Caller;
 import com.aj.tools.InvalidKeyException;
-import com.aj.tools.JSONRefiner;
+import com.aj.tools.jr.AbsentKeyException;
+import com.aj.tools.jr.JR;
 import com.mongodb.DBObject;
 
 import mood.users.io.services.core.UserIOCore;
@@ -25,6 +25,7 @@ import tools.servletspolicy.OfflinePostServlet;
 /**
  * @author Joan */
 public class LoginService {
+	public final static String url="/signin";
 
 	/**
 	 * @description  Users login service : Connects user into online mode
@@ -36,7 +37,7 @@ public class LoginService {
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={"/signin"}),
+			webServlet = @WebServlet(urlPatterns={url}),
 			expectedIn={"username","pass","did"},
 			policy=OfflinePostServlet.class)
 	public static JSONObject login(
@@ -47,36 +48,36 @@ public class LoginService {
 		InputType it = UserIOCore.determineFormat(params.getString("username"));
 		System.out.println("username input format : "+it);//Debug
 
-		JSONObject renamed = JSONRefiner.renameKeys(params,"username->"+it.toString());
+		JSONObject renamed = JR.renameKeys(params,"username->"+it.toString());
 		System.out.println("renamed: "+renamed);//Debug
 
 		if (THINGS.exists(
-				JSONRefiner.slice(renamed,it.toString(),"pass")
+				JR.slice(renamed,it.toString(),"pass")
 				,UserIOCore.collection))
-			user = THINGS.getOne(JSONRefiner.slice(renamed,it.toString())
+			user = THINGS.getOne(JR.slice(renamed,it.toString())
 					,UserIOCore.collection);
 		else return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
 
 		if(!THINGS.exists(
-				JSONRefiner.wrap("_id", user.get("_id"))
+				JR.wrap("_id", user.get("_id"))
 				.put("confirmed", true)
 				,UserIOCore.collection))
 			return JSONResponse.issue(ServiceCodes.USER_NOT_CONFIRMED);
 
 		//2 different devices can't be connected at the same time
 		THINGS.remove(
-				JSONRefiner.wrap("uid", user.get("_id"))
+				JR.wrap("uid", user.get("_id"))
 				,UserIOCore.session);
 
 		String himitsu = ServicesToolBox.generateToken();
 
 		THINGS.add(
-				JSONRefiner.wrap("skey",ServicesToolBox.scramble(himitsu+params.getString("did")))
+				JR.wrap("skey",ServicesToolBox.scramble(himitsu+params.getString("did")))
 				.put("uid", user.get("_id"))
 				,UserIOCore.session);
 
 		return JSONResponse.reply(
-				JSONRefiner.wrap("himitsu", himitsu)
+				JR.wrap("himitsu", himitsu)
 				.put("username",user.get("username")),
 				null,Caller.signature());
 	}

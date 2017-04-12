@@ -5,16 +5,19 @@ import org.json.JSONObject;
 import java.util.*;
 
 /**
+ * Mr : MapRefiner
  * @author ANAGBLA Joan */
 //TODO relire attentivement tt repose su ca
-public class MapRefiner {
+public class Mr {
 
 	/**
 	 * Reshape the input map from Map<String,String[]> to Map<String,String>
 	 * by replacing the table of string map's value by his first element 
 	 * @param parametersMap
 	 * @return */
-	public static Map<String,String> refine(Map<String,String[]> parametersMap) {
+	public static Map<String,String> refine(
+			Map<String,String[]> parametersMap
+			) {
 		Map<String,String> simpleKeyValMap = new HashMap<String, String>();
 		for(Map.Entry<String,String[]> kv : parametersMap.entrySet())
 			simpleKeyValMap.put(kv.getKey(), kv.getValue()[0]);
@@ -45,7 +48,7 @@ public class MapRefiner {
 	 * @return */
 	public static Map<String,String> subMap(
 			Map<String,String> bigMap,
-			String[]subKeysTab
+			String...subKeysTab
 	){
 		Map<String,String> smallMap = new HashMap<>();
 		List<String>subKeys = Arrays.asList(subKeysTab);
@@ -65,7 +68,7 @@ public class MapRefiner {
 	 * @return */
 	public static JSONObject subJSON(
 			Map<String,String> bigMap,
-			String[]subKeysTab
+			String...subKeysTab
 	){
 		return jsonify(subMap(bigMap,subKeysTab));
 	}
@@ -79,7 +82,7 @@ public class MapRefiner {
 	 * @return  */
 	public static List<Map<String,String>> branch(
 			Map<String,String> bigMap,
-			String[]subKeysTab
+			String...subKeysTab
 	){
 		Map<String,String> smallMap = new HashMap<>();
 		Map<String,String> mediumMap = new HashMap<>(bigMap);

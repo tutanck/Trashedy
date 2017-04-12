@@ -10,13 +10,13 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class SendEmail {
+public class Email {
 
 	private final static String username = "socialnetwork.mood@gmail.com"; 
 	private final static String password = "MoodSN12";
 	private final static String from="socialnetwork.mood@gmail.com"; 
 
-	public static void sendMail(String to, String subject, String contenu) {
+	public static void send(String to, String subject, String contenu) {
 		
 		final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
 		// Get a Properties object
@@ -51,5 +51,5 @@ public class SendEmail {
 	}
 	
 	public static void main(String[] args) {
-		sendMail("socialnetwork.mood@gmail.com", "subject", "contenu"); }
+		send("socialnetwork.mood@gmail.com", "subject", "contenu"); }
 }
