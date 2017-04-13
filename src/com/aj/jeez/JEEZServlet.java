@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.aj.jeez.annotations.Checkout;
 import com.aj.jeez.annotations.core.CheckoutsRadar;
 import com.aj.jeez.annotations.exceptions.CheckoutAnnotationMisuseException;
 import com.aj.jeez.exceptions.JEEZException;
@@ -83,7 +84,7 @@ public abstract class JEEZServlet extends HttpServlet{
 	/**
 	 * The set of test classes where to find 
 	 * the test methods to execute after business */
-	protected final Set<Class<?>> testClasses = new HashSet<Class<?>>();
+	protected final Set<Class<?>> checkClasses = new HashSet<Class<?>>();
 
 	private Map<Class<?>,Set<Method>> checkouts;
 
@@ -96,7 +97,7 @@ public abstract class JEEZServlet extends HttpServlet{
 		jeezAttr.put("expectedOut",this.expectedOut);
 		jeezAttr.put("optionalIn",this.optionalIn);
 		jeezAttr.put("optionalOut",this.optionalOut);
-		jeezAttr.put("testClasses",this.testClasses);
+		jeezAttr.put("checkClasses",this.checkClasses);
 	}
 
 
@@ -111,7 +112,9 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * @WebService annotation will override default attributes
 	 * set in the sevlet policy (servlet's template) class
 	 * for {this} dynamically added servlet with the attributes 
-	 * specified in the @WebService annotation.
+	 * specified in the @WebService annotation EXECPT for the
+	 * checkClasses for whom @WebService parameters are added to the set 
+	 * of checkClasses already defined in the template 
 	 * -----------------------------------------------------------
 	 * However, if an attribute is not specified 
 	 * in the @WebService annotation
@@ -154,10 +157,10 @@ public abstract class JEEZServlet extends HttpServlet{
 					this.requireAuth = Boolean.parseBoolean(paramValue);
 					System.out.println("       *af::jeez."+paramName+" = "+this.requireAuth);
 					break;	
-				case "testClasses":
+				case "checkClasses":
 					try {//TODO tester 
-						Utils.reSetClasses((Set<Class<?>>)jeezAttr.get(paramName), paramValue);
-						checkouts = CheckoutsRadar.findAnnotatedServices(testClasses);
+						Utils.addClassesToSet((Set<Class<?>>)jeezAttr.get(paramName), paramValue);
+						checkouts = CheckoutsRadar.findAnnotatedServices(checkClasses);
 					} catch (ClassNotFoundException | CheckoutAnnotationMisuseException e) {						
 						throw new RuntimeException(e);
 					}
@@ -352,7 +355,6 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletResponse response,
 			Object result
 			)throws Exception {
-
 		if(!resultIsOK(result)) {
 			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARILY UNAVAILABLE");
 			System.out.println("result failed to satisfy some postconditions");
@@ -376,11 +378,19 @@ public abstract class JEEZServlet extends HttpServlet{
 			Object result
 			) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException{
 		for(Map.Entry<Class<?>,Set<Method>> entry: this.checkouts.entrySet()){
-			Class<?> testClass=entry.getKey();	
+			Class<?> checkClass=entry.getKey();	
 			for(Method checkout : entry.getValue()){
-				System.out.println("JEEZServlet/resultIsOK:: static call of : "+testClass+"."+checkout+"("+result+")");
-				if(!(boolean)checkout.invoke(testClass.newInstance(), new Object[]{result}))
-					return false;
+				System.out.println("JEEZServlet/resultIsOK:: static call of : "+checkClass+"."+checkout+"("+result+")");
+				Checkout chk = checkout.getAnnotation(Checkout.class);
+				String chkName=chk.name().length()==0?checkClass.getCanonicalName()+"."+checkout.getName():chk.name();
+				try{
+					boolean approved=(boolean)checkout.invoke(checkClass.newInstance(), new Object[]{result,this.expectedOut.toArray(new String[]{}),this.optionalOut.toArray(new String[]{})});
+					if(!approved)
+						if(chk.clientsafe())
+							return false;
+						else //only log or report checkfailure
+							System.out.println("JEEZServlet/resultIsOK:: Checkout '"+chkName+"' failed with no consequences on the service '"+serviceClass+"."+serviceMethod+"' 's result.");
+				}catch (Exception e) {return chk.clientsafe();}
 			}
 		}
 		return true;

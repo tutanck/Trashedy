@@ -31,5 +31,5 @@ public @interface WebService {
    
    String [] optionalOut()default {};
    
-   Class<?>[] testClasses()default {};
+   Class<?>[] checkClasses()default {};
 }

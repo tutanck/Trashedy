@@ -8,13 +8,10 @@ import java.lang.annotation.ElementType;
 
 /**
  * @author AJoan */
-
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Checkout {
-
-	boolean approver() default false;
-
+	boolean clientsafe() default false;
 	String name() default ""; 
 }

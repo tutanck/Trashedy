@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.aj.jeez.annotations.WebService;
+import com.aj.jeez.checks.CheckExpectedOut;
 import com.aj.regina.DBCommit;
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
@@ -43,6 +44,7 @@ public class RegistrationService {
 	@WebService(
 			webServlet = @WebServlet(urlPatterns={url}),
 			expectedIn={"username","pass","email"},
+			checkClasses={CheckExpectedOut.class},
 			policy = OfflinePostServlet.class)
 	public static JSONObject registration(
 			JSONObject params

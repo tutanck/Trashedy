@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
+import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
 
 import com.aj.jeez.JEEZServlet;
@@ -40,18 +41,17 @@ public class ServletsManager {
 			// Register Servlet
 			if(Modifier.isAbstract(ws.policy().getModifiers()))
 				throw new WebServiceAnnotationMisuseException("Dynamic sevlet policy class : '"+className+"' must not be abstract");
-
-			//TODO COMPLETUDE webServlet http://docs.oracle.com/javaee/6/api/javax/servlet/annotation/WebServlet.html
-			WebServlet webServlet = ws.webServlet();
 			
+			WebServlet webServlet = ws.webServlet();
+
 			String servletID = webServlet.name();
 
 			if(servletID.length()==0){
 				servletID=className+"."+service.getName()+"Servlet";
 				System.out.println("Empty Servlet name : JEEZ will choose a name.. what about '"+servletID+"'");
 			}
-			
-			ServletRegistration sr = sc.addServlet(servletID,ws.policy());
+
+			ServletRegistration.Dynamic sr = sc.addServlet(servletID,ws.policy());
 			try{
 				sr.addMapping(webServlet.urlPatterns());
 			}catch(NullPointerException npe)
@@ -60,6 +60,13 @@ public class ServletsManager {
 				throw new ServletInstantiationExceptionAdvise
 				("Advise : Check if two differents servlets have the same name.");
 			}
+		
+			for(WebInitParam wip:webServlet.initParams())//TODO tester
+				sr.setInitParameter(wip.name(),wip.value());
+			
+			sr.setLoadOnStartup(webServlet.loadOnStartup());
+			sr.setAsyncSupported(webServlet.asyncSupported());
+
 			//Static parameters typing test 
 			StaticTypeControler.paramsAreValid(className,webServlet.name(),ws.expectedIn());
 			StaticTypeControler.paramsAreValid(className,webServlet.name(),ws.expectedOut());
@@ -68,15 +75,14 @@ public class ServletsManager {
 
 			String clazzSetStr="";
 			int i=0;
-
 			//test classes presence test by a mockable instantiation and listing/setting
-			Class<?>[]clazzTab = ws.testClasses();
-			for(Class<?> testClazz : clazzTab){
-				Class.forName(testClazz.getCanonicalName());
+			Class<?>[]clazzTab = ws.checkClasses();
+			for(Class<?> checkClazz : clazzTab){
+				Class.forName(checkClazz.getCanonicalName());
 				if(i++<clazzTab.length-1)
-					clazzSetStr+=testClazz.getCanonicalName()+",";
+					clazzSetStr+=checkClazz.getCanonicalName()+",";
 				else
-					clazzSetStr+=testClazz.getCanonicalName();
+					clazzSetStr+=checkClazz.getCanonicalName();
 			}
 
 			if(JEEZServlet.class.isAssignableFrom(ws.policy())){
@@ -84,8 +90,8 @@ public class ServletsManager {
 				sr.setInitParameter("expectedOut", Utils.join(ws.expectedOut()));
 				sr.setInitParameter("optionalIn", Utils.join(ws.optionalIn()));
 				sr.setInitParameter("optionalOut", Utils.join(ws.optionalOut()));
-				sr.setInitParameter("requireAuth", ws.requireAuth()?"true":"false"); 
-				sr.setInitParameter("testClasses", clazzSetStr);
+				sr.setInitParameter("requireAuth", ws.requireAuth()?"true":"false");
+				sr.setInitParameter("checkClasses", clazzSetStr);
 			}
 
 

@@ -42,10 +42,10 @@ public class CheckoutsRadar {
 	public static Set<Method> findAnnotatedServices (
 			Class<?> clazz
 			) throws CheckoutAnnotationMisuseException {
-		String str0="The registred Checkout : 'public static JSONObject ";
-		String str1 = "(JSONObject jsonObject);' must ";
+		String str0="The registred Checkout : 'public static boolean ";
+		String str1 = "(Object result,String[]expectedOut,String[]optionalOut);' must ";
 		Set<Method> servicesSet = new HashSet<>();
-
+	
 		try {
 			for ( Method m : clazz.getMethods() ) {
 
@@ -65,9 +65,19 @@ public class CheckoutsRadar {
 				if (!(m.getReturnType().equals(boolean.class) || m.getReturnType().equals(Boolean.class))) 
 					throw new CheckoutAnnotationMisuseException(msg+"return a boolean or a Boolean");
 
+				if (m.getExceptionTypes().length>0) 
+					throw new CheckoutAnnotationMisuseException(msg+"not throws exceptions");
+				
 				Class<?>[] parameterTypes = m.getParameterTypes();
-				if (parameterTypes.length != 1) 
-					throw new CheckoutAnnotationMisuseException(msg+"have exactly one argument of any type");
+				if (parameterTypes.length != 3) 
+					throw new CheckoutAnnotationMisuseException(msg+"have exactly 3 arguments of the following types in this order :  Object,String[],String[]");
+				else
+					if(!(	Object.class.isAssignableFrom(parameterTypes[0])
+							&&String[].class.isAssignableFrom(parameterTypes[1])
+							&&String[].class.isAssignableFrom(parameterTypes[2])
+							))
+						throw new CheckoutAnnotationMisuseException(msg+"have exactly 3 arguments of the following types in this order :  Object,String[],String[]");
+
 				 
 				servicesSet.add(m);				
 			}
