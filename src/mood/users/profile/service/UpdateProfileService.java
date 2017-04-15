@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import mood.users.io.db.UserSessionDB;
 import mood.users.profile.service.core.UserProfileCore;
 import tools.db.DBException;
-import tools.services.JSONResponse;
+import tools.services.Response;
 import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
@@ -50,17 +50,17 @@ public class UpdateProfileService{
 				JR.slice(clear,"email")
 				.put("_id",JR.wrap("$ne",params.get("uid")))
 				,UserProfileCore.collection))
-			return JSONResponse.issue(ServiceCodes.EMAIL_IS_TAKEN);
+			return Response.issue(ServiceCodes.EMAIL_IS_TAKEN);
 
 		if(clear.has("phone") && THINGS.exists(
 				JR.slice(clear,"phone")
 				.put("_id",JR.wrap("$ne",params.get("uid")))
 				,UserProfileCore.collection))
-			return JSONResponse.issue(ServiceCodes.PHONE_IS_TAKEN);	
+			return Response.issue(ServiceCodes.PHONE_IS_TAKEN);	
 
 		THINGS.putOne(JR.wrap("_id",params.get("uid")),clear,UserProfileCore.collection);
 
-		return JSONResponse.reply(null,null,Caller.signature());
+		return Response.reply(null,null,Caller.signature());
 	}
 
 }

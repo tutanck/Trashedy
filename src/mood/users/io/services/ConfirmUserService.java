@@ -15,7 +15,7 @@ import com.mongodb.WriteResult;
 
 import mood.users.io.services.core.UserIOCore;
 import tools.db.DBException;
-import tools.services.JSONResponse;
+import tools.services.Response;
 import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OfflinePostServlet;
@@ -49,7 +49,7 @@ public class ConfirmUserService {
 				UserIOCore.collection);
 	
 		if(wr.getN()<1)
-			return JSONResponse.issue(ServiceCodes.UNKNOWN_RESOURCE);
+			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);
 	
 		//Better to throw an except and broke the server 
 		//so that an ISE is returned back to the client
@@ -57,7 +57,7 @@ public class ConfirmUserService {
 		if(wr.getN()>1)
 			throw new ShouldNeverOccurException("Inconsistent DBCollection : "+UserIOCore.collection);
 	
-		return JSONResponse.reply(null,null,Caller.signature());
+		return Response.reply(null,null,Caller.signature());
 	}
 
 }

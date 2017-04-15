@@ -15,7 +15,7 @@ import mood.users.io.db.UserSessionDB;
 import tools.general.InputType;
 import tools.general.PatternsHolder;
 import tools.db.DBException;
-import tools.services.JSONResponse;
+import tools.services.Response;
 import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
 
@@ -44,11 +44,11 @@ public class UserIOCore{
 
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidEmail(params.getString("email")))
-			return JSONResponse.issue(ServiceCodes.INVALID_EMAIL_FORMAT);
+			return Response.issue(ServiceCodes.INVALID_EMAIL_FORMAT);
 
 		//--DB VALIDATION
 		if(THINGS.exists(JR.slice(params,"email"),collection))
-			return JSONResponse.issue(ServiceCodes.EMAIL_IS_TAKEN);
+			return Response.issue(ServiceCodes.EMAIL_IS_TAKEN);
 
 		return null; //all right
 	}
@@ -68,11 +68,11 @@ public class UserIOCore{
 	
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidUsername(params.getString("username")))
-			return JSONResponse.issue(ServiceCodes.INVALID_USERNAME_FORMAT);
+			return Response.issue(ServiceCodes.INVALID_USERNAME_FORMAT);
 	
 		//--DB VALIDATION
 		if(THINGS.exists(JR.slice(params,"username"),collection))
-			return JSONResponse.issue(ServiceCodes.USERNAME_IS_TAKEN);		
+			return Response.issue(ServiceCodes.USERNAME_IS_TAKEN);		
 	
 		return null; //all right
 	}

@@ -16,7 +16,7 @@ import org.json.JSONObject;
 import mood.users.io.db.UserSessionDB;
 import mood.users.profile.service.core.UserProfileCore;
 import tools.db.DBException;
-import tools.services.JSONResponse;
+import tools.services.Response;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlineGetServlet;
 
@@ -60,7 +60,7 @@ public class GetProfileService{
 			profile.put("self",true);
 		}
 
-		return JSONResponse.reply(
+		return Response.reply(
 				profile
 				.put("username",user.get("username"))
 				.put("email",user.get("email"))

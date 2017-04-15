@@ -12,7 +12,7 @@ import com.aj.tools.jr.JR;
 
 import mood.users.io.services.core.UserIOCore;
 import tools.db.DBException;
-import tools.services.JSONResponse;
+import tools.services.Response;
 import tools.services.ServicesToolBox;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
@@ -40,7 +40,7 @@ public class LogoutService {
 				"skey",ServicesToolBox.scramble(params.getString("skey")))
 				,UserIOCore.session);
 		
-		return JSONResponse.reply(null,null,Caller.signature());
+		return Response.reply(null,null,Caller.signature());
 	}
 
 }

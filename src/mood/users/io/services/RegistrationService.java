@@ -20,7 +20,7 @@ import tools.db.DBException;
 import tools.general.PatternsHolder;
 import tools.lingua.Lingua;
 import tools.mailing.Email;
-import tools.services.JSONResponse;
+import tools.services.Response;
 import tools.services.Safety;
 import tools.services.ServiceCodes;
 import tools.services.ServicesToolBox;
@@ -52,7 +52,7 @@ public class RegistrationService {
 
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidPass(params.getString("pass")))
-			return JSONResponse.issue(ServiceCodes.INVALID_PASS_FORMAT);
+			return Response.issue(ServiceCodes.INVALID_PASS_FORMAT);
 
 		JSONObject emailCheck = UserIOCore.checkEmailCore(params);
 		if(emailCheck!=null) return emailCheck;
@@ -82,7 +82,7 @@ public class RegistrationService {
 			Safety.explode(e);
 		}
 
-		return JSONResponse.reply(null,null,Caller.signature());
+		return Response.reply(null,null,Caller.signature());
 	}
 
 }

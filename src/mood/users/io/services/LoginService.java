@@ -16,7 +16,7 @@ import com.mongodb.DBObject;
 import mood.users.io.services.core.UserIOCore;
 import tools.db.DBException;
 import tools.general.InputType;
-import tools.services.JSONResponse;
+import tools.services.Response;
 import tools.services.ServiceCodes;
 import tools.services.ServicesToolBox;
 import tools.services.ShouldNeverOccurException;
@@ -56,13 +56,13 @@ public class LoginService {
 				,UserIOCore.collection))
 			user = THINGS.getOne(JR.slice(renamed,it.toString())
 					,UserIOCore.collection);
-		else return JSONResponse.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
+		else return Response.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
 
 		if(!THINGS.exists(
 				JR.wrap("_id", user.get("_id"))
 				.put("confirmed", true)
 				,UserIOCore.collection))
-			return JSONResponse.issue(ServiceCodes.USER_NOT_CONFIRMED);
+			return Response.issue(ServiceCodes.USER_NOT_CONFIRMED);
 
 		//2 different devices can't be connected at the same time
 		THINGS.remove(
@@ -76,7 +76,7 @@ public class LoginService {
 				.put("uid", user.get("_id"))
 				,UserIOCore.session);
 
-		return JSONResponse.reply(
+		return Response.reply(
 				JR.wrap("himitsu", himitsu)
 				.put("username",user.get("username")),
 				null,Caller.signature());

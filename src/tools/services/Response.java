@@ -3,7 +3,7 @@ package tools.services;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JSONResponse {
+public class Response {
 
 	/**
 	 * @description 

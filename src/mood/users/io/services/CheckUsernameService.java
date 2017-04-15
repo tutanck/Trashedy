@@ -11,7 +11,7 @@ import com.aj.tools.jr.AbsentKeyException;
 
 import mood.users.io.services.core.UserIOCore;
 import tools.db.DBException;
-import tools.services.JSONResponse;
+import tools.services.Response;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OfflineGetServlet;
 
@@ -38,7 +38,7 @@ public class CheckUsernameService {
 		JSONObject usernameCheck = UserIOCore.checkUsernameCore(params);
 		if(usernameCheck!=null) 
 			return usernameCheck;
-		return JSONResponse.reply(null,null,Caller.signature());
+		return Response.reply(null,null,Caller.signature());
 	}
 
 }

@@ -15,7 +15,7 @@ import mood.users.io.services.core.UserIOCore;
 import tools.db.DBException;
 import tools.lingua.Lingua;
 import tools.mailing.Email;
-import tools.services.JSONResponse;
+import tools.services.Response;
 import tools.services.Safety;
 import tools.services.ServiceCodes;
 import tools.services.ServicesToolBox;
@@ -46,7 +46,7 @@ public class AccountRecoveryService {
 			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {
 	
 		if(!THINGS.exists(JR.slice(params,"email"),UserIOCore.collection))
-			return JSONResponse.issue(ServiceCodes.UNKNOWN_EMAIL_ADDRESS);
+			return Response.issue(ServiceCodes.UNKNOWN_EMAIL_ADDRESS);
 	
 		//Generate temporary key (sequence of 32 hexadecimal digits)  
 		//reset password temporarily until user redefine it! 
@@ -62,7 +62,7 @@ public class AccountRecoveryService {
 					Lingua.get("NewAccessKeySentMessage","fr-FR")+ secret);
 		}catch (Exception e) {Safety.explode(e);}
 		
-		return JSONResponse.reply(null,null,Caller.signature());
+		return Response.reply(null,null,Caller.signature());
 	}
 
 }

@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 import mood.users.profile.service.core.UserProfileCore;
 import tools.db.DBException;
-import tools.services.JSONResponse;
+import tools.services.Response;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlineGetServlet;
 
@@ -47,7 +47,7 @@ import tools.servletspolicy.OnlineGetServlet;
 				JR.wrap("_id",new ObjectId(params.getString("uther"))), 
 				UserProfileCore.collection);
 
-		return JSONResponse.reply(
+		return Response.reply(
 				JR.wrap("username",user.get("username"))
 				.put("firstname",user.get("firstname"))
 				.put("lastname",user.get("lastname")),null,

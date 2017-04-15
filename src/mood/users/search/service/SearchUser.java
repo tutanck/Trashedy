@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import com.aj.tools.Caller;
 
 import tools.db.DBException;
-import tools.services.JSONResponse;
+import tools.services.Response;
 import tools.services.ShouldNeverOccurException;
 
 public class SearchUser {
@@ -35,7 +35,7 @@ public class SearchUser {
 							.put("lastname",rs.getString("lastname")));
 							}*/
 	
-			return JSONResponse.reply(
+			return Response.reply(
 					new JSONObject().put("users",""/*jar*/),
 					null,Caller.whoIsAsking().hashCode());
 		}
