@@ -21,7 +21,7 @@ import com.aj.jeez.annotations.core.CheckoutsRadar;
 import com.aj.jeez.annotations.exceptions.CheckoutAnnotationMisuseException;
 import com.aj.jeez.exceptions.JEEZException;
 import com.aj.tools.Mr;
-import com.aj.tools.Utils;
+import com.aj.tools.Stretch;
 import com.aj.tools.jr.JR;
 
 
@@ -159,7 +159,7 @@ public abstract class JEEZServlet extends HttpServlet{
 					break;	
 				case "checkClasses":
 					try {//TODO tester 
-						Utils.addClassesToSet((Set<Class<?>>)jeezAttr.get(paramName), paramValue);
+						Stretch.addClassesToSet((Set<Class<?>>)jeezAttr.get(paramName), paramValue);
 						checkouts = CheckoutsRadar.findAnnotatedServices(checkClasses);
 					} catch (ClassNotFoundException | CheckoutAnnotationMisuseException e) {						
 						throw new RuntimeException(e);
@@ -167,7 +167,7 @@ public abstract class JEEZServlet extends HttpServlet{
 					System.out.println("       *af::jeez."+paramName+" = "+jeezAttr.get(paramName));
 					break;	 			
 				default : //No worries we are covered by the above if-clause that checks it's a jeezAttr 
-					Utils.reSet((Set<String>)jeezAttr.get(paramName), paramValue);
+					Stretch.reSet((Set<String>)jeezAttr.get(paramName), paramValue);
 					System.out.println("       *af::jeez."+paramName+" = "+jeezAttr.get(paramName));
 					break;		
 				}
@@ -388,7 +388,7 @@ public abstract class JEEZServlet extends HttpServlet{
 					if(!approved)
 						if(chk.clientsafe())
 							return false;
-						else //only log or report checkfailure
+						else
 							System.out.println("JEEZServlet/resultIsOK:: Checkout '"+chkName+"' failed with no consequences on the service '"+serviceClass+"."+serviceMethod+"' 's result.");
 				}catch (Exception e) {return chk.clientsafe();}
 			}

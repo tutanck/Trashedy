@@ -6,7 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Utils {
+/**
+ * Elastic Str(ing) : Cut - stick Strings separated by a comma.
+ * TODO make it generic : choose the separator character
+ * @author Joan */
+public class Stretch { 
 
 	public static String join(
 			Set<String> stringSet

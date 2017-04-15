@@ -16,7 +16,7 @@ import com.aj.jeez.annotations.WebService;
 import com.aj.jeez.annotations.exceptions.ParameterTypingException;
 import com.aj.jeez.annotations.exceptions.ServletInstantiationExceptionAdvise;
 import com.aj.jeez.annotations.exceptions.WebServiceAnnotationMisuseException;
-import com.aj.tools.Utils;
+import com.aj.tools.Stretch;
 
 public class ServletsManager {
 
@@ -86,10 +86,10 @@ public class ServletsManager {
 			}
 
 			if(JEEZServlet.class.isAssignableFrom(ws.policy())){
-				sr.setInitParameter("expectedIn", Utils.join(ws.expectedIn()));
-				sr.setInitParameter("expectedOut", Utils.join(ws.expectedOut()));
-				sr.setInitParameter("optionalIn", Utils.join(ws.optionalIn()));
-				sr.setInitParameter("optionalOut", Utils.join(ws.optionalOut()));
+				sr.setInitParameter("expectedIn", Stretch.join(ws.expectedIn()));
+				sr.setInitParameter("expectedOut", Stretch.join(ws.expectedOut()));
+				sr.setInitParameter("optionalIn", Stretch.join(ws.optionalIn()));
+				sr.setInitParameter("optionalOut", Stretch.join(ws.optionalOut()));
 				sr.setInitParameter("requireAuth", ws.requireAuth()?"true":"false");
 				sr.setInitParameter("checkClasses", clazzSetStr);
 			}
