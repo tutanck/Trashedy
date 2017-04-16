@@ -150,7 +150,15 @@ public class ServletsManager {
 			initParams.put(wip.name(),wip.value());
 		sr.setInitParameters(initParams);
 
-		router.put(new Integer(servletID.hashCode()).toString(), driver);
+		router.put(
+				new Integer(servletID.hashCode()).toString(), 
+				driver.put(
+						"service",
+						new JSONObject()
+						.put("name",className+"."+service.getName())
+						.put("id",servletID.hashCode())
+						)
+				);
 		return router;
 	}
 

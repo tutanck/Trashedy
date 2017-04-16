@@ -44,7 +44,9 @@ implements ServletContextListener{
 			System.out.println("StartupListener/contextInitialized::assignServlets starting..");//debug
 			router = ServletsManager.assignServlets(sce.getServletContext(),servicesMap);
 			System.out.println("StartupListener/contextInitialized::assignServlets was sucessfull");//debug
-			System.out.println("StartupListener/contextInitialized::services's router : "+router);//debug
+			 
+			for(String ServletID : router.keySet())
+				System.out.println("StartupListener/contextInitialized::services's route : {"+ServletID+":"+router.get(ServletID)+"}");//debug
 
 		} catch (Exception e) {throw new RuntimeException(e);}
 	}
