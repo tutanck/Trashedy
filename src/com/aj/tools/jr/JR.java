@@ -2,8 +2,6 @@ package com.aj.tools.jr;
 
 import org.json.JSONObject;
 
-import com.aj.tools.InvalidKeyException;
-
 import java.util.*;
 
 /**JR : JSONRefiner

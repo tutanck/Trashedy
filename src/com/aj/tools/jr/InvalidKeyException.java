@@ -1,4 +1,4 @@
-package com.aj.tools;
+package com.aj.tools.jr;
 
 /**
  * @author Anagbla Joan */

@@ -12,14 +12,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.aj.tools.jr.AbsentKeyException;
+import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
 
-public class PropertiesIO {
+public class PropIO {
 
 	private String fileName;
 	private File file;
 
-	public PropertiesIO(
+	public PropIO(
 			String fileName
 			) throws IOException {
 		this.fileName=fileName;
@@ -187,7 +188,7 @@ public class PropertiesIO {
 	public String getFileName() {return fileName;}
 
 	public static void main(String[] args) throws JSONException, IOException, AbsentKeyException, InvalidKeyException {
-		PropertiesIO jeez=new PropertiesIO("jeez.properties");
+		PropIO jeez=new PropIO("jeez.properties");
 		jeez.clear();
 		jeez.put(JR.wrap("rootpackage->mood"));
 		
