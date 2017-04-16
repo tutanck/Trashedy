@@ -23,8 +23,9 @@ import com.aj.moodtools.servletspolicy.OfflinePostServlet;
 
 /**
  * @author Joan */
-public class LoginService {
+public class SigninService {
 	public final static String url="/signin";
+	public final static String servletName="signin";
 
 	/**
 	 * @description  Users login service : Connects user into online mode
@@ -36,7 +37,7 @@ public class LoginService {
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={url}),
+			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
 			expectedIn={"username","pass","did"},
 			policy=OfflinePostServlet.class)
 	public static JSONObject login(

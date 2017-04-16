@@ -24,6 +24,7 @@ import com.aj.moodtools.servletspolicy.OnlineGetServlet;
  * @author AJoan */
  public class GetShortInfosService{
 	 public final static String url="/user/infos";
+	 public final static String servletName="user_infos";
  
 	/**
 	 * @description 
@@ -36,7 +37,7 @@ import com.aj.moodtools.servletspolicy.OnlineGetServlet;
 	 * @throws InvalidKeyException 
 	 * @throws AbsentKeyException */
 	 @WebService(
-				webServlet = @WebServlet(urlPatterns={url}),
+				webServlet = @WebServlet(name=servletName,urlPatterns={url}),
 				expectedIn={"uther"},
 				policy = OnlineGetServlet.class)
 	public static JSONObject getShortInfos(

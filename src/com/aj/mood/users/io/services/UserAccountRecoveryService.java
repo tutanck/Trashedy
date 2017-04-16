@@ -24,9 +24,9 @@ import com.aj.moodtools.servletspolicy.OfflinePostServlet;
 
 /**
  * @author Joan */
-public class AccountRecoveryService {
+public class UserAccountRecoveryService {
 	public final static String url="/account/recover";
-	
+	public final static String servletName="recover_account";
 
 	/**
 	 * @description send an email with MD5 generated temporary access key for access recover to the user
@@ -37,7 +37,7 @@ public class AccountRecoveryService {
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={url}),
+			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
 			expectedIn={"email"},
 			policy=OfflinePostServlet.class)
 	public static JSONObject accessRecovery(

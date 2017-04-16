@@ -18,8 +18,9 @@ import com.aj.moodtools.servletspolicy.OnlinePostServlet;
 
 /**
  * @author Joan */
-public class LogoutService {
+public class SignoutService {
 	public final static String url="/signout";
+	public final static String servletName="signout";
 
 	/**
 	 * @description  Users logout service : Disconnects user from online mode
@@ -30,7 +31,7 @@ public class LogoutService {
 	 * @throws ShouldNeverOccurException */
 	
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={url}),
+			webServlet = @WebServlet(name=servletName, urlPatterns={url}),
 			policy=OnlinePostServlet.class)
 	public static JSONObject logout(
 			JSONObject params

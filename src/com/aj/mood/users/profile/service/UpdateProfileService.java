@@ -26,7 +26,7 @@ import com.aj.moodtools.servletspolicy.OnlinePostServlet;
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
 public class UpdateProfileService{
 	 public final static String url="/user/update";
-	
+	 public final static String servletName="user_update";
 
 	/**
 	 * @description update user's profile
@@ -37,7 +37,7 @@ public class UpdateProfileService{
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={url}),
+			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
 			expectedIn={"username","email"},
 			optionalIn={"phone","lastname","firstname","birthdate"},
 			policy = OnlinePostServlet.class)

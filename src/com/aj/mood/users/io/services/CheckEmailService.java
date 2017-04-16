@@ -18,6 +18,7 @@ import com.aj.moodtools.servletspolicy.OfflineGetServlet;
  * @author Joan */
 public class CheckEmailService {
 	public final static String url="/check/email";
+	public final static String servletName="check_email";
 
 	/**
 	 * Check if email's input is valid 
@@ -28,7 +29,7 @@ public class CheckEmailService {
 	 * @throws DBException
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={url}),
+			webServlet = @WebServlet(name = servletName,urlPatterns={url}),
 			expectedIn={"email"},
 			policy=OfflineGetServlet.class)
 	public static JSONObject checkEmail(

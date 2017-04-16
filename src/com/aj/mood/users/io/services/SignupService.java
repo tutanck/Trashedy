@@ -28,8 +28,10 @@ import com.aj.moodtools.servletspolicy.OfflinePostServlet;
 
 /**
  * @author Joan */
-public class RegistrationService {
+public class SignupService {
 	public final static String url="/signup";
+	public final static String servletName="signup";
+
 
 	/**
 	 * @description 
@@ -41,7 +43,7 @@ public class RegistrationService {
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={url}),
+			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
 			expectedIn={"username","pass","email"},
 			checkClasses={CheckExpectedOut.class},
 			policy = OfflinePostServlet.class)
@@ -75,7 +77,7 @@ public class RegistrationService {
 					params.getString("email"),
 					Lingua.get("welcomeMailSubject","fr-FR"),
 					Lingua.get("welcomeMailMessage","fr-FR")
-					+basedir+AccountRecoveryService.url+"?ckey="+ckey);
+					+basedir+UserAccountRecoveryService.url+"?ckey="+ckey);
 		}catch (Exception e) {
 			commit.rollback(); //TODO a tester bcp
 			Safety.explode(e);

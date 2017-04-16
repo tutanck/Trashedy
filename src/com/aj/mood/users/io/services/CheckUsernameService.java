@@ -18,6 +18,7 @@ import com.aj.moodtools.servletspolicy.OfflineGetServlet;
  * @author Joan */
 public class CheckUsernameService {
 	public final static String url="/check/username";
+	public final static String servletName="check_username";
 
 	/**
 	 * Check if username's input is valid 
@@ -28,7 +29,7 @@ public class CheckUsernameService {
 	 * @throws DBException
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={url}),
+			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
 			expectedIn={"username"},
 			policy=OfflineGetServlet.class)
 	public static JSONObject checkUsername(

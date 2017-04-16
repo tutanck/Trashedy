@@ -21,8 +21,9 @@ import com.aj.moodtools.servletspolicy.OfflinePostServlet;
 
 /**
  * @author Joan */
-public class ConfirmUserService {
+public class UserAccountConfirmationService {
 	public final static String url="/account/confirm";
+	public final static String servletName="confirm_account";
 
 	/**
 	 * @description 
@@ -35,7 +36,7 @@ public class ConfirmUserService {
 	 * @throws InvalidKeyException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={url}),
+			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
 			expectedIn={"ckey"},
 			policy=OfflinePostServlet.class)
 	public static JSONObject confirmUser(

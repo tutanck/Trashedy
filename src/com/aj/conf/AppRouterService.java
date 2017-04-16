@@ -13,8 +13,10 @@ import com.aj.jeez.policy.GetServlet;
  * @author Joan */
 public class AppRouterService {
 	public final static String url="/jz/app/routes"; 
+	 public final static String servletName="jz_app_routes";
+
 	
-	@WebService(webServlet = @WebServlet(urlPatterns={url}),policy=GetServlet.class)
+	@WebService(webServlet = @WebServlet(name=servletName,urlPatterns={url}),policy=GetServlet.class)
 	public static JSONObject getRouter(
 			JSONObject params
 			) throws JSONException  {

@@ -27,7 +27,7 @@ import com.aj.moodtools.servletspolicy.OnlineGetServlet;
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
 public class GetProfileService{
 	public final static String url="/user/profile";
-
+	public final static String servletName="user_profile";
 
 	/** 
 	 * return user's complete profile information 
@@ -39,7 +39,7 @@ public class GetProfileService{
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
 	@WebService(
-			webServlet = @WebServlet(urlPatterns={url}),
+			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
 			optionalIn={"uther"},
 			policy = OnlineGetServlet.class)
 	public static JSONObject getProfile(
