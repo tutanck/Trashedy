@@ -1,10 +1,9 @@
 package com.aj.mood.users.search.servlets;
 
-import tools.servletspolicy.OnlineGetServlet;
-
 import org.json.JSONObject;
 
 import com.aj.mood.users.search.service.SearchUser;
+import com.aj.moodtools.servletspolicy.OnlineGetServlet;
 
 import java.util.Arrays;
 

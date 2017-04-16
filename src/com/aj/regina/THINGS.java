@@ -2,12 +2,12 @@ package com.aj.regina;
 
 import java.util.Date;
 
+import com.aj.moodtools.db.DBException;
 import com.aj.tools.Caller;
 import com.mongodb.*;
 
 import org.bson.types.ObjectId;
 import org.json.JSONObject;
-import tools.db.DBException;
 
 /**
  * @author AJoan

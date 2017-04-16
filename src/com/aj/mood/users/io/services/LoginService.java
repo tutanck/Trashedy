@@ -12,15 +12,14 @@ import com.aj.tools.InvalidKeyException;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
 import com.mongodb.DBObject;
-
 import com.aj.mood.users.io.services.core.UserIOCore;
-import tools.db.DBException;
-import tools.general.InputType;
-import tools.services.Response;
-import tools.services.ServiceCodes;
-import tools.services.ServicesToolBox;
-import tools.services.ShouldNeverOccurException;
-import tools.servletspolicy.OfflinePostServlet;
+import com.aj.moodtools.db.DBException;
+import com.aj.moodtools.general.InputType;
+import com.aj.moodtools.services.Response;
+import com.aj.moodtools.services.ServiceCodes;
+import com.aj.moodtools.services.ServicesToolBox;
+import com.aj.moodtools.services.ShouldNeverOccurException;
+import com.aj.moodtools.servletspolicy.OfflinePostServlet;
 
 /**
  * @author Joan */

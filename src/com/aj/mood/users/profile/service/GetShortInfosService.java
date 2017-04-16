@@ -15,10 +15,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.aj.mood.users.profile.service.core.UserProfileCore;
-import tools.db.DBException;
-import tools.services.Response;
-import tools.services.ShouldNeverOccurException;
-import tools.servletspolicy.OnlineGetServlet;
+import com.aj.moodtools.db.DBException;
+import com.aj.moodtools.services.Response;
+import com.aj.moodtools.services.ShouldNeverOccurException;
+import com.aj.moodtools.servletspolicy.OnlineGetServlet;
 
 /**
  * @author AJoan */

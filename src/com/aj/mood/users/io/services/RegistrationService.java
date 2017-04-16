@@ -14,18 +14,17 @@ import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
-
 import com.aj.mood.users.io.services.core.UserIOCore;
-import tools.db.DBException;
-import tools.general.PatternsHolder;
-import tools.lingua.Lingua;
-import tools.mailing.Email;
-import tools.services.Response;
-import tools.services.Safety;
-import tools.services.ServiceCodes;
-import tools.services.ServicesToolBox;
-import tools.services.ShouldNeverOccurException;
-import tools.servletspolicy.OfflinePostServlet;
+import com.aj.moodtools.db.DBException;
+import com.aj.moodtools.general.PatternsHolder;
+import com.aj.moodtools.lingua.Lingua;
+import com.aj.moodtools.mailing.Email;
+import com.aj.moodtools.services.Response;
+import com.aj.moodtools.services.Safety;
+import com.aj.moodtools.services.ServiceCodes;
+import com.aj.moodtools.services.ServicesToolBox;
+import com.aj.moodtools.services.ShouldNeverOccurException;
+import com.aj.moodtools.servletspolicy.OfflinePostServlet;
 
 /**
  * @author Joan */

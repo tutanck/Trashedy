@@ -3,13 +3,12 @@ package com.aj.mood.users.io.db;
 import org.json.JSONObject;
 
 import com.mongodb.DBCollection;
+import com.aj.moodtools.db.DBConnectionManager;
+import com.aj.moodtools.db.DBException;
+import com.aj.moodtools.services.ServicesToolBox;
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
-
-import tools.db.DBConnectionManager;
-import tools.db.DBException;
-import tools.services.ServicesToolBox;
 
 /**
  * @author AJoan */

@@ -1,7 +1,7 @@
 package com.aj.mood.users.io.db;
 
+import com.aj.moodtools.db.DBConnectionManager;
 import com.mongodb.DBCollection;
-import tools.db.DBConnectionManager;
 
 
 /**

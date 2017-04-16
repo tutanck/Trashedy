@@ -12,12 +12,12 @@ import org.json.JSONObject;
 
 import com.aj.mood.users.io.db.UserIODB;
 import com.aj.mood.users.io.db.UserSessionDB;
-import tools.general.InputType;
-import tools.general.PatternsHolder;
-import tools.db.DBException;
-import tools.services.Response;
-import tools.services.ServiceCodes;
-import tools.services.ShouldNeverOccurException;
+import com.aj.moodtools.db.DBException;
+import com.aj.moodtools.general.InputType;
+import com.aj.moodtools.general.PatternsHolder;
+import com.aj.moodtools.services.Response;
+import com.aj.moodtools.services.ServiceCodes;
+import com.aj.moodtools.services.ShouldNeverOccurException;
 
 /**
  * @author AJoan
