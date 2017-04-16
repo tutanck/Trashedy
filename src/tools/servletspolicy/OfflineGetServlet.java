@@ -6,6 +6,8 @@ import org.json.JSONObject;
 
 import com.aj.jeez.policy.GetServlet;
 
+import com.aj.mood.users.io.db.UserSessionDB;
+
 /**
  * * @author Anagbla Joan */
 public class OfflineGetServlet extends GetServlet{
@@ -16,6 +18,6 @@ public class OfflineGetServlet extends GetServlet{
 			HttpServletRequest request,
 			JSONObject params
 			)throws Exception{	
-		return false;
+		return UserSessionDB.sessionExists(params);
 	}
 }

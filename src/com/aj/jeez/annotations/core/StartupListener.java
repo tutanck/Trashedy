@@ -8,12 +8,15 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import org.json.JSONObject;
+
 @WebListener 
 public class StartupListener
 implements ServletContextListener{
 
 	private final String defaultClassPath="/WEB-INF/classes/";
 	private String classPath=defaultClassPath;
+	public static JSONObject router;
 
 	//Run this before web application is started
 	@Override
@@ -39,8 +42,9 @@ implements ServletContextListener{
 				System.out.println("StartupListener/contextInitialized::servicesMap : "+classServices);//debug
 
 			System.out.println("StartupListener/contextInitialized::assignServlets starting..");//debug
-			ServletsManager.assignServlets(sce.getServletContext(),servicesMap);
+			router = ServletsManager.assignServlets(sce.getServletContext(),servicesMap);
 			System.out.println("StartupListener/contextInitialized::assignServlets was sucessfull");//debug
+			System.out.println("StartupListener/contextInitialized::services's router : "+router);//debug
 
 		} catch (Exception e) {throw new RuntimeException(e);}
 	}

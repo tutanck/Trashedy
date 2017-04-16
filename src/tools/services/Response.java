@@ -4,6 +4,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Response {
+	
+	/**
+	 * STATUS CODES */
+	private static int _ISSUE=-1;
+	private static int _KANPEKI=0;
 
 	/**
 	 * @description 
@@ -11,8 +16,8 @@ public class Response {
 	 * the reply code {rpcode},
 	 * a the status code [_KANPEKI] 
 	 * eventually 
-	 * 	the service's {result},
-	 * 	a warning {message}
+	 * 	- a service's {result},
+	 * 	- a warning {message}
 	 * @param result
 	 * @param message
 	 * @param replycode
@@ -25,7 +30,7 @@ public class Response {
 			)throws JSONException, ShouldNeverOccurException{
 
 		return new JSONObject()
-				.put("status",ServiceCodes._KANPEKI)
+				.put("status",_KANPEKI)
 				.put("rpcode",replycode)
 				.put("message",message)//warning or whatever
 				.put("result",result);
@@ -49,7 +54,7 @@ public class Response {
 			int issue
 			)throws JSONException, ShouldNeverOccurException{
 		return new JSONObject()
-				.put("status",ServiceCodes._ISSUE)
+				.put("status",_ISSUE)
 				.put("issue",issue);
 	}
 

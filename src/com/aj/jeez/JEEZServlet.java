@@ -185,7 +185,7 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletRequest request,
 			JSONObject params
 			) throws Exception{
-		return request.getSession(false)==null;
+		return request.getSession(false)!=null;
 	}
 
 

@@ -1,10 +1,6 @@
 package tools.services;
 
 public interface ServiceCodes {
-	/**
-	 * STATUS CODES */
-	int _ISSUE=-1;
-	int _KANPEKI=0;
 	
 	/**
 	 * BUSINESS ERRORS CODES -** */
