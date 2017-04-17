@@ -18,6 +18,7 @@ public class OfflineGetServlet extends GetServlet{
 			HttpServletRequest request,
 			JSONObject params
 			)throws Exception{	
-		return UserSessionDB.sessionExists(params);
+		//return UserSessionDB.sessionExists(params);
+		return false; //TODO FIND BETTER
 	}
 }

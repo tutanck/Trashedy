@@ -133,7 +133,9 @@ public abstract class JEEZServlet extends HttpServlet{
 	@Override @SuppressWarnings("unchecked")
 	public void init() throws ServletException {
 		super.init();
-
+		
+		System.out.println("JEEZServlet/init::"+getClass().getCanonicalName()+" : new instance initialisation requested for service");
+		
 		Enumeration<String> servletInitParamsNames = getInitParameterNames();
 		while(servletInitParamsNames.hasMoreElements()){ 
 			String paramName = servletInitParamsNames.nextElement();
@@ -173,6 +175,8 @@ public abstract class JEEZServlet extends HttpServlet{
 				}
 			} 
 		}
+		
+		System.out.println("JEEZServlet/init::"+serviceClass+"."+serviceMethod+" initialised and now waiting for call...");
 	}
 
 
@@ -203,6 +207,8 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletRequest request,
 			HttpServletResponse response
 			)throws Exception {
+		
+		System.out.println("JEEZServlet/beforeBusiness::"+serviceClass+"."+serviceMethod+" --> before business...");
 
 		response.setContentType("text/plain");
 
@@ -210,7 +216,7 @@ public abstract class JEEZServlet extends HttpServlet{
 
 		Map<String,String>requestParams=Mr.refine(request.getParameterMap());
 
-		System.out.println("JEEZServlet/beforeBusiness:: requestParams : "+requestParams+" - expectedIn : "+expectedIn +" - expectedOut : "+expectedOut);
+		System.out.println("JEEZServlet/beforeBusiness::requestParams : "+requestParams+" - expectedIn : "+expectedIn +" - expectedOut : "+expectedOut);
 
 		for(String expected : expectedIn) {
 			JSONObject res = paramIsValid(requestParams,expected,params,true);
@@ -272,8 +278,8 @@ public abstract class JEEZServlet extends HttpServlet{
 				.put("supportedParams", supportedParams); //parameter not added to supportedParams
 
 		//name:string --> {[0]:name(paramName) , [1]:string(paramType)}
-		String[] typedParameterNameTab = typedParameterName.split("\\:");
-		String paramName = typedParameterNameTab[0].trim();
+		String[] typedParameterTab = typedParameterName.split("\\:");
+		String paramName = typedParameterTab[0].trim();
 		System.out.print("    --->paramName : "+paramName);
 
 		//availability test
@@ -287,8 +293,8 @@ public abstract class JEEZServlet extends HttpServlet{
 				return noChanges;
 
 		//typing test
-		if (typedParameterNameTab.length >= 2) {//typedef is provided in the template
-			String paramType = typedParameterNameTab[1].trim().toLowerCase();
+		if (typedParameterTab.length >= 2) {//typedef is provided in the template
+			String paramType = typedParameterTab[1].trim().toLowerCase();
 
 			if(paramType.length()==0) //in case of empty string --> consider type as not defined
 				//Copy the supported parameter now typed into a restricted JSON(supportedParams) 
@@ -355,6 +361,9 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletResponse response,
 			Object result
 			)throws Exception {
+		
+		System.out.println("JEEZServlet/beforeBusiness::"+serviceClass+"."+serviceMethod+" --> after business...");
+		
 		if(!resultIsOK(result)) {
 			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARILY UNAVAILABLE");
 			System.out.println("result failed to satisfy some postconditions");

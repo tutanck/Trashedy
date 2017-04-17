@@ -77,7 +77,7 @@ public class SignupService {
 					params.getString("email"),
 					Lingua.get("welcomeMailSubject","fr-FR"),
 					Lingua.get("welcomeMailMessage","fr-FR")
-					+basedir+UserAccountRecoveryService.url+"?ckey="+ckey);
+					+basedir+UserAccountConfirmationService.url+"?ckey="+ckey);
 		}catch (Exception e) {
 			commit.rollback(); //TODO a tester bcp
 			Safety.explode(e);
