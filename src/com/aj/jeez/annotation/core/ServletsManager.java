@@ -25,14 +25,17 @@ import com.aj.jeez.annotation.annotations.RequestParams;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.jeez.annotation.exceptions.ParameterNamingException;
 import com.aj.jeez.annotation.exceptions.ParameterTypingException;
+import com.aj.jeez.annotation.exceptions.WebInitParameterSettingException;
 import com.aj.jeez.annotation.exceptions.WebServiceAnnotationMisuseException;
 import com.aj.jeez.policy.GetServlet;
 import com.aj.jeez.policy.PostServlet;
 import com.aj.tools.Stretch;
 
 public class ServletsManager {
+	
+	public static String JZID="JZID12101992";
 
-	public static JSONObject assignServlets(
+	static JSONObject assignServlets(
 			ServletContext sc,
 			Map<Class<?>, Set<Method>> servicesMap
 			) throws WebServiceAnnotationMisuseException, ParameterTypingException, ClassNotFoundException, ParameterNamingException{
@@ -44,7 +47,7 @@ public class ServletsManager {
 	}
 
 
-	public static JSONObject assignClassServlets(
+	static JSONObject assignClassServlets(
 			ServletContext sc,
 			Entry<Class<?>,Set<Method>> classServices,
 			JSONObject router
@@ -58,12 +61,14 @@ public class ServletsManager {
 	}
 
 
-	public static JSONObject assignClassServlet(
+	static JSONObject assignClassServlet(
 			ServletContext sc,
 			String className,
 			Method service,
 			JSONObject router
 			) throws WebServiceAnnotationMisuseException, ParameterTypingException, ClassNotFoundException, ParameterNamingException{
+
+		boolean invalid=false;
 
 		String servletID = className+"."+service.getName()+"Servlet";
 
@@ -83,46 +88,38 @@ public class ServletsManager {
 		Class<? extends HttpServlet>policy=ws.policy();
 		Class<?>[]clazzTab = ws.checkClasses();
 
+		/*** VERIFICATION PHASE */
+
 		//Policy checking 
 		if(Modifier.isAbstract(policy.getModifiers()))
-			throw new WebServiceAnnotationMisuseException("Dynamic sevlet policy class : '"+className+"' must not be abstract");				
+			throw new WebServiceAnnotationMisuseException(servletID+": Dynamic sevlet policy class : '"+className+"' must not be abstract");				
 
 		//Static parameters typing test 
 		StaticTypedParamControler.paramsAreValid(className,servletID,expIN,expOut,optIN,optOut);
 
-		//ParamName collision detection
-		Set<String>expINNameSet=new HashSet<>();
-		Set<String>optINNameSet=new HashSet<>();	
+		//Parameter name collisions detection
+		detectParamNameCollision(servletID,"request",expIN,optIN);
+		detectParamNameCollision(servletID,"jsonout",optOut,expOut);
 
-		for(String exp : expIN)
-			expINNameSet.add(exp.split("\\:")[0].trim());
-
-		for(String opt : optIN)
-			expINNameSet.add(opt.split("\\:")[0].trim());
-
-		for(String paramName :optINNameSet)
-			if(expINNameSet.contains(paramName))
-				throw new WebServiceAnnotationMisuseException("Collision detected between parameters : '"+paramName+"' is duplicated");
-
-		//Test class existence (check the class is loaded in the webApp container)
+		//Test class existence (check if the class is loaded in the webApp container)
 		for(Class<?> checkClazz : clazzTab) 
 			Class.forName(checkClazz.getCanonicalName());
-		String clazzSetStr = Stretch.joinClasses(clazzTab);
 
 
-		//Servlet registration
+		/*** REGISTRATION PHASE */
+
 		ServletRegistration.Dynamic sr = sc.addServlet(servletID,policy);
 		sr.addMapping(urlPattern);
 		sr.setLoadOnStartup(ws.loadOnStartup());
 		sr.setAsyncSupported(ws.asyncSupported());
-		sr.setInitParameter("expectedIn", Stretch.join(expIN));
-		sr.setInitParameter("expectedOut", Stretch.join(expOut));
-		sr.setInitParameter("optionalIn", Stretch.join(optIN));
-		sr.setInitParameter("optionalOut", Stretch.join(optOut));
-		sr.setInitParameter("requireAuth", auth?"true":"false");
-		sr.setInitParameter("checkClasses", clazzSetStr);
-		sr.setInitParameter("serviceClass", className);
-		sr.setInitParameter("serviceMethod", service.getName());
+		sr.setInitParameter(JZID+"expIn", Stretch.join(expIN));
+		sr.setInitParameter(JZID+"expOut", Stretch.join(expOut));
+		sr.setInitParameter(JZID+"optIn", Stretch.join(optIN));
+		sr.setInitParameter(JZID+"optOut", Stretch.join(optOut));
+		sr.setInitParameter(JZID+"auth", auth?"true":"false");
+		sr.setInitParameter(JZID+"ck",Stretch.joinClasses(clazzTab));
+		sr.setInitParameter(JZID+"sc", className);
+		sr.setInitParameter(JZID+"sm", service.getName());
 
 		Map<String,String> initParams = new HashMap<>();
 		for(WebInitParam wip:ws.initParams())//TODO tester
@@ -130,24 +127,53 @@ public class ServletsManager {
 		sr.setInitParameters(initParams);
 
 
+		/*** DRIVER SETTINGS PHASE */
+
 		//Servlet communication driver settings
 		JSONObject driver = new JSONObject();
 		driver.put("url",urlPattern);
 		driver.put("auth",auth);
-		driver.put("optOut",optOut);
-		driver.put("optIN",optIN);
-		driver.put("expOut",expOut);
 		driver.put("expIN",expIN);
-		if(PostServlet.class.isAssignableFrom(policy))
-			driver.put("httpM", 1);
+		driver.put("expOut",expOut);
+		driver.put("optIN",optIN);
+		driver.put("optOut",optOut);
 
 		//Get override over method definition in case of multiple legacy
 		if(GetServlet.class.isAssignableFrom(policy))
 			driver.put("httpM", 0);
+		else if(PostServlet.class.isAssignableFrom(policy))
+			driver.put("httpM", 1);
+		else 
+			throw new WebServiceAnnotationMisuseException
+			("WebService policy must be a descendant of one of the following : "
+			+GetServlet.class.getCanonicalName()+","+PostServlet.class.getCanonicalName());
 
 		return router.put(servletID,driver);
 	}
 
 
+	private void detectInitParamSettingFailure(
+			boolean status,
+			String servletID,
+			String paramName
+			) throws WebInitParameterSettingException{
+		if(!status)
+			throw new WebInitParameterSettingException
+			(servletID+": Fail to set servlet init parameter '"+paramName+"'");
+	}
+
+
+	private static void detectParamNameCollision(
+			String servletID,
+			String group,
+			Param[]...paramsTabTabs
+			) throws WebServiceAnnotationMisuseException{
+		Set<String>nameSet=new HashSet<>();	
+		for(Param[]paramsTab : paramsTabTabs)
+			for(Param param : paramsTab)
+				if(!nameSet.add(param.value()))
+					throw new WebServiceAnnotationMisuseException
+					(servletID+": Collision detected between "+group+" parameters : '"+param.value()+"' is duplicated");
+	}
 
 }

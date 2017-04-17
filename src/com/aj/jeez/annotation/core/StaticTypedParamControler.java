@@ -6,7 +6,7 @@ import com.aj.jeez.annotation.exceptions.ParameterTypingException;
 
 public class StaticTypedParamControler {
 	
-	public static boolean paramsAreValid(
+	 static boolean paramsAreValid(
 			String className,
 			String servletName,
 			Param[]... paramsTabs
@@ -16,7 +16,7 @@ public class StaticTypedParamControler {
 		return true;
 	}
 	
-	public static boolean paramsAreValid(
+	static boolean paramsAreValid(
 			String className,
 			String servletName,
 			Param... params
@@ -27,7 +27,7 @@ public class StaticTypedParamControler {
 	}
 
 
-	public static boolean paramIsValid(
+	static boolean paramIsValid(
 			String className,
 			String serviceName,
 			Param param
@@ -48,7 +48,7 @@ public class StaticTypedParamControler {
 	}
 
 
-	public static boolean typeIsValid(
+	static boolean typeIsValid(
 			Class<?> type
 			){		
 		if(String.class.isAssignableFrom(type)) return true;

@@ -11,7 +11,7 @@ import com.aj.jeez.annotation.exceptions.ClassPathScannerNotConfiguredException;
 /**
  * The ClassPathScanner is a configurable .class files finder.
  * @author ANAGBLA Joan */
-public class ClassPathScanner {	 
+ class ClassPathScanner {	 
 
 	private static String classPath;
 	

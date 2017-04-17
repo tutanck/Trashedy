@@ -14,7 +14,7 @@ import com.aj.jeez.annotation.exceptions.CheckoutAnnotationMisuseException;
  * The CheckoutsRadar is a checkouts finder from built classes (.class extension).
  * It scans the class and returns the methods annotated with the @Checkout annotation.   
  * @author Joan */
-public class CheckoutsRadar {
+ public class CheckoutsRadar {
 
 	/**
 	 * Return a map containing all the methods 
@@ -23,7 +23,7 @@ public class CheckoutsRadar {
 	 * @param classesSet
 	 * @return 
 	 * @throws CheckoutAnnotationMisuseException */
-	public static Map<Class<?>,Set<Method>> findAnnotatedServices (
+	 public static Map<Class<?>,Set<Method>> findAnnotatedServices (
 			Set<Class<?>> classSet
 			) throws CheckoutAnnotationMisuseException{
 		Map<Class<?>,Set<Method>> classesMethods = new HashMap<>();
@@ -39,7 +39,7 @@ public class CheckoutsRadar {
 	 * @param clazz
 	 * @return
 	 * @throws CheckoutAnnotationMisuseException */
-	public static Set<Method> findAnnotatedServices (
+	 static Set<Method> findAnnotatedServices (
 			Class<?> clazz
 			) throws CheckoutAnnotationMisuseException {
 		String str0="The registred Checkout : 'public static boolean ";
