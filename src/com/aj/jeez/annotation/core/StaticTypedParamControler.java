@@ -1,7 +1,7 @@
-package com.aj.jeez.annotations.core;
+package com.aj.jeez.annotation.core;
 
-import com.aj.jeez.annotations.exceptions.ParameterNamingException;
-import com.aj.jeez.annotations.exceptions.ParameterTypingException;
+import com.aj.jeez.annotation.exceptions.ParameterNamingException;
+import com.aj.jeez.annotation.exceptions.ParameterTypingException;
 
 public class StaticTypedParamControler {
 

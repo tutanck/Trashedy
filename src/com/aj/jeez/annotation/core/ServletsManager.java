@@ -1,4 +1,4 @@
-package com.aj.jeez.annotations.core;
+package com.aj.jeez.annotation.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -17,11 +17,11 @@ import javax.servlet.http.HttpServlet;
 import org.json.JSONObject;
 
 import com.aj.jeez.JEEZServlet;
-import com.aj.jeez.annotations.WebService;
-import com.aj.jeez.annotations.exceptions.ParameterNamingException;
-import com.aj.jeez.annotations.exceptions.ParameterTypingException;
-import com.aj.jeez.annotations.exceptions.ServletInstantiationExceptionAdvise;
-import com.aj.jeez.annotations.exceptions.WebServiceAnnotationMisuseException;
+import com.aj.jeez.annotation.annotations.WebService;
+import com.aj.jeez.annotation.exceptions.ParameterNamingException;
+import com.aj.jeez.annotation.exceptions.ParameterTypingException;
+import com.aj.jeez.annotation.exceptions.ServletInstantiationExceptionAdvise;
+import com.aj.jeez.annotation.exceptions.WebServiceAnnotationMisuseException;
 import com.aj.jeez.policy.GetServlet;
 import com.aj.jeez.policy.PostServlet;
 import com.aj.tools.Stretch;

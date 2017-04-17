@@ -1,17 +1,17 @@
 package com.aj.mood.users.io.services;
 
-import javax.servlet.annotation.WebServlet;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.WebService;
+import com.mongodb.DBObject;
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
-import com.mongodb.DBObject;
+import com.aj.jeez.annotation.annotations.Param;
+import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.services.core.UserIOCore;
 import com.aj.moodtools.db.DBException;
 import com.aj.moodtools.general.InputType;
@@ -25,24 +25,25 @@ import com.aj.moodtools.servletspolicy.OfflinePostServlet;
  * @author Joan */
 public class SigninService {
 	public final static String url="/signin";
-	public final static String servletName="signin";
+	public final static String id="signin";
 
 	/**
 	 * @description  Users login service : Connects user into online mode
 	 * @param params
 	 * @return
 	 * @throws DBException 
-	 * @throws JSONException  
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
 	@WebService(
-			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
-			expectedIn={"username","pass","did"},
-			policy=OfflinePostServlet.class)
+			id=id,urlPattern=url,policy=OfflinePostServlet.class,
+			requestParams=@RequestParams({
+					@Param("username"),
+					@Param("pass"),
+					@Param("did")}))
 	public static JSONObject login(
 			JSONObject params
-			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {
+			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {
 
 		DBObject user;
 		InputType it = UserIOCore.determineFormat(params.getString("username"));

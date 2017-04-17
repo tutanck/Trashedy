@@ -1,17 +1,16 @@
 package com.aj.mood.users.io.services;
 
-import javax.servlet.annotation.WebServlet;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
 import com.mongodb.WriteResult;
+import com.aj.jeez.annotation.annotations.Param;
+import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.services.core.UserIOCore;
 import com.aj.moodtools.db.DBException;
 import com.aj.moodtools.services.Response;
@@ -23,7 +22,7 @@ import com.aj.moodtools.servletspolicy.OfflinePostServlet;
  * @author Joan */
 public class UserAccountConfirmationService {
 	public final static String url="/account/confirm";
-	public final static String servletName="confirm_account";
+	public final static String id="confirm_account";
 
 	/**
 	 * @description 
@@ -32,16 +31,13 @@ public class UserAccountConfirmationService {
 	 * @return 
 	 * @throws ShouldNeverOccurException
 	 * @throws DBException 
-	 * @throws JSONException 
 	 * @throws InvalidKeyException 
 	 * @throws AbsentKeyException */
-	@WebService(
-			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
-			expectedIn={"ckey"},
-			policy=OfflinePostServlet.class)
+	@WebService(id=id,urlPattern=url,policy=OfflinePostServlet.class,
+			requestParams=@RequestParams({@Param("ckey")}))
 	public static JSONObject confirmUser(
 			JSONObject params
-			) throws ShouldNeverOccurException, DBException, JSONException, AbsentKeyException, InvalidKeyException{ 
+			) throws ShouldNeverOccurException, DBException, AbsentKeyException, InvalidKeyException{ 
 	
 		WriteResult wr =THINGS.replaceOne(
 				JR.renameKeys(params,"ckey->confirmed"), 

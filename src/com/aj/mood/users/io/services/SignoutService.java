@@ -1,14 +1,11 @@
 package com.aj.mood.users.io.services;
 
-import javax.servlet.annotation.WebServlet;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
 import com.aj.tools.jr.JR;
+import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.services.core.UserIOCore;
 import com.aj.moodtools.db.DBException;
 import com.aj.moodtools.services.Response;
@@ -27,15 +24,12 @@ public class SignoutService {
 	 * @param params
 	 * @return
 	 * @throws DBException 
-	 * @throws JSONException 
 	 * @throws ShouldNeverOccurException */
 	
-	@WebService(
-			webServlet = @WebServlet(name=servletName, urlPatterns={url}),
-			policy=OnlinePostServlet.class)
+	@WebService(id=servletName,urlPattern=url,policy=OnlinePostServlet.class)
 	public static JSONObject logout(
 			JSONObject params
-			) throws DBException, JSONException, ShouldNeverOccurException {
+			) throws DBException, ShouldNeverOccurException {
 		THINGS.remove(JR.wrap(
 				"skey",ServicesToolBox.scramble(params.getString("skey")))
 				,UserIOCore.session);

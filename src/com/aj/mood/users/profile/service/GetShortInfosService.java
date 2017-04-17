@@ -1,6 +1,5 @@
 package com.aj.mood.users.profile.service;
 
-import com.aj.jeez.annotations.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
@@ -8,12 +7,12 @@ import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
 import com.mongodb.DBObject;
 
-import javax.servlet.annotation.WebServlet;
-
 import org.bson.types.ObjectId;
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.aj.jeez.annotation.annotations.Param;
+import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.profile.service.core.UserProfileCore;
 import com.aj.moodtools.db.DBException;
 import com.aj.moodtools.services.Response;
@@ -32,17 +31,14 @@ import com.aj.moodtools.servletspolicy.OnlineGetServlet;
 	 * @param params
 	 * @return
 	 * @throws DBException
-	 * @throws JSONException 
 	 * @throws ShouldNeverOccurException 
 	 * @throws InvalidKeyException 
 	 * @throws AbsentKeyException */
-	 @WebService(
-				webServlet = @WebServlet(name=servletName,urlPatterns={url}),
-				expectedIn={"uther"},
-				policy = OnlineGetServlet.class)
+	 @WebService(id=servletName,urlPattern=url,policy = OnlineGetServlet.class,
+				requestParams=@RequestParams({@Param("uther")}))
 	public static JSONObject getShortInfos(
 			JSONObject params
-			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {		 
+			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {		 
 		
 		DBObject user=  THINGS.getOne(
 				JR.wrap("_id",new ObjectId(params.getString("uther"))), 

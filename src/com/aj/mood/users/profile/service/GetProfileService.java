@@ -1,6 +1,5 @@
 package com.aj.mood.users.profile.service;
 
-import com.aj.jeez.annotations.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
@@ -8,11 +7,11 @@ import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
 import com.mongodb.DBObject;
 
-import javax.servlet.annotation.WebServlet;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.aj.jeez.annotation.annotations.Param;
+import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.db.UserSessionDB;
 import com.aj.mood.users.profile.service.core.UserProfileCore;
 import com.aj.moodtools.db.DBException;
@@ -27,24 +26,21 @@ import com.aj.moodtools.servletspolicy.OnlineGetServlet;
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
 public class GetProfileService{
 	public final static String url="/user/profile";
-	public final static String servletName="user_profile";
+	public final static String id="user_profile";
 
 	/** 
 	 * return user's complete profile information 
 	 * @param params
 	 * @return
 	 * @throws DBException
-	 * @throws JSONException 
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
-	@WebService(
-			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
-			optionalIn={"uther"},
-			policy = OnlineGetServlet.class)
+	@WebService(id=id,urlPattern=url,policy=OnlineGetServlet.class,
+			requestParams=@RequestParams(optionals={@Param("uther")}))
 	public static JSONObject getProfile(
 			JSONObject params
-			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
+			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
 		DBObject user=null;
 		JSONObject profile=new JSONObject();
 		//Trick : like fb, an user can see his profile as someone else

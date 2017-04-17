@@ -1,10 +1,10 @@
 package com.aj.jeez.checks;
 
-import com.aj.jeez.annotations.Checkout;
+import com.aj.jeez.annotation.annotations.Checkout;
 
 public class CheckExpectedOut {
 
-	@Checkout(clientsafe=true,name="CheckExpOut")
+	@Checkout(clientsafe=true,value="CheckExpOut")
 	public static boolean checkExpectedOut(
 			Object result,
 			String[]expectedOut,

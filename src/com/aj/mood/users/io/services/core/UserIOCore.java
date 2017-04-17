@@ -40,7 +40,7 @@ public class UserIOCore{
 	 * @throws AbsentKeyException */
 	public static JSONObject checkEmailCore(
 			JSONObject params
-			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
+			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
 
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidEmail(params.getString("email")))
@@ -64,7 +64,7 @@ public class UserIOCore{
 	 * @throws AbsentKeyException */
 	public static JSONObject checkUsernameCore(
 			JSONObject params
-			) throws JSONException, ShouldNeverOccurException, DBException, AbsentKeyException{
+			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
 	
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidUsername(params.getString("username")))

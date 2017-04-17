@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.Checkout;
-import com.aj.jeez.annotations.core.CheckoutsRadar;
-import com.aj.jeez.annotations.exceptions.CheckoutAnnotationMisuseException;
+import com.aj.jeez.annotation.annotations.Checkout;
+import com.aj.jeez.annotation.core.CheckoutsRadar;
+import com.aj.jeez.annotation.exceptions.CheckoutAnnotationMisuseException;
 import com.aj.jeez.exceptions.JEEZException;
 import com.aj.tools.Mr;
 import com.aj.tools.Stretch;
@@ -391,7 +391,7 @@ public abstract class JEEZServlet extends HttpServlet{
 			for(Method checkout : entry.getValue()){
 				System.out.println("JEEZServlet/resultIsOK:: static call of : "+checkClass+"."+checkout+"("+result+")");
 				Checkout chk = checkout.getAnnotation(Checkout.class);
-				String chkName=chk.name().length()==0?checkClass.getCanonicalName()+"."+checkout.getName():chk.name();
+				String chkName=chk.value().length()==0?checkClass.getCanonicalName()+"."+checkout.getName():chk.value();
 				try{
 					boolean approved=(boolean)checkout.invoke(checkClass.newInstance(), new Object[]{result,this.expectedOut.toArray(new String[]{}),this.optionalOut.toArray(new String[]{})});
 					if(!approved)

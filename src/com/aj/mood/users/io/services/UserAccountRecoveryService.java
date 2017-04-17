@@ -1,15 +1,14 @@
 package com.aj.mood.users.io.services;
 
-import javax.servlet.annotation.WebServlet;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
+import com.aj.jeez.annotation.annotations.Param;
+import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.services.core.UserIOCore;
 import com.aj.moodtools.db.DBException;
 import com.aj.moodtools.lingua.Lingua;
@@ -26,23 +25,20 @@ import com.aj.moodtools.servletspolicy.OfflinePostServlet;
  * @author Joan */
 public class UserAccountRecoveryService {
 	public final static String url="/account/recover";
-	public final static String servletName="recover_account";
+	public final static String id="recover_account";
 
 	/**
 	 * @description send an email with MD5 generated temporary access key for access recover to the user
 	 * @param params
 	 * @return
 	 * @throws DBException
-	 * @throws JSONException 
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
-	@WebService(
-			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
-			expectedIn={"email"},
-			policy=OfflinePostServlet.class)
+	@WebService(id=id,urlPattern=url,policy=OfflinePostServlet.class,
+			requestParams=@RequestParams({@Param("email")}))
 	public static JSONObject accessRecovery(
 			JSONObject params
-			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {
+			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
 	
 		if(!THINGS.exists(JR.slice(params,"email"),UserIOCore.collection))
 			return Response.issue(ServiceCodes.UNKNOWN_EMAIL_ADDRESS);

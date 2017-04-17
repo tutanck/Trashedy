@@ -1,4 +1,4 @@
-package com.aj.jeez.annotations.core;
+package com.aj.jeez.annotation.core;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;

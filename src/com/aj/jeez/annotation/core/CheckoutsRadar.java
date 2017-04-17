@@ -1,4 +1,4 @@
-package com.aj.jeez.annotations.core;
+package com.aj.jeez.annotation.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.aj.jeez.annotations.Checkout;
-import com.aj.jeez.annotations.exceptions.CheckoutAnnotationMisuseException;
+import com.aj.jeez.annotation.annotations.Checkout;
+import com.aj.jeez.annotation.exceptions.CheckoutAnnotationMisuseException;
 
 /**
  * The CheckoutsRadar is a checkouts finder from built classes (.class extension).

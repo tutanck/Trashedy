@@ -1,4 +1,4 @@
-package com.aj.jeez.annotations.exceptions;
+package com.aj.jeez.annotation.exceptions;
 
 public class WebServiceAnnotationMisuseException extends Exception {
 

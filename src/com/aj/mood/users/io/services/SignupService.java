@@ -1,13 +1,11 @@
 package com.aj.mood.users.io.services;
 
 import java.util.Date;
-
-import javax.servlet.annotation.WebServlet;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.WebService;
+import com.aj.jeez.annotation.annotations.Param;
+import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.jeez.checks.CheckExpectedOut;
 import com.aj.regina.DBCommit;
 import com.aj.regina.THINGS;
@@ -30,7 +28,7 @@ import com.aj.moodtools.servletspolicy.OfflinePostServlet;
  * @author Joan */
 public class SignupService {
 	public final static String url="/signup";
-	public final static String servletName="signup";
+	public final static String id="signup";
 
 
 	/**
@@ -39,17 +37,18 @@ public class SignupService {
 	 * @param params
 	 * @return
 	 * @throws DBException 
-	 * @throws JSONException 
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			webServlet = @WebServlet(name=servletName,urlPatterns={url}),
-			expectedIn={"username","pass","email"},
+			id=id,urlPattern=url,policy = OfflinePostServlet.class,
 			checkClasses={CheckExpectedOut.class},
-			policy = OfflinePostServlet.class)
+			requestParams=@RequestParams({
+				@Param("username"),
+				@Param("pass"),
+				@Param("email")}))
 	public static JSONObject registration(
 			JSONObject params
-			) throws DBException, JSONException, ShouldNeverOccurException, AbsentKeyException {
+			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
 
 		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
 		if(!PatternsHolder.isValidPass(params.getString("pass")))
@@ -71,7 +70,7 @@ public class SignupService {
 
 		//TODO utiliser un .property pour gerer le nom de racine de l app
 		String basedir = "http://localhost:8080/Essais0";
-	
+
 		try {
 			Email.send(
 					params.getString("email"),
