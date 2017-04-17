@@ -14,7 +14,7 @@ import java.lang.annotation.ElementType;
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface Param { 
       
-   String value ();
+   String value (); //name
    
    Class<?> type() default String.class;
    

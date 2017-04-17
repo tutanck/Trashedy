@@ -30,21 +30,25 @@ implements ServletContextListener{
 
 			Set<String> classesQNSet;
 			Map<Class<?>,Set<Method>> servicesMap;
-
+			
+			//Project classes scan and listing
 			classesQNSet = ClassPathScanner.getClassesQualifiedNames(sce.getServletContext());
 			System.out.println("StartupListener/contextInitialized:: classes qualified names list : ");//debug
 			for(String classQN :classesQNSet)
 				System.out.println("StartupListener/contextInitialized::classQualifiedName : "+classQN);//debug
-
+			
+			//WebService annotations detection in found classes
 			servicesMap = WebServicesRadar.findAnnotatedServices(classesQNSet);
 			System.out.println("StartupListener/contextInitialized::services list by class : ");//debug
 			for(Entry<Class<?>, Set<Method>> classServices : servicesMap.entrySet())
 				System.out.println("StartupListener/contextInitialized::servicesMap : "+classServices);//debug
 
+			//Servlet assignment for each found annotation
 			System.out.println("StartupListener/contextInitialized::assignServlets starting..");//debug
 			router = ServletsManager.assignServlets(sce.getServletContext(),servicesMap);
 			System.out.println("StartupListener/contextInitialized::assignServlets was sucessfull");//debug
 			 
+			//Routes listing
 			for(String ServletID : router.keySet())
 				System.out.println("StartupListener/contextInitialized::services's route : {"+ServletID+":"+router.get(ServletID)+"}");//debug
 

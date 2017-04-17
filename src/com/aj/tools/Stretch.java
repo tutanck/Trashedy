@@ -3,6 +3,7 @@ package com.aj.tools;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -16,12 +17,11 @@ public class Stretch {
 			Set<String> stringSet
 			){
 		String joined="";
-		int i=0;
-		for(String s : stringSet)
-			if(i++<stringSet.size()-1)
-				joined+=s+",";
-			else
-				joined+=s;
+		Iterator<String> it = stringSet.iterator();
+		while(it.hasNext()){
+			String str=it.next();
+			joined+=it.hasNext()?str+",":str;
+		}
 		return joined;
 	}
 
