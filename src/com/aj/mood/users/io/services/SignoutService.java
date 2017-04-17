@@ -26,7 +26,7 @@ public class SignoutService {
 	 * @throws DBException 
 	 * @throws ShouldNeverOccurException */
 	
-	@WebService(id=servletName,urlPattern=url,policy=OnlinePostServlet.class)
+	@WebService(ID=servletName,urlPattern=url,policy=OnlinePostServlet.class)
 	public static JSONObject logout(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException {

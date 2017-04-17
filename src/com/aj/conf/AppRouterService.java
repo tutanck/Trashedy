@@ -14,7 +14,7 @@ public class AppRouterService {
 	public final static String id="jz_app_routes";
 
 	
-	@WebService(id=id,urlPattern=url,policy=GetServlet.class)
+	@WebService(ID=id,urlPattern=url,policy=GetServlet.class)
 	public static JSONObject getRouter(
 			JSONObject params
 			) throws JSONException  {

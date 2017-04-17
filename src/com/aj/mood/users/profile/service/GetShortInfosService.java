@@ -34,7 +34,7 @@ import com.aj.moodtools.servletspolicy.OnlineGetServlet;
 	 * @throws ShouldNeverOccurException 
 	 * @throws InvalidKeyException 
 	 * @throws AbsentKeyException */
-	 @WebService(id=servletName,urlPattern=url,policy = OnlineGetServlet.class,
+	 @WebService(ID=servletName,urlPattern=url,policy = OnlineGetServlet.class,
 				requestParams=@RequestParams({@Param("uther")}))
 	public static JSONObject getShortInfos(
 			JSONObject params

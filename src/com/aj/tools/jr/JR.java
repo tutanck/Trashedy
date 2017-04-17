@@ -18,6 +18,15 @@ public class JR {
 			){
 		return new JSONObject(map);
 	}
+	
+	
+	public static JSONObject clone(
+			JSONObject json
+			){
+		return jsonify(json.toMap());
+	}
+	
+	
 
 
 	/**
@@ -28,8 +37,13 @@ public class JR {
 	public static JSONObject wrap(String key, Object value){
 		return new JSONObject().put(key, value);
 	}
+	
 
-
+	/**
+	 * Wrap a key-value string list into a JSONObject and return it
+	 * @param keyValString
+	 * @return
+	 * @throws InvalidKeyException */
 	public static JSONObject wrap(
 			String...keyValString
 			) throws InvalidKeyException{

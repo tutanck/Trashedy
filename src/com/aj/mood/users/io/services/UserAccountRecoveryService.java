@@ -34,7 +34,7 @@ public class UserAccountRecoveryService {
 	 * @throws DBException
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
-	@WebService(id=id,urlPattern=url,policy=OfflinePostServlet.class,
+	@WebService(ID=id,urlPattern=url,policy=OfflinePostServlet.class,
 			requestParams=@RequestParams({@Param("email")}))
 	public static JSONObject accessRecovery(
 			JSONObject params

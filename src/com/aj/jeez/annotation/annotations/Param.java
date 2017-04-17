@@ -18,6 +18,6 @@ public @interface Param {
    
    Class<?> type() default String.class;
    
-   String rule () default "";
+   String[] rules () default {};
    
 }

@@ -26,7 +26,7 @@ public class CheckUsernameService {
 	 * @throws ShouldNeverOccurException
 	 * @throws DBException
 	 * @throws AbsentKeyException */
-	@WebService(id=servletName,urlPattern=url,policy=OfflineGetServlet.class,
+	@WebService(ID=servletName,urlPattern=url,policy=OfflineGetServlet.class,
 			requestParams=@RequestParams({@Param("username")}))
 	public static JSONObject checkUsername(
 			JSONObject params

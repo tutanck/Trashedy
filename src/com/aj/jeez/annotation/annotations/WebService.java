@@ -30,7 +30,7 @@ public @interface WebService {
    
    /**For WebService*/
    
-   String id();
+   String ID();
    
    Class<? extends JEEZServlet> policy();
    

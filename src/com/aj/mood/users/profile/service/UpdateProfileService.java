@@ -34,7 +34,7 @@ public class UpdateProfileService{
 	 * @throws DBException 
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
-	@WebService(id=id,urlPattern=url,policy = OnlinePostServlet.class,
+	@WebService(ID=id,urlPattern=url,policy = OnlinePostServlet.class,
 			requestParams=@RequestParams(
 					value={@Param("username"),@Param("email")},
 			optionals={@Param("phone"),@Param("lastname"),@Param("firstname"),@Param("birthdate")}))

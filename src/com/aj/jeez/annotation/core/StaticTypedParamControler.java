@@ -6,33 +6,30 @@ import com.aj.jeez.annotation.exceptions.ParameterTypingException;
 
 public class StaticTypedParamControler {
 	
-	 static boolean paramsAreValid(
+	 static void paramsAreValid(
 			String className,
 			String servletName,
 			Param[]... paramsTabs
 			) throws ParameterTypingException, ParameterNamingException{
 		for(Param[] params:paramsTabs)
 			paramsAreValid(className,servletName,params);
-		return true;
 	}
 	
-	static boolean paramsAreValid(
+	static void paramsAreValid(
 			String className,
 			String servletName,
 			Param... params
 			) throws ParameterTypingException, ParameterNamingException{
 		for(Param param:params)
 			paramIsValid(className,servletName,param);
-		return true;
 	}
 
 
-	static boolean paramIsValid(
+	static void paramIsValid(
 			String className,
 			String serviceName,
 			Param param
 			) throws ParameterTypingException, ParameterNamingException{		
-
 		String paramName = param.value().trim();
 
 		if(paramName.length()==0)
@@ -43,20 +40,18 @@ public class StaticTypedParamControler {
 		if(!typeIsValid(param.type()))
 			throw new ParameterTypingException
 			("WebService '"+serviceName+"' in class '"+className+"' specifies unsupported type for parameter '"+paramName+"'");
-
-		return true;
 	}
 
 
 	static boolean typeIsValid(
 			Class<?> type
 			){		
-		if(String.class.isAssignableFrom(type)) return true;
 		if(int.class.isAssignableFrom(type)) return true;
 		if(long.class.isAssignableFrom(type)) return true;
 		if(float.class.isAssignableFrom(type)) return true;
 		if(double.class.isAssignableFrom(type)) return true;
 		if(boolean.class.isAssignableFrom(type)) return true;
+		if(String.class.isAssignableFrom(type)) return true;
 		return false;
 	}
 

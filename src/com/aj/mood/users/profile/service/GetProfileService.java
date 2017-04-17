@@ -36,7 +36,7 @@ public class GetProfileService{
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
-	@WebService(id=id,urlPattern=url,policy=OnlineGetServlet.class,
+	@WebService(ID=id,urlPattern=url,policy=OnlineGetServlet.class,
 			requestParams=@RequestParams(optionals={@Param("uther")}))
 	public static JSONObject getProfile(
 			JSONObject params

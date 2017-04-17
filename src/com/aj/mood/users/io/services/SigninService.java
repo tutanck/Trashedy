@@ -36,7 +36,7 @@ public class SigninService {
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
 	@WebService(
-			id=id,urlPattern=url,policy=OfflinePostServlet.class,
+			ID=id,urlPattern=url,policy=OfflinePostServlet.class,
 			requestParams=@RequestParams({
 					@Param("username"),
 					@Param("pass"),

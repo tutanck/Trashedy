@@ -26,7 +26,7 @@ public class CheckEmailService {
 	 * @throws ShouldNeverOccurException
 	 * @throws DBException
 	 * @throws AbsentKeyException */
-	@WebService(id=id,urlPattern=url,policy=OfflineGetServlet.class,
+	@WebService(ID=id,urlPattern=url,policy=OfflineGetServlet.class,
 			requestParams=@RequestParams({@Param("email")}))
 	public static JSONObject checkEmail(
 			JSONObject params

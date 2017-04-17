@@ -33,7 +33,7 @@ public class UserAccountConfirmationService {
 	 * @throws DBException 
 	 * @throws InvalidKeyException 
 	 * @throws AbsentKeyException */
-	@WebService(id=id,urlPattern=url,policy=OfflinePostServlet.class,
+	@WebService(ID=id,urlPattern=url,policy=OfflinePostServlet.class,
 			requestParams=@RequestParams({@Param("ckey")}))
 	public static JSONObject confirmUser(
 			JSONObject params

@@ -40,7 +40,7 @@ public class SignupService {
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			id=id,urlPattern=url,policy = OfflinePostServlet.class,
+			ID=id,urlPattern=url,policy = OfflinePostServlet.class,
 			checkClasses={CheckExpectedOut.class},
 			requestParams=@RequestParams({
 				@Param("username"),
