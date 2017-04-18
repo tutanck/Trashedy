@@ -4,7 +4,7 @@ import java.util.Date;
 import org.json.JSONObject;
 
 import com.aj.jeez.annotation.annotations.Param;
-import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.jeez.checks.CheckExpectedOut;
 import com.aj.regina.DBCommit;
@@ -28,11 +28,9 @@ import com.aj.moodtools.servletspolicy.OfflinePostServlet;
  * @author Joan */
 public class SignupService {
 	public final static String url="/signup";
-	public final static String id="signup";
 
 
-	/**
-	 * @description 
+	/** 
 	 * Users registration service : register a new user
 	 * @param params
 	 * @return
@@ -40,9 +38,9 @@ public class SignupService {
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
 	@WebService(
-			ID=id,urlPattern=url,policy = OfflinePostServlet.class,
+			value=url,policy = OfflinePostServlet.class,
 			checkClasses={CheckExpectedOut.class},
-			requestParams=@RequestParams({
+			requestParams=@Params({
 				@Param("username"),
 				@Param("pass"),
 				@Param("email")}))

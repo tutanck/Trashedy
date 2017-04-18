@@ -2,8 +2,10 @@ package com.aj.jeez.annotation.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -17,9 +19,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.annotations.JSONOUTParams;
 import com.aj.jeez.annotation.annotations.Param;
-import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.jeez.annotation.exceptions.ParameterNamingException;
 import com.aj.jeez.annotation.exceptions.ParameterTypingException;
@@ -30,7 +31,7 @@ import com.aj.jeez.policy.PostServlet;
 
 public class ServletsManager {
 
-	public static String JZID=DigestUtils.shaHex("JZ"+new Date().toString()+"JZ");
+	public static String JZID=DigestUtils.shaHex("JZ"+new Date()+"JZ");
 
 	static JSONObject assignServlets(
 			ServletContext sc,
@@ -41,10 +42,10 @@ public class ServletsManager {
 		for(Entry<Class<?>, Set<Method>> classServices : servicesMap.entrySet())
 			for(Method service : classServices.getValue()){
 				WebService ws = service.getAnnotation(WebService.class);
-				String wsid=ws.ID();
+				String wsid=ws.value();
 				if(!hs.add(wsid) || wsid.length()==0)
 					throw new WebServiceAnnotationMisuseException
-					("Invalid service ID detected '"+wsid+"' for WebService '"+classServices.getKey().getCanonicalName()+"."+service.getName()+"' : A service ID must be unique and not empty");
+					("Invalid service url pattern detected '"+wsid+"' for WebService '"+classServices.getKey().getCanonicalName()+"."+service.getName()+"' : A service url must be unique and not empty");
 			}		
 
 		JSONObject router = new JSONObject();
@@ -75,20 +76,19 @@ public class ServletsManager {
 			JSONObject router
 			) throws WebServiceAnnotationMisuseException, ParameterTypingException, ClassNotFoundException, ParameterNamingException, WebInitParameterSettingException{
 
-		String servletID = className+"."+service.getName()+"Servlet";
+		String serviceID = className+"."+service.getName();
 
 		WebService ws = service.getAnnotation(WebService.class);
 
-		String id = ws.ID();
-		String urlPattern = ws.urlPattern();
+		String url = ws.value();
 		boolean auth=ws.requireAuth();
-		RequestParams rp = ws.requestParams();
-		JSONOUTParams jop = ws.jsonOutParams();
+		Params rp = ws.requestParams();
+		Params jop = ws.jsonOutParams();
 
 		Param [] expIN=rp.value();
 		Param [] optIN=rp.optionals();
-		Param [] optOut=jop.optionals();
 		Param [] expOut=jop.value();
+		Param [] optOut=jop.optionals();
 
 		Class<? extends HttpServlet>policy=ws.policy();
 		Class<?>[]clazzTab = ws.checkClasses();
@@ -98,14 +98,18 @@ public class ServletsManager {
 
 		//Policy checking 
 		if(Modifier.isAbstract(policy.getModifiers()))
-			throw new WebServiceAnnotationMisuseException(servletID+": Dynamic sevlet policy class : '"+className+"' must not be abstract");				
+			throw new WebServiceAnnotationMisuseException(serviceID+" : Dynamic sevlet policy class : '"+className+"' must not be abstract");				
 
+		//JSONOUTParams use --> return type checking
+		if((optOut.length>0 || expOut.length>0)&& !JSONObject.class.isAssignableFrom(service.getReturnType()))
+			throw new WebServiceAnnotationMisuseException(serviceID+" : Declaring at least one JSONOUTParam force the WebService return type to be JSONObject or descendant");				
+		
 		//Static parameters typing test 
-		StaticTypedParamControler.paramsAreValid(className,servletID,expIN,expOut,optIN,optOut);
+		StaticTypedParamControler.paramsAreValid(className,serviceID,expIN,expOut,optIN,optOut);
 
 		//Parameter name collisions detection
-		detectParamNameCollision(servletID,"request",expIN,optIN);
-		detectParamNameCollision(servletID,"jsonout",optOut,expOut);
+		detectParamNameCollision(serviceID,"request",expIN,optIN);
+		detectParamNameCollision(serviceID,"jsonout",optOut,expOut);
 
 		//Test class existence (check if the class is loaded in the webApp container)
 		for(Class<?> checkClazz : clazzTab) 
@@ -115,9 +119,7 @@ public class ServletsManager {
 		/*** DRIVER SETTINGS PHASE */
 
 		//Servlet communication driver settings
-		JSONObject driver = new JSONObject()
-				.put("sid",id)
-				.put("url",urlPattern)
+		JSONObject jzcDriver = new JSONObject()				
 				.put("auth",auth)
 				.put("httpM", determineHTTPMethod(policy))
 				.put("expIN",stretchParams(expIN))
@@ -129,38 +131,40 @@ public class ServletsManager {
 		/*** REGISTRATION PHASE */
 
 		//Servlet parameters setting
-		ServletRegistration.Dynamic sr = sc.addServlet(servletID,policy);
-		sr.addMapping(urlPattern);
+		ServletRegistration.Dynamic sr = sc.addServlet(serviceID,policy);
+		sr.addMapping(url);
 		sr.setAsyncSupported(ws.asyncSupported());
 		sr.setLoadOnStartup(ws.loadOnStartup());		
 		for(WebInitParam wip:ws.initParams())
-			detectInitParamSettingFailure(
-					sr.setInitParameter(wip.name(),wip.value()),servletID,wip.name());
+			detectInitParamSettingFailure(sr.setInitParameter(wip.name(),wip.value()),serviceID,wip.name());
 
 		//Service parameters setting
-		JSONObject jzParams=new JSONObject(driver.toMap())
-				.put("ck",clazzTab)
-				.put("sc", className)
-				.put("sm", service.getName());
-		detectInitParamSettingFailure(sr.setInitParameter(JZID,jzParams.toString()),servletID,JZID);
+		JSONObject jzsDriver=new JSONObject(jzcDriver.toMap())
+				.put("url",url)
+				.put("ckC",stretchClasses(clazzTab))
+				.put("sC", className)
+				.put("sM", service.getName());
+		detectInitParamSettingFailure(sr.setInitParameter(JZID,jzsDriver.toString()),serviceID,JZID);
 
-		return router.put(servletID,driver);
+		return router.put(url,jzcDriver);
 	}
 
+	
+	
 
 	private static void detectInitParamSettingFailure(
 			boolean status,
-			String servletID,
+			String serviceID,
 			String paramName
 			) throws WebInitParameterSettingException{
 		if(!status)
 			throw new WebInitParameterSettingException
-			(servletID+": Fail to set servlet init parameter '"+paramName+"'");
+			(serviceID+": Fail to set servlet's init parameter '"+paramName+"'");
 	}
 
 
 	private static void detectParamNameCollision(
-			String servletID,
+			String serviceID,
 			String group,
 			Param[]...paramsTabTabs
 			) throws WebServiceAnnotationMisuseException{
@@ -169,7 +173,7 @@ public class ServletsManager {
 			for(Param param : paramsTab)
 				if(!nameSet.add(param.value()))
 					throw new WebServiceAnnotationMisuseException
-					(servletID+": Collision detected between "+group+" parameters : '"+param.value()+"' is duplicated");
+					(serviceID+": Collision detected between "+group+" parameters : '"+param.value()+"' is duplicated");
 	}
 
 	private static int determineHTTPMethod(
@@ -187,24 +191,30 @@ public class ServletsManager {
 	}
 
 
-	private static String stretchParams(
+	private static JSONArray stretchParams(
 			Param[]params
 			){
 		JSONArray jar = new JSONArray();
-		for(Param param : params){
-			int typeInt = 0; //String by default
-			Class<?> type=param.type();
-			if(int.class.isAssignableFrom(type)) typeInt=1;
-			if(long.class.isAssignableFrom(type))typeInt=2;
-			if(float.class.isAssignableFrom(type))typeInt=3;
-			if(double.class.isAssignableFrom(type))typeInt=4;
-			if(boolean.class.isAssignableFrom(type))typeInt=5;
+		for(Param param : params)
 			jar.put(new JSONObject()
 					.put("name", param.value())
-					.put("type", typeInt)
+					.put("type", param.type().getCanonicalName())
 					.put("rules", param.rules()));
-		}
-		return jar.toString();
+		return jar;
 	}
 
+	
+	private static String stretchClasses(
+			Class<?>[]clazzs
+			){
+		String s="";
+		Iterator<Class<?>> it = new HashSet<>(Arrays.asList(clazzs)).iterator();
+		
+		while(it.hasNext()){
+			s+=it.next().getCanonicalName();
+			if(it.hasNext())s+=",";
+		}
+		return s;
+	}
+	
 }

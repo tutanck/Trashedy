@@ -6,7 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.aj.jeez.JEEZServlet;
+import com.aj.jeez.templating.JEEZServlet;
 
 
 /**
@@ -15,7 +15,7 @@ public class PostServlet extends JEEZServlet{
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void doPost(
+	protected final void doPost(
 			HttpServletRequest request,
 			HttpServletResponse response
 			) throws ServletException, IOException {
@@ -23,7 +23,7 @@ public class PostServlet extends JEEZServlet{
 	}
 
 	@Override
-	protected void doGet(
+	protected final void doGet(
 			HttpServletRequest request,
 			HttpServletResponse response
 			) throws ServletException, IOException {
@@ -31,7 +31,7 @@ public class PostServlet extends JEEZServlet{
 	}
 
 	@Override
-	protected void doPut(
+	protected final void doPut(
 			HttpServletRequest request,
 			HttpServletResponse response
 			) throws ServletException, IOException {
@@ -39,7 +39,7 @@ public class PostServlet extends JEEZServlet{
 	}
 
 	@Override
-	protected void doDelete(
+	protected final void doDelete(
 			HttpServletRequest request,
 			HttpServletResponse response
 			) throws ServletException, IOException {

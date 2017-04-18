@@ -10,7 +10,7 @@ import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
 import com.aj.jeez.annotation.annotations.Param;
-import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.services.core.UserIOCore;
 import com.aj.moodtools.db.DBException;
@@ -25,10 +25,9 @@ import com.aj.moodtools.servletspolicy.OfflinePostServlet;
  * @author Joan */
 public class SigninService {
 	public final static String url="/signin";
-	public final static String id="signin";
 
 	/**
-	 * @description  Users login service : Connects user into online mode
+	 * Users login service : Connects user into online mode
 	 * @param params
 	 * @return
 	 * @throws DBException 
@@ -36,8 +35,8 @@ public class SigninService {
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
 	@WebService(
-			ID=id,urlPattern=url,policy=OfflinePostServlet.class,
-			requestParams=@RequestParams({
+			value=url,policy=OfflinePostServlet.class,
+			requestParams=@Params({
 					@Param("username"),
 					@Param("pass"),
 					@Param("did")}))

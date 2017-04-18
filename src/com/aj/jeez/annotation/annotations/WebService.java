@@ -8,7 +8,8 @@ import java.lang.annotation.ElementType;
 
 import javax.servlet.annotation.WebInitParam;
 
-import com.aj.jeez.JEEZServlet;
+import com.aj.jeez.policy.GetServlet;
+import com.aj.jeez.templating.JEEZServlet;
 
 /**
  * @author AJoan */
@@ -17,28 +18,26 @@ import com.aj.jeez.JEEZServlet;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface WebService {   
-   
-   /**For WebServlet*/
-   
-   boolean asyncSupported() default false;
-   
-   WebInitParam[] initParams() default {};
-   
-   int loadOnStartup() default -1;
-   
-   String urlPattern(); 
-   
-   /**For WebService*/
-   
-   String ID();
-   
-   Class<? extends JEEZServlet> policy();
-   
-   boolean requireAuth() default false;
-   
-   RequestParams requestParams() default @RequestParams;
-   
-   JSONOUTParams jsonOutParams() default @JSONOUTParams ;
-   
-   Class<?>[] checkClasses()default {};
+
+	/**For WebServlet*/
+
+	String value(); //urlPattern
+
+	boolean asyncSupported() default false;
+
+	WebInitParam[] initParams() default {};
+
+	int loadOnStartup() default -1;
+
+	/**For WebService*/
+
+	Class<? extends JEEZServlet> policy() default GetServlet.class;
+
+	boolean requireAuth() default false;
+
+	Params requestParams() default @Params;
+
+	Params jsonOutParams() default @Params ;
+
+	Class<?>[] checkClasses()default {};
 }

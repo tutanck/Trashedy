@@ -8,7 +8,7 @@ import com.aj.tools.jr.JR;
 import org.json.JSONObject;
 
 import com.aj.jeez.annotation.annotations.Param;
-import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.db.UserSessionDB;
 import com.aj.mood.users.profile.service.core.UserProfileCore;
@@ -25,7 +25,6 @@ import com.aj.moodtools.servletspolicy.OnlinePostServlet;
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
 public class UpdateProfileService{
 	 public final static String url="/user/update";
-	 public final static String id="user_update";
 
 	/**
 	 * @description update user's profile
@@ -34,8 +33,8 @@ public class UpdateProfileService{
 	 * @throws DBException 
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
-	@WebService(ID=id,urlPattern=url,policy = OnlinePostServlet.class,
-			requestParams=@RequestParams(
+	@WebService(value=url,policy = OnlinePostServlet.class,
+			requestParams=@Params(
 					value={@Param("username"),@Param("email")},
 			optionals={@Param("phone"),@Param("lastname"),@Param("firstname"),@Param("birthdate")}))
 	public static JSONObject updateProfile(

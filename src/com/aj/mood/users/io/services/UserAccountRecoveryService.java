@@ -7,7 +7,7 @@ import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
 import com.aj.jeez.annotation.annotations.Param;
-import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.services.core.UserIOCore;
 import com.aj.moodtools.db.DBException;
@@ -25,7 +25,6 @@ import com.aj.moodtools.servletspolicy.OfflinePostServlet;
  * @author Joan */
 public class UserAccountRecoveryService {
 	public final static String url="/account/recover";
-	public final static String id="recover_account";
 
 	/**
 	 * @description send an email with MD5 generated temporary access key for access recover to the user
@@ -34,8 +33,8 @@ public class UserAccountRecoveryService {
 	 * @throws DBException
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
-	@WebService(ID=id,urlPattern=url,policy=OfflinePostServlet.class,
-			requestParams=@RequestParams({@Param("email")}))
+	@WebService(value=url,policy=OfflinePostServlet.class,
+			requestParams=@Params({@Param("email")}))
 	public static JSONObject accessRecovery(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {

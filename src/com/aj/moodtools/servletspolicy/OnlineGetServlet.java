@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 
 import com.aj.jeez.policy.GetServlet;
-
+import com.aj.jeez.templating.Param;
 import com.aj.mood.users.io.db.UserSessionDB;
 
 /**
@@ -17,8 +17,8 @@ public class OnlineGetServlet extends GetServlet{
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		super.requireAuth=true;
-		super.expectedIn.add("skey");
+		super.auth=true;
+		super.requestParams.addExpected(new Param("skey"));
 	}
 
 	@Override

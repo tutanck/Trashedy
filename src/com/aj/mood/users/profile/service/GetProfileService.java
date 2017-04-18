@@ -10,7 +10,7 @@ import com.mongodb.DBObject;
 import org.json.JSONObject;
 
 import com.aj.jeez.annotation.annotations.Param;
-import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.db.UserSessionDB;
 import com.aj.mood.users.profile.service.core.UserProfileCore;
@@ -26,7 +26,6 @@ import com.aj.moodtools.servletspolicy.OnlineGetServlet;
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
 public class GetProfileService{
 	public final static String url="/user/profile";
-	public final static String id="user_profile";
 
 	/** 
 	 * return user's complete profile information 
@@ -36,8 +35,8 @@ public class GetProfileService{
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
-	@WebService(ID=id,urlPattern=url,policy=OnlineGetServlet.class,
-			requestParams=@RequestParams(optionals={@Param("uther")}))
+	@WebService(value=url,policy=OnlineGetServlet.class,
+			requestParams=@Params(optionals={@Param("uther")}))
 	public static JSONObject getProfile(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	

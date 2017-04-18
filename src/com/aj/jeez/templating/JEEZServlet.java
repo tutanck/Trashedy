@@ -1,11 +1,13 @@
-package com.aj.jeez;
+package com.aj.jeez.templating;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,10 +16,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.aj.jeez.annotation.annotations.Checkout;
 import com.aj.jeez.annotation.core.CheckoutsRadar;
+import com.aj.jeez.annotation.core.ServletsManager;
 import com.aj.jeez.annotation.exceptions.CheckoutAnnotationMisuseException;
 import com.aj.jeez.exceptions.JEEZException;
 import com.aj.tools.Mr;
@@ -26,158 +30,138 @@ import com.aj.tools.jr.JR;
 
 
 /**
- * Abstract servlet-template as a basis for all the JEEZServlets policies.
- * JEEZServlet defines some useful default methods that can help to connect the services layer
- * outside of the server to any client that uses HTTP requests to communicate with the exposed services.
- * This class is abstract and must be extended and override a least one HTTP doMethod
- * (doGet,doPost,doPut,doDelete) to be usable.
- * Its descendants can as well be used as : 
- * -a real servlet 
- * -or just as a template used by the @WebService annotation to dynamically add servlets that will follow the template with specific configuration for each of them
- * -or both : in that case each dynamically created servlet will override the default template configuration with its specific parameters specified in the annotation. 
- * * @author Anagbla Joan */
+ * @author Anagbla Joan */
 public abstract class JEEZServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 
+	/*PRIVATE ATTRIBUTES*/
 
 	/**
-	 * The set that contains all the names of parameters
-	 * JEEZ needs to initialize jeezServlets */
-	private final Map<String,Object> jeezAttr = new HashMap<String,Object>();
+	 * The url pattern of the servlet */
+	private String url;
 
 	/**
 	 * The qualified name of the class where to find 
 	 * the serice's method to call */
-	protected String serviceClass=null; 
+	private String sC; 
 
 	/**
 	 * The qualified name of the serice's method 
 	 * to be called */
-	protected String serviceMethod=null;
+	private String sM;
+
+	/**
+	 * The servlet checkouts by checkClass */
+	private Map<Class<?>,Set<Method>> checkouts;
+
+
+
+	/*PROTECTED ATTRIBUTES*/
 
 	/**
 	 * Specify if the underlying service 
-	 * need to the user to be authenticated or not */
-	protected boolean requireAuth = false;
+	 * need the user to be authenticated or not */
+	protected Boolean auth = null;
 
 	/**
-	 * The set of incoming parameters names required 
-	 * for the underlying service to work properly */
-	protected final Set<String> expectedIn=new HashSet<String>();
+	 * The set of incoming parameters required and optional
+	 * known by the underlying service  */
+	protected final Params requestParams = new Params() ; 
 
 	/**
-	 * The set of outgoing parameters names required 
-	 * for the client to work properly */
-	protected final Set<String> expectedOut=new HashSet<String>();
-
-	/**
-	 * The set of incoming additional parameters names  
-	 *  taken into account by the underlying service */
-	protected final Set<String> optionalIn=new HashSet<String>(); 
-
-	//N'est pas tres important cote server mais pour generer le client , c'est indispensable de savoir l'integralite des noms de params qu'ue servlet peut retourner (pour generer le reviver)
-	/**
-	 * The set of outgoing additional parameters names  
-	 *  taken into account by the client */
-	protected final Set<String> optionalOut=new HashSet<String>();
+	 * The set of outgoing parameters required and optional
+	 * known by the underlying service */
+	protected Params jsonOutParams = new Params();
 
 	/**
 	 * The set of test classes where to find 
 	 * the test methods to execute after business */
 	protected final Set<Class<?>> checkClasses = new HashSet<Class<?>>();
 
-	private Map<Class<?>,Set<Method>> checkouts;
-
-	//initialization block 
-	{	//act as a global reference to the class attributes
-		jeezAttr.put("serviceClass",this.serviceClass); 
-		jeezAttr.put("serviceMethod",this.serviceMethod);
-		jeezAttr.put("requireAuth",this.requireAuth); 
-		jeezAttr.put("expectedIn",this.expectedIn);
-		jeezAttr.put("expectedOut",this.expectedOut);
-		jeezAttr.put("optionalIn",this.optionalIn);
-		jeezAttr.put("optionalOut",this.optionalOut);
-		jeezAttr.put("checkClasses",this.checkClasses);
-	}
 
 
-	/**
-	 * Default initialization of the JEEZServlet attributes.
-	 * -----------------------------------------------------------
-	 * This method favors the dynamic template initialization
-	 * (using the annotation @WebService parameters)
-	 * to the static template initialization
-	 * (direct setting from servlet class attributes)
-	 * Thus, dynamically adding a servlet via the
-	 * @WebService annotation will override default attributes
-	 * set in the sevlet policy (servlet's template) class
-	 * for {this} dynamically added servlet with the attributes 
-	 * specified in the @WebService annotation EXECPT for the
-	 * checkClasses for whom @WebService parameters are added to the set 
-	 * of checkClasses already defined in the template 
-	 * -----------------------------------------------------------
-	 * However, if an attribute is not specified 
-	 * in the @WebService annotation
-	 * this attribute will not be modified in the servlet 
-	 * and will keep its policy's default value.
-	 * -----------------------------------------------------------
-	 * Anyway, if you specify an <init-param> in the web.xml
-	 * for a JEEZServlet's descendant JEEZ will not be able 
-	 * to modify the corresponding JEEZServlet's attribute. 
-	 * -----------------------------------------------------------
-	 * This entire method is only useful in case of
-	 * using the @WebService annotation 
-	 * else (should and will) not be executed.
-	 * It will update (set and override) JEEZServlet attributes
-	 * present in the @WebService annotations*/
-	@Override @SuppressWarnings("unchecked")
+
 	public void init() throws ServletException {
 		super.init();
-		
-		System.out.println("JEEZServlet/init::"+getClass().getCanonicalName()+" : new instance initialisation requested for service");
-		
+
+		System.out.println("JEEZServlet/init:: "+getClass().getCanonicalName()+" : new instance requested...");
+
 		Enumeration<String> servletInitParamsNames = getInitParameterNames();
 		while(servletInitParamsNames.hasMoreElements()){ 
 			String paramName = servletInitParamsNames.nextElement();
-			System.out.println("JEEZ just found in ServletConfig an init parameter named '"+paramName+"'.");
-			if(jeezAttr.containsKey(paramName)){
-				String paramValue = getInitParameter(paramName);
-				System.out.println("   --->JEEZServlet/init::");
-				System.out.println("       *getInitParameter('"+paramName+"') = '"+paramValue+"'");
-				System.out.println("       *bf::jeez."+paramName+" = "+jeezAttr.get(paramName));
 
-				switch (paramName) {
-				case "serviceClass":
-					this.serviceClass=paramValue;
-					System.out.println("       *af::jeez."+paramName+" = "+this.serviceClass);
-					break;
-				case "serviceMethod":
-					this.serviceMethod=paramValue;
-					System.out.println("       *af::jeez."+paramName+" = "+this.serviceMethod);
-					break;
-				case "requireAuth":
-					this.requireAuth = Boolean.parseBoolean(paramValue);
-					System.out.println("       *af::jeez."+paramName+" = "+this.requireAuth);
-					break;	
-				case "checkClasses":
-					try {//TODO tester 
-						Stretch.addClassesToSet((Set<Class<?>>)jeezAttr.get(paramName), paramValue);
-						checkouts = CheckoutsRadar.findAnnotatedServices(checkClasses);
-					} catch (ClassNotFoundException | CheckoutAnnotationMisuseException e) {						
-						throw new RuntimeException(e);
+			if(ServletsManager.JZID.equals(paramName)){
+				String paramValue = getInitParameter(paramName);
+
+				JSONObject jzDriver = new JSONObject(paramValue);
+
+				System.out.println("JEEZServlet/init::jzDriver="+jzDriver);
+
+				this.url=jzDriver.getString("url");
+				this.sC=jzDriver.getString("sC");
+				this.sM=jzDriver.getString("sM");
+
+				if(this.auth==null)
+					this.auth = jzDriver.getBoolean("auth");
+
+				try { 
+					Stretch.addClassesToSet(this.checkClasses,jzDriver.getString("ckC"));
+					checkouts = CheckoutsRadar.findAnnotatedServices(checkClasses);
+
+					JSONArray expIN = (JSONArray)jzDriver.get("expIN");
+					for(int i=0;i<expIN.length();i++){
+						Param param = Stretch.inflateParam(expIN.getJSONObject(i));
+						if(!requestParams.getExpecteds().contains(param))
+							requestParams.addExpected(param);
 					}
-					System.out.println("       *af::jeez."+paramName+" = "+jeezAttr.get(paramName));
-					break;	 			
-				default : //No worries we are covered by the above if-clause that checks it's a jeezAttr 
-					Stretch.reSet((Set<String>)jeezAttr.get(paramName), paramValue);
-					System.out.println("       *af::jeez."+paramName+" = "+jeezAttr.get(paramName));
-					break;		
-				}
+					
+					JSONArray optIN = (JSONArray)jzDriver.get("optIN");
+					for(int i=0;i<optIN.length();i++){
+						Param param = Stretch.inflateParam(optIN.getJSONObject(i));
+						if(!requestParams.getOptionals().contains(param))
+							requestParams.addOptional(param);
+					}
+					
+					JSONArray expOut = (JSONArray)jzDriver.get("expOut");
+					for(int i=0;i<expOut.length();i++){
+						Param param = Stretch.inflateParam(expOut.getJSONObject(i));
+						if(!requestParams.getExpecteds().contains(param))
+							requestParams.addExpected(param);
+					}
+					
+					JSONArray optOut = (JSONArray)jzDriver.get("optOut");
+					for(int i=0;i<optOut.length();i++){
+						Param param = Stretch.inflateParam(optOut.getJSONObject(i));
+						if(!requestParams.getOptionals().contains(param))
+							requestParams.addOptional(param);
+					}
+
+
+				} catch (ClassNotFoundException | CheckoutAnnotationMisuseException e) 
+				{throw new ServletException(e);}
+
+
+
+				System.out.println("JEEZServlet/init::THIS : '"+toString()+"'");
 			} 
 		}
-		
-		System.out.println("JEEZServlet/init::"+serviceClass+"."+serviceMethod+" initialised and now waiting for call...");
+
+		System.out.println("JEEZServlet/init::"+sC+"."+sM+" initialised and now waiting for call...");
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -207,13 +191,13 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletRequest request,
 			HttpServletResponse response
 			)throws Exception {
-		
-		System.out.println("JEEZServlet/beforeBusiness::"+serviceClass+"."+serviceMethod+" --> before business...");
+
+		System.out.println("JEEZServlet/beforeBusiness::"+sC+"."+sM+" --> before business...");
 
 		response.setContentType("text/plain");
 
 		JSONObject params = new JSONObject();
-
+		/*
 		Map<String,String>requestParams=Mr.refine(request.getParameterMap());
 
 		System.out.println("JEEZServlet/beforeBusiness::requestParams : "+requestParams+" - expectedIn : "+expectedIn +" - expectedOut : "+expectedOut);
@@ -242,14 +226,14 @@ public abstract class JEEZServlet extends HttpServlet{
 					params,(JSONObject) res.get("supportedParams"));
 		}
 
-		if(requireAuth && !isAuth(request,params)){
+		if(auth && !isAuth(request,params)){
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "USER UNAUTHENTICATED");
 			return null;
-		}else if(!requireAuth && isAuth(request,params)){
+		}else if(!auth && isAuth(request,params)){
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "USER ALREADY AUTHENTICATED");
 			return null;
 		}
-
+		 */
 		return params;
 	}
 
@@ -361,9 +345,9 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletResponse response,
 			Object result
 			)throws Exception {
-		
-		System.out.println("JEEZServlet/beforeBusiness::"+serviceClass+"."+serviceMethod+" --> after business...");
-		
+
+		System.out.println("JEEZServlet/beforeBusiness::"+sC+"."+sM+" --> after business...");
+
 		if(!resultIsOK(result)) {
 			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARILY UNAVAILABLE");
 			System.out.println("result failed to satisfy some postconditions");
@@ -393,12 +377,12 @@ public abstract class JEEZServlet extends HttpServlet{
 				Checkout chk = checkout.getAnnotation(Checkout.class);
 				String chkName=chk.value().length()==0?checkClass.getCanonicalName()+"."+checkout.getName():chk.value();
 				try{
-					boolean approved=(boolean)checkout.invoke(checkClass.newInstance(), new Object[]{result,this.expectedOut.toArray(new String[]{}),this.optionalOut.toArray(new String[]{})});
-					if(!approved)
-						if(chk.clientsafe())
-							return false;
-						else
-							System.out.println("JEEZServlet/resultIsOK:: Checkout '"+chkName+"' failed with no consequences on the service '"+serviceClass+"."+serviceMethod+"' 's result.");
+					//	boolean approved=(boolean)checkout.invoke(checkClass.newInstance(), new Object[]{result,this.expectedOut.toArray(new String[]{}),this.optionalOut.toArray(new String[]{})});
+					///if(!approved)
+					if(chk.clientsafe())
+						return false;
+					else
+						System.out.println("JEEZServlet/resultIsOK:: Checkout '"+chkName+"' failed with no consequences on the service '"+sC+"."+sM+"' 's result.");
 				}catch (Exception e) {return chk.clientsafe();}
 			}
 		}
@@ -419,9 +403,9 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletResponse response,
 			JSONObject params
 			)throws Exception {		
-		System.out.println("JEEZServlet/doBusiness:: static call of : "+this.serviceClass+"."+this.serviceMethod+"("+params+")");
-		Class<?> serviceClass=Class.forName(this.serviceClass);	
-		Method m = serviceClass.getMethod(this.serviceMethod, new Class[]{JSONObject.class});
+		System.out.println("JEEZServlet/doBusiness:: static call of : "+this.sC+"."+this.sM+"("+params+")");
+		Class<?> serviceClass=Class.forName(this.sC);	
+		Method m = serviceClass.getMethod(this.sM, new Class[]{JSONObject.class});
 		return m.invoke(serviceClass.newInstance(), new Object[]{params});
 	}	 
 
@@ -453,4 +437,22 @@ public abstract class JEEZServlet extends HttpServlet{
 		}
 	}
 
+	public String toString(){
+		String jz ="";
+		jz+="service:"+this.sC+"."+this.sM;
+		jz+=" - url:"+this.url;
+		jz+=" - auth:"+this.auth;	
+		List<String> ckList= new ArrayList<>();
+		for(Map.Entry<Class<?>,Set<Method>> entry : checkouts.entrySet())
+			for(Method m : entry.getValue())
+				ckList.add(entry.getKey().getCanonicalName()+"."+m.getName());		
+		jz+=" - checkouts:"+ckList;
+		jz+="\n- reqestParams:{"+requestParams+"}";
+		jz+="\n- jsonOutParams:{"+jsonOutParams+"}";
+		return jz;
+	}
+
+	/** 
+	 * @return The url of the servlet exposed to public */
+	public String getUrl() {return url;}
 }

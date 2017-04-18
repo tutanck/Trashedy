@@ -17,16 +17,15 @@ import com.aj.moodtools.servletspolicy.OnlinePostServlet;
  * @author Joan */
 public class SignoutService {
 	public final static String url="/signout";
-	public final static String servletName="signout";
 
 	/**
-	 * @description  Users logout service : Disconnects user from online mode
+	 * Users logout service : Disconnects user from online mode
 	 * @param params
 	 * @return
 	 * @throws DBException 
 	 * @throws ShouldNeverOccurException */
 	
-	@WebService(ID=servletName,urlPattern=url,policy=OnlinePostServlet.class)
+	@WebService(value=url,policy=OnlinePostServlet.class)
 	public static JSONObject logout(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException {

@@ -4,8 +4,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.aj.jeez.templating.Param;
+import com.aj.jeez.templating.Params;
 
 /**
  * Elastic Str(ing) : Cut - stick Strings separated by a comma.
@@ -19,11 +25,12 @@ public class Stretch {
 		String joined="";
 		Iterator<String> it = stringSet.iterator();
 		while(it.hasNext()){
-			String str=it.next();
-			joined+=it.hasNext()?str+",":str;
+			joined+=it.next();
+			if(it.hasNext())joined+=",";
 		}
 		return joined;
 	}
+
 
 	public static String join(
 			String... strings
@@ -32,6 +39,7 @@ public class Stretch {
 		stringSet.addAll(Arrays.asList(strings));
 		return join(stringSet);
 	}
+
 
 	public static String joinClasses(
 			Class<?>... classes
@@ -42,6 +50,7 @@ public class Stretch {
 		return join(classNames);
 	}
 
+
 	public static String[] split(
 			String string
 			) {
@@ -49,6 +58,7 @@ public class Stretch {
 			return new String[0];
 		return string.split("\\,");
 	}
+
 
 	public static Set<String> splitToSet(
 			String string
@@ -58,13 +68,25 @@ public class Stretch {
 				Collections.emptySet():new HashSet<String>(Arrays.asList(strTab));
 	}
 
-	public static List<String> splitToList(
-			String string
-			) {
-		String []strTab=split(string);
-		return strTab.length==0?
-				Collections.emptyList():Arrays.asList(strTab);
+
+	public static void addStringsToSet(
+			Set<String>set,
+			String paramListString
+			){
+		set.addAll(splitToSet(paramListString));
 	}
+
+
+	public static void addStringsToSet(
+			Set<String>set,
+			String paramListString,
+			boolean reset
+			){
+		Set<String> paramSet=splitToSet(paramListString);
+		if(reset)set.clear();
+		addStringsToSet(paramSet,paramListString);
+	}
+
 
 	public static Set<Class<?>> splitToClassSet(
 			String string
@@ -75,14 +97,6 @@ public class Stretch {
 		return classes;
 	}
 
-	public static void reSet(
-			Set<String>set,
-			String paramListString
-			){
-		Set<String> paramSet=splitToSet(paramListString);
-		set.clear();
-		set.addAll(paramSet);
-	}
 
 	public static void addClassesToSet(
 			Set<Class<?>>set,
@@ -91,6 +105,46 @@ public class Stretch {
 		set.addAll(splitToClassSet(paramListString));
 	}
 
+
+	public static void addClassesToSet(
+			Set<Class<?>>set,
+			String paramListString,
+			boolean reset
+			) throws ClassNotFoundException{
+		if(reset)set.clear();
+		addClassesToSet(set,paramListString);
+	}
+
+
+	public static Param inflateParams(
+			Params params,
+			JSONArray jsonParams,
+			boolean expected
+			) throws ClassNotFoundException, JSONException{	
+		for(int i=0;i<jsonParams.length();i++){
+			Param param = Stretch.inflateParam(jsonParams.getJSONObject(i));
+			
+				if(expected)
+					if(!params.getExpecteds().contains(param))
+					params.addExpected(param);else if(!params.get).contains(param))
+						params.addOptional(param);
+		}
+	}
+
+
+	public static Param inflateParam(
+			JSONObject jsonParam
+			) throws ClassNotFoundException, JSONException{	
+
+		Set<String> rules = new HashSet<>();
+		JSONArray jarRules = (JSONArray)jsonParam.get("rules");
+
+		for(int i=0; i<jarRules.length();i++)
+			rules.add(jarRules.getString(i));
+
+		return new Param(jsonParam.getString("name"),
+				Class.forName(jsonParam.getString("type")),rules);
+	}
 
 
 

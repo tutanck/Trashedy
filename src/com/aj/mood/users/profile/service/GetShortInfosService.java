@@ -11,7 +11,7 @@ import org.bson.types.ObjectId;
 import org.json.JSONObject;
 
 import com.aj.jeez.annotation.annotations.Param;
-import com.aj.jeez.annotation.annotations.RequestParams;
+import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.profile.service.core.UserProfileCore;
 import com.aj.moodtools.db.DBException;
@@ -23,7 +23,6 @@ import com.aj.moodtools.servletspolicy.OnlineGetServlet;
  * @author AJoan */
  public class GetShortInfosService{
 	 public final static String url="/user/infos";
-	 public final static String servletName="user_infos";
  
 	/**
 	 * @description 
@@ -34,8 +33,8 @@ import com.aj.moodtools.servletspolicy.OnlineGetServlet;
 	 * @throws ShouldNeverOccurException 
 	 * @throws InvalidKeyException 
 	 * @throws AbsentKeyException */
-	 @WebService(ID=servletName,urlPattern=url,policy = OnlineGetServlet.class,
-				requestParams=@RequestParams({@Param("uther")}))
+	 @WebService(value=url,policy = OnlineGetServlet.class,
+				requestParams=@Params({@Param("uther")}))
 	public static JSONObject getShortInfos(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {		 
