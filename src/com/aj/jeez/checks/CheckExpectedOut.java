@@ -3,6 +3,7 @@ package com.aj.jeez.checks;
 import org.json.JSONObject;
 
 import com.aj.jeez.annotation.annotations.Checkout;
+import com.aj.jeez.templating.TemplateParam;
 import com.aj.jeez.templating.TemplateParams;
 
 public class CheckExpectedOut {
@@ -12,8 +13,8 @@ public class CheckExpectedOut {
 			JSONObject result,
 			TemplateParams jsonOut
 			){
-		
-	
-		return false;
+		for(TemplateParam tp : jsonOut.getExpecteds())
+			if(!result.has(tp.getName())) return false;
+		return true;
 	};	
 }
