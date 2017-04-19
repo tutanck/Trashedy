@@ -116,18 +116,23 @@ public class Stretch {
 	}
 
 
-	public static Param inflateParams(
+	
+	
+	
+	
+	public static void inflateParams(
 			Params params,
 			JSONArray jsonParams,
 			boolean expected
 			) throws ClassNotFoundException, JSONException{	
+		
 		for(int i=0;i<jsonParams.length();i++){
 			Param param = Stretch.inflateParam(jsonParams.getJSONObject(i));
-			
-				if(expected)
-					if(!params.getExpecteds().contains(param))
-					params.addExpected(param);else if(!params.get).contains(param))
-						params.addOptional(param);
+			if(expected){
+				if(!params.getExpecteds().contains(param))
+					params.addExpected(param);			}else 
+				if(!params.getOptionals().contains(param))
+					params.addOptional(param);
 		}
 	}
 

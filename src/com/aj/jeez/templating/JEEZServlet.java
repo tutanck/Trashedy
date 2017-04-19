@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -108,62 +107,21 @@ public abstract class JEEZServlet extends HttpServlet{
 					Stretch.addClassesToSet(this.checkClasses,jzDriver.getString("ckC"));
 					checkouts = CheckoutsRadar.findAnnotatedServices(checkClasses);
 
-					JSONArray expIN = (JSONArray)jzDriver.get("expIN");
-					for(int i=0;i<expIN.length();i++){
-						Param param = Stretch.inflateParam(expIN.getJSONObject(i));
-						if(!requestParams.getExpecteds().contains(param))
-							requestParams.addExpected(param);
-					}
-					
-					JSONArray optIN = (JSONArray)jzDriver.get("optIN");
-					for(int i=0;i<optIN.length();i++){
-						Param param = Stretch.inflateParam(optIN.getJSONObject(i));
-						if(!requestParams.getOptionals().contains(param))
-							requestParams.addOptional(param);
-					}
-					
-					JSONArray expOut = (JSONArray)jzDriver.get("expOut");
-					for(int i=0;i<expOut.length();i++){
-						Param param = Stretch.inflateParam(expOut.getJSONObject(i));
-						if(!requestParams.getExpecteds().contains(param))
-							requestParams.addExpected(param);
-					}
-					
-					JSONArray optOut = (JSONArray)jzDriver.get("optOut");
-					for(int i=0;i<optOut.length();i++){
-						Param param = Stretch.inflateParam(optOut.getJSONObject(i));
-						if(!requestParams.getOptionals().contains(param))
-							requestParams.addOptional(param);
-					}
-
+					Stretch.inflateParams(requestParams, (JSONArray)jzDriver.get("expIN"), true);
+					Stretch.inflateParams(requestParams, (JSONArray)jzDriver.get("optIN"), false);
+					Stretch.inflateParams(jsonOutParams, (JSONArray)jzDriver.get("expOut"), true);
+					Stretch.inflateParams(jsonOutParams, (JSONArray)jzDriver.get("optOut"), false);
 
 				} catch (ClassNotFoundException | CheckoutAnnotationMisuseException e) 
 				{throw new ServletException(e);}
 
-
-
 				System.out.println("JEEZServlet/init::THIS : '"+toString()+"'");
 			} 
 		}
-
 		System.out.println("JEEZServlet/init::"+sC+"."+sM+" initialised and now waiting for call...");
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	
 
 	/**
 	 * The default method that check the connectivity of the related service
@@ -197,13 +155,13 @@ public abstract class JEEZServlet extends HttpServlet{
 		response.setContentType("text/plain");
 
 		JSONObject params = new JSONObject();
-		/*
-		Map<String,String>requestParams=Mr.refine(request.getParameterMap());
+		
+		Map<String,String>effectiveRequestParams=Mr.refine(request.getParameterMap());
 
-		System.out.println("JEEZServlet/beforeBusiness::requestParams : "+requestParams+" - expectedIn : "+expectedIn +" - expectedOut : "+expectedOut);
+		System.out.println("JEEZServlet/beforeBusiness::effectiveRequestParams : "+effectiveRequestParams+" formalRequestParams : "+requestParams);
 
-		for(String expected : expectedIn) {
-			JSONObject res = paramIsValid(requestParams,expected,params,true);
+		for(Param expected : requestParams.getExpecteds()) {
+			JSONObject res = paramIsValid(effectiveRequestParams,expected,params,true);
 			if (!res.getBoolean("valid")){
 				System.out.println(" -> Not Valid");
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL MISUSED");
@@ -214,8 +172,8 @@ public abstract class JEEZServlet extends HttpServlet{
 					params,(JSONObject) res.get("supportedParams"));
 		}
 
-		for(String optional : optionalIn){
-			JSONObject res = paramIsValid(requestParams,optional,params,false);
+		for(Param optional : requestParams.getOptionals()){
+			JSONObject res = paramIsValid(effectiveRequestParams,optional,params,false);
 			if (!res.getBoolean("valid")){
 				System.out.println(" -> Not Valid");
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL MISUSED");
@@ -233,7 +191,7 @@ public abstract class JEEZServlet extends HttpServlet{
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "USER ALREADY AUTHENTICATED");
 			return null;
 		}
-		 */
+		 
 		return params;
 	}
 
@@ -346,13 +304,14 @@ public abstract class JEEZServlet extends HttpServlet{
 			Object result
 			)throws Exception {
 
-		System.out.println("JEEZServlet/beforeBusiness::"+sC+"."+sM+" --> after business...");
+		System.out.println("JEEZServlet/afterBusiness::"+sC+"."+sM+" --> after business...");
 
 		if(!resultIsOK(result)) {
 			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARILY UNAVAILABLE");
 			System.out.println("result failed to satisfy some postconditions");
 			return;
 		}
+		System.out.println("result satisfy all postconditions");
 		response.getWriter().print(result);
 	}	
 
@@ -377,8 +336,8 @@ public abstract class JEEZServlet extends HttpServlet{
 				Checkout chk = checkout.getAnnotation(Checkout.class);
 				String chkName=chk.value().length()==0?checkClass.getCanonicalName()+"."+checkout.getName():chk.value();
 				try{
-					//	boolean approved=(boolean)checkout.invoke(checkClass.newInstance(), new Object[]{result,this.expectedOut.toArray(new String[]{}),this.optionalOut.toArray(new String[]{})});
-					///if(!approved)
+						//boolean approved=(boolean)checkout.invoke(checkClass.newInstance(), new Object[]{result,this.expectedOut.toArray(new String[]{}),this.optionalOut.toArray(new String[]{})});
+					//TODO if(!approved)
 					if(chk.clientsafe())
 						return false;
 					else
@@ -437,6 +396,8 @@ public abstract class JEEZServlet extends HttpServlet{
 		}
 	}
 
+	
+	
 	public String toString(){
 		String jz ="";
 		jz+="service:"+this.sC+"."+this.sM;
