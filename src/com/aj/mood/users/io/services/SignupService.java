@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import com.aj.jeez.annotation.annotations.Param;
 import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
-import com.aj.jeez.checks.CheckExpectedOut;
 import com.aj.regina.DBCommit;
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
@@ -39,7 +38,10 @@ public class SignupService {
 	 * @throws AbsentKeyException */
 	@WebService(
 			value=url,policy = OfflinePostServlet.class,
-			checkClasses={CheckExpectedOut.class},
+			jsonOutParams=@Params({
+				@Param("username"),
+				@Param("pass"),
+				@Param("email")}),
 			requestParams=@Params({
 				@Param("username"),
 				@Param("pass"),

@@ -24,6 +24,7 @@ import com.aj.jeez.annotation.core.FormalParamTypeControler;
 import com.aj.jeez.annotation.core.ServletsManager;
 import com.aj.jeez.annotation.exceptions.CheckoutAnnotationMisuseException;
 import com.aj.jeez.annotation.exceptions.ParameterTypingException;
+import com.aj.jeez.checks.CheckExpectedOut;
 import com.aj.jeez.exceptions.JEEZError;
 import com.aj.tools.MapRefiner;
 import com.aj.tools.Stretch;
@@ -112,14 +113,17 @@ public abstract class JEEZServlet extends HttpServlet{
 					this.auth = jzsDriver.getBoolean("auth");
 
 				try { 
-					Stretch.addClassesToSet(this.checkClasses,jzsDriver.getString("ckc"));
-					checkouts = CheckoutsRadar.findAnnotatedServices(checkClasses);
-
 					ParamsInflator.inflateParams(requestParams, (JSONArray)jzsDriver.get("expin"), true);
 					ParamsInflator.inflateParams(requestParams, (JSONArray)jzsDriver.get("optin"), false);
 					ParamsInflator.inflateParams(jsonOutParams, (JSONArray)jzsDriver.get("expout"), true);
 					ParamsInflator.inflateParams(jsonOutParams, (JSONArray)jzsDriver.get("optout"), false);
-
+					
+					if(!jsonOutParams.expectedsEmpty() || !jsonOutParams.optionalsEmpty())
+						checkClasses.add(CheckExpectedOut.class);
+					
+					Stretch.addClassesToSet(this.checkClasses,jzsDriver.getString("ckc"));
+					checkouts = CheckoutsRadar.findAnnotatedServices(checkClasses);
+										
 				} catch (ClassNotFoundException | CheckoutAnnotationMisuseException e) 
 				{throw new ServletException(e);}
 
