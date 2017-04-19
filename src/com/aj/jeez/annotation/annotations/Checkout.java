@@ -12,6 +12,5 @@ import java.lang.annotation.ElementType;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Checkout {
-	String value() default "";
-	boolean clientsafe() default false;
+	boolean value() default false; //clientsafe
 }

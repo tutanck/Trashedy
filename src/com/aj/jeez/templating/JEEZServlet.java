@@ -20,10 +20,12 @@ import org.json.JSONObject;
 
 import com.aj.jeez.annotation.annotations.Checkout;
 import com.aj.jeez.annotation.core.CheckoutsRadar;
+import com.aj.jeez.annotation.core.FormalParamTypeControler;
 import com.aj.jeez.annotation.core.ServletsManager;
 import com.aj.jeez.annotation.exceptions.CheckoutAnnotationMisuseException;
-import com.aj.jeez.exceptions.JEEZException;
-import com.aj.tools.Mr;
+import com.aj.jeez.annotation.exceptions.ParameterTypingException;
+import com.aj.jeez.exceptions.JEEZError;
+import com.aj.tools.MapRefiner;
 import com.aj.tools.Stretch;
 import com.aj.tools.jr.JR;
 
@@ -38,6 +40,11 @@ public abstract class JEEZServlet extends HttpServlet{
 	/**
 	 * The url pattern of the servlet */
 	private String url;
+
+	/**
+	 * HTTP method
+	 */
+	private Integer HTTPMethod=null;
 
 	/**
 	 * The qualified name of the class where to find 
@@ -65,12 +72,12 @@ public abstract class JEEZServlet extends HttpServlet{
 	/**
 	 * The set of incoming parameters required and optional
 	 * known by the underlying service  */
-	protected final Params requestParams = new Params() ; 
+	protected final TemplateParams requestParams = new TemplateParams() ; 
 
 	/**
 	 * The set of outgoing parameters required and optional
 	 * known by the underlying service */
-	protected Params jsonOutParams = new Params();
+	protected TemplateParams jsonOutParams = new TemplateParams();
 
 	/**
 	 * The set of test classes where to find 
@@ -92,25 +99,26 @@ public abstract class JEEZServlet extends HttpServlet{
 			if(ServletsManager.JZID.equals(paramName)){
 				String paramValue = getInitParameter(paramName);
 
-				JSONObject jzDriver = new JSONObject(paramValue);
+				JSONObject jzsDriver = new JSONObject(paramValue);
 
-				System.out.println("JEEZServlet/init::jzDriver="+jzDriver);
+				System.out.println("JEEZServlet/init::jzsDriver="+jzsDriver);
 
-				this.url=jzDriver.getString("url");
-				this.sC=jzDriver.getString("sC");
-				this.sM=jzDriver.getString("sM");
+				this.url=jzsDriver.getString("url");
+				this.HTTPMethod=jzsDriver.getInt("httpm");
+				this.sC=jzsDriver.getString("sc");
+				this.sM=jzsDriver.getString("sm");
 
 				if(this.auth==null)
-					this.auth = jzDriver.getBoolean("auth");
+					this.auth = jzsDriver.getBoolean("auth");
 
 				try { 
-					Stretch.addClassesToSet(this.checkClasses,jzDriver.getString("ckC"));
+					Stretch.addClassesToSet(this.checkClasses,jzsDriver.getString("ckc"));
 					checkouts = CheckoutsRadar.findAnnotatedServices(checkClasses);
 
-					Stretch.inflateParams(requestParams, (JSONArray)jzDriver.get("expIN"), true);
-					Stretch.inflateParams(requestParams, (JSONArray)jzDriver.get("optIN"), false);
-					Stretch.inflateParams(jsonOutParams, (JSONArray)jzDriver.get("expOut"), true);
-					Stretch.inflateParams(jsonOutParams, (JSONArray)jzDriver.get("optOut"), false);
+					ParamsInflator.inflateParams(requestParams, (JSONArray)jzsDriver.get("expin"), true);
+					ParamsInflator.inflateParams(requestParams, (JSONArray)jzsDriver.get("optin"), false);
+					ParamsInflator.inflateParams(jsonOutParams, (JSONArray)jzsDriver.get("expout"), true);
+					ParamsInflator.inflateParams(jsonOutParams, (JSONArray)jzsDriver.get("optout"), false);
 
 				} catch (ClassNotFoundException | CheckoutAnnotationMisuseException e) 
 				{throw new ServletException(e);}
@@ -121,7 +129,7 @@ public abstract class JEEZServlet extends HttpServlet{
 		System.out.println("JEEZServlet/init::"+sC+"."+sM+" initialised and now waiting for call...");
 	}
 
-	
+
 
 	/**
 	 * The default method that check the connectivity of the related service
@@ -154,139 +162,97 @@ public abstract class JEEZServlet extends HttpServlet{
 
 		response.setContentType("text/plain");
 
-		JSONObject params = new JSONObject();
-		
-		Map<String,String>effectiveRequestParams=Mr.refine(request.getParameterMap());
+		JSONObject validParams = new JSONObject();
 
-		System.out.println("JEEZServlet/beforeBusiness::effectiveRequestParams : "+effectiveRequestParams+" formalRequestParams : "+requestParams);
+		Map<String,String>effectiveRequestParams=MapRefiner.refine(request.getParameterMap());
 
-		for(Param expected : requestParams.getExpecteds()) {
-			JSONObject res = paramIsValid(effectiveRequestParams,expected,params,true);
+		System.out.println("JEEZServlet/beforeBusiness::effectiveRequestParams : "+effectiveRequestParams+" - formalRequestParams : "+requestParams);
+
+		for(TemplateParam expected : requestParams.getExpecteds()) {
+			JSONObject res = paramIsValid(effectiveRequestParams,expected,validParams,true);
 			if (!res.getBoolean("valid")){
 				System.out.println(" -> Not Valid");
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL MISUSED");
 				return null;
 			}
 			System.out.println(" -> Valid");
-			params = JR.merge(
-					params,(JSONObject) res.get("supportedParams"));
+			validParams = JR.merge(validParams,(JSONObject) res.get("validParams"));
 		}
 
-		for(Param optional : requestParams.getOptionals()){
-			JSONObject res = paramIsValid(effectiveRequestParams,optional,params,false);
+		for(TemplateParam optional : requestParams.getOptionals()){
+			JSONObject res = paramIsValid(effectiveRequestParams,optional,validParams,false);
 			if (!res.getBoolean("valid")){
 				System.out.println(" -> Not Valid");
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL MISUSED");
 				return null;
 			}
 			System.out.println(" -> Valid");
-			params = JR.merge(
-					params,(JSONObject) res.get("supportedParams"));
+			validParams = JR.merge(validParams,(JSONObject) res.get("validParams"));
 		}
 
-		if(auth && !isAuth(request,params)){
+		System.out.println("JEEZServlet/beforeBusiness::Finally ValidParams:"+validParams);
+
+		if(auth && !isAuth(request,validParams)){
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "USER UNAUTHENTICATED");
 			return null;
-		}else if(!auth && isAuth(request,params)){
+		}else if(!auth && isAuth(request,validParams)){
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "USER ALREADY AUTHENTICATED");
 			return null;
 		}
-		 
-		return params;
+
+		return validParams;
 	}
 
 
 	/**
 	 * Check if an incoming parameter is filled (exists and is not empty in the request)
 	 * and properly typed according to epnIn and opnIn definitions
-	 * @param requestParams
-	 * @param typedParameterName
-	 * @param supportedParams
+	 * @param effectiveParams
+	 * @param formalParam
+	 * @param validParams
 	 * @param strict
-	 * @return 
-	 * @throws JEEZException */
+	 * @return */
 	private final JSONObject paramIsValid(
-			Map<String,String>requestParams,
-			String typedParameterName,
-			JSONObject supportedParams,
+			Map<String,String>effectiveParams,
+			TemplateParam formalParam,
+			JSONObject validParams,
 			boolean strict
-			) throws JEEZException {
-		JSONObject notValid = new JSONObject()
-				.put("valid", false)
-				.put("supportedParams", supportedParams); //parameter not added to supportedParams
+			){
+		//Must be at the beginning to be unchanged
+		JSONObject invalid = new JSONObject().put("valid", false).put("validParams", validParams); 
+		JSONObject unchanged = new JSONObject().put("valid", true).put("validParams", validParams);
 
-		JSONObject noChanges= new JSONObject()
-				.put("valid", true)
-				.put("supportedParams", supportedParams); //parameter not added to supportedParams
+		String paramName = formalParam.getName();
+		Class<?> paramType = formalParam.getType();
 
-		//name:string --> {[0]:name(paramName) , [1]:string(paramType)}
-		String[] typedParameterTab = typedParameterName.split("\\:");
-		String paramName = typedParameterTab[0].trim();
-		System.out.print("    --->paramName : "+paramName);
+		//Debug
+		System.out.print("    --->paramName:"+paramName);
+		System.out.print(" && paramType:"+paramType);
+		System.out.print(" = "+effectiveParams.get(paramName)+" ");
 
 		//availability test
-		if(!requestParams.containsKey(paramName)
-				|| requestParams.get(paramName).equals("")
-				|| requestParams.get(paramName).equals("null")
-				|| requestParams.get(paramName)==null)
-			if (strict)
-				return notValid;
-			else
-				return noChanges;
+		if(effectiveParams.containsKey(paramName) && 
+				effectiveParams.get(paramName)!=null &&
+				!effectiveParams.get(paramName).equals("") && 
+				!effectiveParams.get(paramName).equals("null")
+				){
+			try {//typing test
+				if(EffectiveParamTyper.valid(
+						paramName, 
+						FormalParamTypeControler.typeToInt(paramType),
+						effectiveParams.get(paramName), validParams))	
+					//parameter added to validParams
 
-		//typing test
-		if (typedParameterTab.length >= 2) {//typedef is provided in the template
-			String paramType = typedParameterTab[1].trim().toLowerCase();
+					return new JSONObject() //updated with the valid parameter in addition
+							.put("valid", true)
+							.put("validParams", validParams); 
 
-			if(paramType.length()==0) //in case of empty string --> consider type as not defined
-				//Copy the supported parameter now typed into a restricted JSON(supportedParams) 
-				//(that contains only valid and typed epn and opn)
-				supportedParams.put(paramName, requestParams.get(paramName));
-			else
-				try {
-					System.out.print(" - paramType : "+paramType);
-					//Copy the supported parameter now typed into a restricted JSON(supportedParams) 
-					//(that contains only valid and typed epn and opn)
-					switch (paramType) {
-					case "int":
-						supportedParams.put(paramName, Integer.parseInt(requestParams.get(paramName)));
-						break;
-					case "long":
-						supportedParams.put(paramName, Long.parseLong(requestParams.get(paramName)));
-						break;
-					case "float":
-						supportedParams.put(paramName, Float.parseFloat(requestParams.get(paramName)));
-						break;
-					case "double":
-						supportedParams.put(paramName, Double.parseDouble(requestParams.get(paramName)));
-						break;
-					case "boolean":
-						String boolStr=requestParams.get(paramName);
-						if(!boolStr.equals("true") || !boolStr.equals("false"))
-							throw new IllegalArgumentException(paramName+"'s value: "+boolStr+" is not a boolean value");
-						supportedParams.put(paramName, Boolean.parseBoolean(requestParams.get(paramName)));
-						break;
-					case "string" :
-						supportedParams.put(paramName, requestParams.get(paramName));
-						break;
-						//Should Never occur ("parameters types have to be checked at deployment time")
-					default: throw new JEEZException(
-							"Unsupported type for expected parameter "+paramName+": "+paramType+". "
-									+ "Supported types are : int, long, float, double, boolean and string.");
-					}
-				} catch (IllegalArgumentException iae) {
-					iae.printStackTrace();
-					return notValid;
-				}
-		}else  //Copy the supported parameter now typed into a restricted JSON(supportedParams) 
-			//(that contains only valid and typed epn and opn)
-			supportedParams.put(paramName, requestParams.get(paramName));
-
-		return new JSONObject()
-				.put("valid", true)
-				.put("supportedParams", supportedParams); //updated with the valid parameter added
+			}catch (ParameterTypingException e) {
+				throw new JEEZError("#SNO : internal typing error");
+			}
+		}
+		return strict? invalid:unchanged; 
 	}
-
 
 	/**
 	 * Check if the result in the server response is sufficient and well formed (
@@ -308,10 +274,9 @@ public abstract class JEEZServlet extends HttpServlet{
 
 		if(!resultIsOK(result)) {
 			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARILY UNAVAILABLE");
-			System.out.println("result failed to satisfy some postconditions");
 			return;
 		}
-		System.out.println("result satisfy all postconditions");
+		System.out.println("result satisfied all clientsafe's checkouts");
 		response.getWriter().print(result);
 	}	
 
@@ -326,23 +291,24 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * @throws InvocationTargetException 
 	 * @throws IllegalArgumentException 
 	 * @throws IllegalAccessException */
-	protected boolean resultIsOK(//TODO tester
+	protected boolean resultIsOK(
 			Object result
 			) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException{
+		
 		for(Map.Entry<Class<?>,Set<Method>> entry: this.checkouts.entrySet()){
 			Class<?> checkClass=entry.getKey();	
+			
 			for(Method checkout : entry.getValue()){
-				System.out.println("JEEZServlet/resultIsOK:: static call of : "+checkClass+"."+checkout+"("+result+")");
+				String chkName=checkClass+"."+checkout;
+				System.out.println("JEEZServlet/resultIsOK:: static call of : "+chkName+"("+result+")");
 				Checkout chk = checkout.getAnnotation(Checkout.class);
-				String chkName=chk.value().length()==0?checkClass.getCanonicalName()+"."+checkout.getName():chk.value();
+
 				try{
-						//boolean approved=(boolean)checkout.invoke(checkClass.newInstance(), new Object[]{result,this.expectedOut.toArray(new String[]{}),this.optionalOut.toArray(new String[]{})});
-					//TODO if(!approved)
-					if(chk.clientsafe())
-						return false;
-					else
-						System.out.println("JEEZServlet/resultIsOK:: Checkout '"+chkName+"' failed with no consequences on the service '"+sC+"."+sM+"' 's result.");
-				}catch (Exception e) {return chk.clientsafe();}
+					if(!(boolean)checkout.invoke(checkClass.newInstance(), new Object[]{result,this.jsonOutParams})){
+						System.out.println("result failed to satisfy checkout '"+chkName+"'");
+						return !chk.value();							
+					}
+				}catch (Throwable t) {t.printStackTrace();return !chk.value();}
 			}
 		}
 		return true;
@@ -361,10 +327,10 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletRequest request,
 			HttpServletResponse response,
 			JSONObject params
-			)throws Exception {		
-		System.out.println("JEEZServlet/doBusiness:: static call of : "+this.sC+"."+this.sM+"("+params+")");
+			)throws Exception {			
 		Class<?> serviceClass=Class.forName(this.sC);	
 		Method m = serviceClass.getMethod(this.sM, new Class[]{JSONObject.class});
+		System.out.println("JEEZServlet/doBusiness:: static call of : "+this.sC+"."+m+"("+params+")");
 		return m.invoke(serviceClass.newInstance(), new Object[]{params});
 	}	 
 
@@ -390,18 +356,19 @@ public abstract class JEEZServlet extends HttpServlet{
 						request,response,
 						doBusiness(request,response,params)
 						);
-		}catch (Exception e){
-			e.printStackTrace();
+		}catch (Throwable t){
+			t.printStackTrace();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "AN INTERNAL SERVER ERROR OCCURRED");
 		}
 	}
 
-	
-	
+
+
 	public String toString(){
 		String jz ="";
 		jz+="service:"+this.sC+"."+this.sM;
 		jz+=" - url:"+this.url;
+		jz+=" - method:"+this.HTTPMethod;
 		jz+=" - auth:"+this.auth;	
 		List<String> ckList= new ArrayList<>();
 		for(Map.Entry<Class<?>,Set<Method>> entry : checkouts.entrySet())

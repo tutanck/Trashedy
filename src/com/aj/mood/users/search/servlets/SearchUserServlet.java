@@ -23,7 +23,7 @@ public class SearchUserServlet extends OnlineGetServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		super.expectedIn.addAll(Arrays.asList(new String[]{"query"}));
+	//	super.expectedIn.addAll(Arrays.asList(new String[]{"query"}));
 	}
 
 	@Override

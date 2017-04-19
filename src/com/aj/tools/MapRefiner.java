@@ -7,8 +7,9 @@ import java.util.*;
 /**
  * Mr : MapRefiner
  * @author ANAGBLA Joan */
+//TODO generiser ? iof string
 //TODO relire attentivement tt repose su ca
-public class Mr {
+public class MapRefiner {
 
 	/**
 	 * Reshape the input map from Map<String,String[]> to Map<String,String>
@@ -34,6 +35,29 @@ public class Mr {
 			Map<?,?> map
 	){
 		return new JSONObject(map);
+	}
+	
+	
+	public Entry<String,String> getEntry(
+			Map<String,String> map,
+			String key
+			){
+		return new Entry<String,String>(key,map.get(key));
+	}
+	
+	
+	public class Entry<K,V>{
+		
+		private K key;
+		private V val;
+		
+		public Entry(K key,V val) {
+			this.key=key;
+			this.val=val;
+		}
+		
+		public K getKey(){return key;}
+		public V getValue(){return val;}
 	}
 
 

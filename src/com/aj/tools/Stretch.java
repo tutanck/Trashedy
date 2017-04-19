@@ -6,13 +6,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.aj.jeez.templating.Param;
-import com.aj.jeez.templating.Params;
-
 /**
  * Elastic Str(ing) : Cut - stick Strings separated by a comma.
  * TODO make it generic : choose the separator character
@@ -115,44 +108,21 @@ public class Stretch {
 		addClassesToSet(set,paramListString);
 	}
 
-
 	
+	public static String stretchClasses(
+			Class<?>[]clazzs
+			){
+		String s="";
+		Iterator<Class<?>> it = new HashSet<>(Arrays.asList(clazzs)).iterator();
 	
-	
-	
-	public static void inflateParams(
-			Params params,
-			JSONArray jsonParams,
-			boolean expected
-			) throws ClassNotFoundException, JSONException{	
-		
-		for(int i=0;i<jsonParams.length();i++){
-			Param param = Stretch.inflateParam(jsonParams.getJSONObject(i));
-			if(expected){
-				if(!params.getExpecteds().contains(param))
-					params.addExpected(param);			}else 
-				if(!params.getOptionals().contains(param))
-					params.addOptional(param);
+		while(it.hasNext()){
+			s+=it.next().getCanonicalName();
+			if(it.hasNext())s+=",";
 		}
+		return s;
 	}
-
-
-	public static Param inflateParam(
-			JSONObject jsonParam
-			) throws ClassNotFoundException, JSONException{	
-
-		Set<String> rules = new HashSet<>();
-		JSONArray jarRules = (JSONArray)jsonParam.get("rules");
-
-		for(int i=0; i<jarRules.length();i++)
-			rules.add(jarRules.getString(i));
-
-		return new Param(jsonParam.getString("name"),
-				Class.forName(jsonParam.getString("type")),rules);
-	}
-
-
-
+	
+	
 	public static void main(String[] args) {
 		System.out.println(splitToSet(join()).size()); //split an empty joined set of strings
 		System.out.println(join("username","pass","email"));
@@ -160,6 +130,4 @@ public class Stretch {
 			System.out.println(s+" ");
 		System.out.println(join(split(join("username","pass","email"))));
 	}
-
-
 }

@@ -1,16 +1,19 @@
 package com.aj.jeez.checks;
 
+import org.json.JSONObject;
+
 import com.aj.jeez.annotation.annotations.Checkout;
+import com.aj.jeez.templating.TemplateParams;
 
 public class CheckExpectedOut {
 
-	@Checkout(clientsafe=true,value="CheckExpOut")
+	@Checkout
 	public static boolean checkExpectedOut(
-			Object result,
-			String[]expectedOut,
-			String[]optionalOut
+			JSONObject result,
+			TemplateParams jsonOut
 			){
-		int i=(int)result;
+		
+	
 		return false;
 	};	
 }

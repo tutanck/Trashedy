@@ -1,12 +1,12 @@
 package com.aj.jeez.exceptions;
 
-public class JEEZException extends Exception {
+public class JEEZError extends Error {
 
 	private static final long serialVersionUID = 1L;
 
-	public JEEZException() {}
+	public JEEZError() {}
 	
-	public JEEZException(
+	public JEEZError(
 			String msg
 			) {
 		super(msg);

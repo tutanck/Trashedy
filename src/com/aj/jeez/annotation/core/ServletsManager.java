@@ -2,10 +2,8 @@ package com.aj.jeez.annotation.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -16,7 +14,6 @@ import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServlet;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.aj.jeez.annotation.annotations.Param;
@@ -28,6 +25,7 @@ import com.aj.jeez.annotation.exceptions.WebInitParameterSettingException;
 import com.aj.jeez.annotation.exceptions.WebServiceAnnotationMisuseException;
 import com.aj.jeez.policy.GetServlet;
 import com.aj.jeez.policy.PostServlet;
+import com.aj.tools.Stretch;
 
 public class ServletsManager {
 
@@ -37,7 +35,7 @@ public class ServletsManager {
 			ServletContext sc,
 			Map<Class<?>, Set<Method>> servicesMap
 			) throws WebServiceAnnotationMisuseException, ParameterTypingException, ClassNotFoundException, ParameterNamingException, WebInitParameterSettingException{
-		
+
 		HashSet<String> hs = new HashSet<>();
 		for(Entry<Class<?>, Set<Method>> classServices : servicesMap.entrySet())
 			for(Method service : classServices.getValue()){
@@ -101,11 +99,11 @@ public class ServletsManager {
 			throw new WebServiceAnnotationMisuseException(serviceID+" : Dynamic sevlet policy class : '"+className+"' must not be abstract");				
 
 		//JSONOUTParams use --> return type checking
-		if((optOut.length>0 || expOut.length>0)&& !JSONObject.class.isAssignableFrom(service.getReturnType()))
+		if((expOut.length>0 ||optOut.length>0)&& !JSONObject.class.isAssignableFrom(service.getReturnType()))
 			throw new WebServiceAnnotationMisuseException(serviceID+" : Declaring at least one JSONOUTParam force the WebService return type to be JSONObject or descendant");				
-		
+
 		//Static parameters typing test 
-		StaticTypedParamControler.paramsAreValid(className,serviceID,expIN,expOut,optIN,optOut);
+		FormalParamTypeControler.paramsAreValid(className,serviceID,expIN,expOut,optIN,optOut);
 
 		//Parameter name collisions detection
 		detectParamNameCollision(serviceID,"request",expIN,optIN);
@@ -121,11 +119,11 @@ public class ServletsManager {
 		//Servlet communication driver settings
 		JSONObject jzcDriver = new JSONObject()				
 				.put("auth",auth)
-				.put("httpM", determineHTTPMethod(policy))
-				.put("expIN",stretchParams(expIN))
-				.put("expOut",stretchParams(expOut))
-				.put("optIN",stretchParams(optIN))
-				.put("optOut",stretchParams(optOut));
+				.put("httpm", determineHTTPMethod(policy))
+				.put("expin",ParamsSerializer.serialize(expIN,true))
+				.put("expout",ParamsSerializer.serialize(expOut,true))
+				.put("optin",ParamsSerializer.serialize(optIN,true))
+				.put("optout",ParamsSerializer.serialize(optOut,true));
 
 
 		/*** REGISTRATION PHASE */
@@ -139,18 +137,24 @@ public class ServletsManager {
 			detectInitParamSettingFailure(sr.setInitParameter(wip.name(),wip.value()),serviceID,wip.name());
 
 		//Service parameters setting
-		JSONObject jzsDriver=new JSONObject(jzcDriver.toMap())
+		JSONObject jzsDriver=new JSONObject()
+				.put("auth",auth)
+				.put("httpm", determineHTTPMethod(policy))
 				.put("url",url)
-				.put("ckC",stretchClasses(clazzTab))
-				.put("sC", className)
-				.put("sM", service.getName());
+				.put("ckc",Stretch.stretchClasses(clazzTab))
+				.put("sc", className)
+				.put("sm", service.getName())
+				.put("expin",ParamsSerializer.serialize(expIN,false))
+				.put("expout",ParamsSerializer.serialize(expOut,false))
+				.put("optin",ParamsSerializer.serialize(optIN,false))
+				.put("optout",ParamsSerializer.serialize(optOut,false));
 		detectInitParamSettingFailure(sr.setInitParameter(JZID,jzsDriver.toString()),serviceID,JZID);
 
 		return router.put(url,jzcDriver);
 	}
 
-	
-	
+
+
 
 	private static void detectInitParamSettingFailure(
 			boolean status,
@@ -190,31 +194,4 @@ public class ServletsManager {
 
 	}
 
-
-	private static JSONArray stretchParams(
-			Param[]params
-			){
-		JSONArray jar = new JSONArray();
-		for(Param param : params)
-			jar.put(new JSONObject()
-					.put("name", param.value())
-					.put("type", param.type().getCanonicalName())
-					.put("rules", param.rules()));
-		return jar;
-	}
-
-	
-	private static String stretchClasses(
-			Class<?>[]clazzs
-			){
-		String s="";
-		Iterator<Class<?>> it = new HashSet<>(Arrays.asList(clazzs)).iterator();
-		
-		while(it.hasNext()){
-			s+=it.next().getCanonicalName();
-			if(it.hasNext())s+=",";
-		}
-		return s;
-	}
-	
 }

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.aj.jeez.annotation.annotations.Checkout;
 import com.aj.jeez.annotation.exceptions.CheckoutAnnotationMisuseException;
+import com.aj.jeez.templating.TemplateParams;
 
 /**
  * The CheckoutsRadar is a checkouts finder from built classes (.class extension).
@@ -69,16 +70,16 @@ import com.aj.jeez.annotation.exceptions.CheckoutAnnotationMisuseException;
 					throw new CheckoutAnnotationMisuseException(msg+"not throws exceptions");
 				
 				Class<?>[] parameterTypes = m.getParameterTypes();
-				if (parameterTypes.length != 3) 
-					throw new CheckoutAnnotationMisuseException(msg+"have exactly 3 arguments of the following types in this order :  Object,String[],String[]");
+				
+				String str3="have exactly 2 arguments of the following types in this order :  "+Object.class.getCanonicalName()+","+TemplateParams.class.getCanonicalName();
+				
+				if (parameterTypes.length != 2) 
+					throw new CheckoutAnnotationMisuseException(msg+str3);
 				else
 					if(!(	Object.class.isAssignableFrom(parameterTypes[0])
-							&&String[].class.isAssignableFrom(parameterTypes[1])
-							&&String[].class.isAssignableFrom(parameterTypes[2])
-							))
-						throw new CheckoutAnnotationMisuseException(msg+"have exactly 3 arguments of the following types in this order :  Object,String[],String[]");
+							&&TemplateParams.class.isAssignableFrom(parameterTypes[1])  ) )
+						throw new CheckoutAnnotationMisuseException(msg+str3);
 
-				 
 				servicesSet.add(m);				
 			}
 			return servicesSet;

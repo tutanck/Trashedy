@@ -4,7 +4,8 @@ import com.aj.jeez.annotation.annotations.Param;
 import com.aj.jeez.annotation.exceptions.ParameterNamingException;
 import com.aj.jeez.annotation.exceptions.ParameterTypingException;
 
-public class StaticTypedParamControler {
+
+public class FormalParamTypeControler {
 	
 	 static void paramsAreValid(
 			String className,
@@ -53,6 +54,18 @@ public class StaticTypedParamControler {
 		if(boolean.class.isAssignableFrom(type)) return true;
 		if(String.class.isAssignableFrom(type)) return true;
 		return false;
+	}
+
+	 public static int typeToInt(
+			Class<?> type
+			) throws ParameterTypingException{
+		if(String.class.isAssignableFrom(type)) return 0; 
+		if(int.class.isAssignableFrom(type)) return 1; 
+		if(long.class.isAssignableFrom(type))return 2; 
+		if(float.class.isAssignableFrom(type))return 3; 
+		if(double.class.isAssignableFrom(type))return 4; 
+		if(boolean.class.isAssignableFrom(type))return 5;
+		throw new ParameterTypingException("Unknown type '"+type+"'");
 	}
 
 }

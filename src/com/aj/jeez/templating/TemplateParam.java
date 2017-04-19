@@ -3,7 +3,7 @@ package com.aj.jeez.templating;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Param {
+public class TemplateParam {
 
 	private final String name;
 
@@ -11,15 +11,15 @@ public class Param {
 
 	private final Set<String> rules;
 
-	public Param(String name){
+	public TemplateParam(String name){
 		this(name,String.class,null);
 	}
 
-	public Param(String name,Class<?> type){
+	public TemplateParam(String name,Class<?> type){
 		this(name,type,null);
 	}
 
-	public Param(
+	public TemplateParam(
 			String name, //TODO interdire les caracteres invalides
 			Class<?> type,
 			Set<String> rules
@@ -50,8 +50,8 @@ public class Param {
 	@Override
 	public boolean equals(Object obj) {
 		if(obj==null)return false; 
-		return obj instanceof Param ? 
-				((Param)obj).name.equals(name) : false;
+		return obj instanceof TemplateParam ? 
+				((TemplateParam)obj).name.equals(name) : false;
 	}
 
 	@Override
