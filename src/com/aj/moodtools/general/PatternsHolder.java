@@ -15,20 +15,17 @@ import java.util.regex.Pattern;
 public class PatternsHolder {
 	//" " , "    " , ^"     " 
 	//public static String space="\\s"; //use instead blank
-	public static String blank="\\s+";
-	public static String notBlank="\\S+";
-	//[a-zA-Z0-9_] , [^a-zA-Z0-9_] , [a-zA-Z0-9_]+ , [^a-zA-Z0-9_]+
-	public static String nonaccentuedchar="\\w";
-	public static String notnonaccentuedchar="\\W";
-	public static String aword="\\w+";
-	public static String notWord="\\W+";
-	//[0-9] , [^0-9] ,[0-9]+ , [^0-9]+
-	public static String num="\\d";
-	public static String notNum="\\D";
-	public static String nums="\\d+";
-	public static String notNums="\\D+";
-	//.+@.+
-	public static String email=".+@.+";
+	public static final String blank="\\s+";
+	public static final String notBlank="\\S+";
+	public static final String nonaccentuedchar="\\w"; //[a-zA-Z0-9_]
+	public static final String notnonaccentuedchar="\\W"; // [^a-zA-Z0-9_]
+	public static final String aword="\\w+"; //[a-zA-Z0-9_]+
+	public static final String notWord="\\W+"; //[^a-zA-Z0-9_]+
+	public static final String num="\\d"; //[0-9]
+	public static final String notNum="\\D"; //[^0-9]
+	public static final String nums="\\d+"; //[0-9]+
+	public static final String notNums="\\D+"; //[^0-9]+
+	public static final String email=".+@.+"; //.+@.+
 	public static final String pass = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,})";
 	public static final String username = "((?=.*[a-z])^[a-zA-Z](\\w{2,}))";
 

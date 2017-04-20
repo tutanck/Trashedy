@@ -9,6 +9,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.regina.DBCommit;
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
+import com.aj.tools.__;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
 import com.aj.mood.users.io.services.core.UserIOCore;
@@ -17,7 +18,6 @@ import com.aj.moodtools.general.PatternsHolder;
 import com.aj.moodtools.lingua.Lingua;
 import com.aj.moodtools.mailing.Email;
 import com.aj.moodtools.services.Response;
-import com.aj.moodtools.services.Safety;
 import com.aj.moodtools.services.ServiceCodes;
 import com.aj.moodtools.services.ServicesToolBox;
 import com.aj.moodtools.services.ShouldNeverOccurException;
@@ -38,14 +38,10 @@ public class SignupService {
 	 * @throws AbsentKeyException */
 	@WebService(
 			value=url,policy = OfflinePostServlet.class,
-			jsonOutParams=@Params({
-				@Param("username"),
-				@Param("pass"),
-				@Param("email")}),
 			requestParams=@Params({
-				@Param("username"),
-				@Param("pass"),
-				@Param("email")}))
+				@Param(value="username",rules={PatternsHolder.username}),
+				@Param(value="pass",rules={PatternsHolder.pass}),
+				@Param(value="email",rules={PatternsHolder.email})}))
 	public static JSONObject registration(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
@@ -79,7 +75,7 @@ public class SignupService {
 					+basedir+UserAccountConfirmationService.url+"?ckey="+ckey);
 		}catch (Exception e) {
 			commit.rollback(); //TODO a tester bcp
-			Safety.explode(e);
+			__.explode(e);
 		}
 
 		return Response.reply(null,null,Caller.signature());

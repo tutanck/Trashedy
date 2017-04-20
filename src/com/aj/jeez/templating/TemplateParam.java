@@ -1,7 +1,12 @@
 package com.aj.jeez.templating;
 
-import java.util.HashSet;
 import java.util.Set;
+
+import com.aj.jeez.annotation.core.FormalParamTypeControler;
+import com.aj.jeez.annotation.exceptions.ParamNamingException;
+import com.aj.jeez.annotation.exceptions.ParamRulingException;
+import com.aj.jeez.annotation.exceptions.ParamTypingException;
+import com.aj.tools.__;
 
 public class TemplateParam {
 
@@ -11,39 +16,29 @@ public class TemplateParam {
 
 	private final Set<String> rules;
 
-	public TemplateParam(String name){
+	public TemplateParam(
+			String name
+			) throws ParamTypingException, ParamNamingException, ParamRulingException{
 		this(name,String.class,null);
 	}
 
-	public TemplateParam(String name,Class<?> type){
+	public TemplateParam(
+			String name,
+			Class<?> type
+			) throws ParamTypingException, ParamNamingException, ParamRulingException{
 		this(name,type,null);
 	}
 
 	public TemplateParam(
-			String name, //TODO interdire les caracteres invalides
+			String name,
 			Class<?> type,
 			Set<String> rules
-			){
-		if(name.length()==0)
-			throw new IllegalArgumentException("Name must not be empty");
+			) throws ParamTypingException, ParamNamingException, ParamRulingException{		
+		FormalParamTypeControler.validParam(name, type, rules);
 
-		for(String rule : rules)
-			if(rule.length()==0)
-				throw new IllegalArgumentException("Each rule must not be empty");
-
-		if(type==String.class
-				||type==int.class
-				||type==long.class
-				||type==float.class
-				||type==double.class
-				||type==boolean.class)
-			this.type=type;
-		else 
-			throw new IllegalArgumentException
-			("Param type must only be int,long,float,double,boolean or String");
-
+		this.type=type;
 		this.name=name;
-		this.rules=(rules!=null?rules:new HashSet<>());
+		this.rules=(__.stringSet(rules));
 	}
 
 

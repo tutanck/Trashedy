@@ -23,11 +23,14 @@ import com.aj.jeez.annotation.core.CheckoutsRadar;
 import com.aj.jeez.annotation.core.FormalParamTypeControler;
 import com.aj.jeez.annotation.core.ServletsManager;
 import com.aj.jeez.annotation.exceptions.CheckoutAnnotationMisuseException;
-import com.aj.jeez.annotation.exceptions.ParameterTypingException;
+import com.aj.jeez.annotation.exceptions.ParamNamingException;
+import com.aj.jeez.annotation.exceptions.ParamRulingException;
+import com.aj.jeez.annotation.exceptions.ParamTypingException;
 import com.aj.jeez.checks.CheckExpectedOut;
 import com.aj.jeez.exceptions.JEEZError;
 import com.aj.tools.MapRefiner;
 import com.aj.tools.Stretch;
+import com.aj.tools.__;
 import com.aj.tools.jr.JR;
 
 
@@ -112,19 +115,19 @@ public abstract class JEEZServlet extends HttpServlet{
 				if(this.auth==null)
 					this.auth = jzsDriver.getBoolean("auth");
 
-				try { 
+				try { //Order matters : expected first optional then to favor expected parameter in case of collision exp-opt
 					ParamsInflator.inflateParams(requestParams, (JSONArray)jzsDriver.get("expin"), true);
 					ParamsInflator.inflateParams(requestParams, (JSONArray)jzsDriver.get("optin"), false);
 					ParamsInflator.inflateParams(jsonOutParams, (JSONArray)jzsDriver.get("expout"), true);
 					ParamsInflator.inflateParams(jsonOutParams, (JSONArray)jzsDriver.get("optout"), false);
-					
+
 					if(!jsonOutParams.expectedsEmpty() || !jsonOutParams.optionalsEmpty())
 						checkClasses.add(CheckExpectedOut.class);
-					
+
 					Stretch.addClassesToSet(this.checkClasses,jzsDriver.getString("ckc"));
 					checkouts = CheckoutsRadar.findAnnotatedServices(checkClasses);
-										
-				} catch (ClassNotFoundException | CheckoutAnnotationMisuseException e) 
+
+				} catch (ClassNotFoundException | CheckoutAnnotationMisuseException  | ParamTypingException | ParamNamingException | ParamRulingException e) 
 				{throw new ServletException(e);}
 
 				System.out.println("JEEZServlet/init::THIS : '"+toString()+"'");
@@ -228,6 +231,7 @@ public abstract class JEEZServlet extends HttpServlet{
 
 		String paramName = formalParam.getName();
 		Class<?> paramType = formalParam.getType();
+		Set<String> paramRules = formalParam.getRules();
 
 		//Debug
 		System.out.print("    --->paramName:"+paramName);
@@ -235,26 +239,26 @@ public abstract class JEEZServlet extends HttpServlet{
 		System.out.print(" = "+effectiveParams.get(paramName)+" ");
 
 		//availability test
-		if(effectiveParams.containsKey(paramName) && 
+		if( effectiveParams.containsKey(paramName) && 
 				effectiveParams.get(paramName)!=null &&
 				!effectiveParams.get(paramName).equals("") && 
-				!effectiveParams.get(paramName).equals("null")
-				){
-			try {//typing test
-				if(EffectiveParamTyper.valid(
-						paramName, 
-						FormalParamTypeControler.typeToInt(paramType),
-						effectiveParams.get(paramName), validParams))	
-					//parameter added to validParams
+				!effectiveParams.get(paramName).equals("null") )
+			__.errln("ghghyuyfhgfrnnfbdc"+__.civilized(effectiveParams.get(paramName), paramRules));
+			if(__.civilized(effectiveParams.get(paramName), paramRules)) //civilization test
+				try {//typing test
+					if( EffectiveParamTyper.valid(
+							paramName, 
+							FormalParamTypeControler.typeToInt(paramType),
+							effectiveParams.get(paramName), validParams) )	
+						//parameter added to validParams
 
-					return new JSONObject() //updated with the valid parameter in addition
-							.put("valid", true)
-							.put("validParams", validParams); 
+						return new JSONObject() //updated with the valid parameter in addition
+								.put("valid", true)
+								.put("validParams", validParams); 
 
-			}catch (ParameterTypingException e) {
-				throw new JEEZError("#SNO : internal typing error");
-			}
-		}
+				}catch (ParamTypingException e) {
+					throw new JEEZError("#SNO : internal typing error");
+				}
 		return strict? invalid:unchanged; 
 	}
 
@@ -277,10 +281,11 @@ public abstract class JEEZServlet extends HttpServlet{
 		System.out.println("JEEZServlet/afterBusiness::"+sC+"."+sM+" --> after business...");
 
 		if(!resultIsOK(result)) {
+			System.out.println("result failed to satisfy at least one clientsafe checkouts");
 			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARILY UNAVAILABLE");
 			return;
 		}
-		System.out.println("result satisfied all clientsafe's checkouts");
+		System.out.println("result satisfied all clientsafe checkouts");
 		response.getWriter().print(result);
 	}	
 
@@ -298,10 +303,10 @@ public abstract class JEEZServlet extends HttpServlet{
 	protected boolean resultIsOK(
 			Object result
 			) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException{
-		
+
 		for(Map.Entry<Class<?>,Set<Method>> entry: this.checkouts.entrySet()){
 			Class<?> checkClass=entry.getKey();	
-			
+
 			for(Method checkout : entry.getValue()){
 				String chkName=checkClass+"."+checkout;
 				System.out.println("JEEZServlet/resultIsOK:: static call of : "+chkName+"("+result+")");

@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import com.aj.regina.THINGS;
 import com.aj.tools.Caller;
+import com.aj.tools.__;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
 import com.aj.jeez.annotation.annotations.Param;
@@ -14,7 +15,6 @@ import com.aj.moodtools.db.DBException;
 import com.aj.moodtools.lingua.Lingua;
 import com.aj.moodtools.mailing.Email;
 import com.aj.moodtools.services.Response;
-import com.aj.moodtools.services.Safety;
 import com.aj.moodtools.services.ServiceCodes;
 import com.aj.moodtools.services.ServicesToolBox;
 import com.aj.moodtools.services.ShouldNeverOccurException;
@@ -54,7 +54,7 @@ public class UserAccountRecoveryService {
 			Email.send(params.getString("email"),
 					Lingua.get("NewAccessKeySentSubject","fr-FR"),
 					Lingua.get("NewAccessKeySentMessage","fr-FR")+ secret);
-		}catch (Exception e) {Safety.explode(e);}
+		}catch (Exception e) {__.explode(e);}
 		
 		return Response.reply(null,null,Caller.signature());
 	}

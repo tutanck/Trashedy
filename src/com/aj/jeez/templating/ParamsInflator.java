@@ -4,8 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.aj.jeez.annotation.exceptions.ParamNamingException;
+import com.aj.jeez.annotation.exceptions.ParamRulingException;
+import com.aj.jeez.annotation.exceptions.ParamTypingException;
 
 public class ParamsInflator {
 
@@ -13,29 +16,28 @@ public class ParamsInflator {
 			TemplateParams params,
 			JSONArray jsonParams,
 			boolean expected
-			) throws ClassNotFoundException, JSONException{	
-		
+			) throws ClassNotFoundException, ParamTypingException, ParamNamingException, ParamRulingException{	
+
 		for(int i=0;i<jsonParams.length();i++){
 			TemplateParam param = ParamsInflator.inflateParam(jsonParams.getJSONObject(i));
-			if(expected){
-				if(!params.getExpecteds().contains(param))
+			if(!params.getExpecteds().contains(param) && !params.getOptionals().contains(param))
+				if(expected)
 					params.addExpected(param);
-			}else 
-				if(!params.getOptionals().contains(param))
+				else 
 					params.addOptional(param);
 		}
 	}
 
 	public static TemplateParam inflateParam(
 			JSONObject jsonParam
-			) throws ClassNotFoundException, JSONException{	
-	
+			) throws ClassNotFoundException, ParamTypingException, ParamNamingException, ParamRulingException{	
+
 		Set<String> rules = new HashSet<>();
 		JSONArray jarRules = (JSONArray)jsonParam.get("rules");
-	
+
 		for(int i=0; i<jarRules.length();i++)
 			rules.add(jarRules.getString(i));
-	
+
 		return new TemplateParam(jsonParam.getString("name"),
 				Class.forName(jsonParam.getString("type")),rules);
 	}

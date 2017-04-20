@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.aj.jeez.annotation.annotations.Param;
-import com.aj.jeez.annotation.exceptions.ParameterTypingException;
+import com.aj.jeez.annotation.exceptions.ParamTypingException;
 import com.aj.jeez.exceptions.JEEZError;
 
 public class ParamsSerializer {
@@ -20,7 +20,7 @@ public class ParamsSerializer {
 			if(serializable)
 				try {
 					jo.put("type", FormalParamTypeControler.typeToInt(param.type()));
-				}catch (ParameterTypingException e) {
+				}catch (ParamTypingException e) {
 					throw new JEEZError("#SNO : internal typing error");
 				}
 			else

@@ -19,8 +19,8 @@ import org.json.JSONObject;
 import com.aj.jeez.annotation.annotations.Param;
 import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
-import com.aj.jeez.annotation.exceptions.ParameterNamingException;
-import com.aj.jeez.annotation.exceptions.ParameterTypingException;
+import com.aj.jeez.annotation.exceptions.ParamNamingException;
+import com.aj.jeez.annotation.exceptions.ParamTypingException;
 import com.aj.jeez.annotation.exceptions.WebInitParameterSettingException;
 import com.aj.jeez.annotation.exceptions.WebServiceAnnotationMisuseException;
 import com.aj.jeez.policy.GetServlet;
@@ -34,7 +34,7 @@ public class ServletsManager {
 	static JSONObject assignServlets(
 			ServletContext sc,
 			Map<Class<?>, Set<Method>> servicesMap
-			) throws WebServiceAnnotationMisuseException, ParameterTypingException, ClassNotFoundException, ParameterNamingException, WebInitParameterSettingException{
+			) throws WebServiceAnnotationMisuseException, ParamTypingException, ClassNotFoundException, ParamNamingException, WebInitParameterSettingException{
 
 		HashSet<String> hs = new HashSet<>();
 		for(Entry<Class<?>, Set<Method>> classServices : servicesMap.entrySet())
@@ -57,7 +57,7 @@ public class ServletsManager {
 			ServletContext sc,
 			Entry<Class<?>,Set<Method>> classServices,
 			JSONObject router
-			) throws WebServiceAnnotationMisuseException, ParameterTypingException, ClassNotFoundException, ParameterNamingException, WebInitParameterSettingException{
+			) throws WebServiceAnnotationMisuseException, ParamTypingException, ClassNotFoundException, ParamNamingException, WebInitParameterSettingException{
 		Class<?> clazz = classServices.getKey();
 		String className = clazz.getCanonicalName();
 
@@ -72,7 +72,7 @@ public class ServletsManager {
 			String className,
 			Method service,
 			JSONObject router
-			) throws WebServiceAnnotationMisuseException, ParameterTypingException, ClassNotFoundException, ParameterNamingException, WebInitParameterSettingException{
+			) throws WebServiceAnnotationMisuseException, ParamTypingException, ClassNotFoundException, ParamNamingException, WebInitParameterSettingException{
 
 		String serviceID = className+"."+service.getName();
 
@@ -99,7 +99,7 @@ public class ServletsManager {
 			throw new WebServiceAnnotationMisuseException(serviceID+" : Dynamic sevlet policy class : '"+className+"' must not be abstract");				
 
 		//JSONOUTParams use --> return type checking
-		if((expOut.length>0 ||optOut.length>0)&& !JSONObject.class.isAssignableFrom(service.getReturnType()))
+		if((expOut.length>0 ||optOut.length>0) && !JSONObject.class.isAssignableFrom(service.getReturnType()))
 			throw new WebServiceAnnotationMisuseException(serviceID+" : Declaring at least one JSONOUTParam force the WebService return type to be JSONObject or descendant");				
 
 		//Static parameters typing test 

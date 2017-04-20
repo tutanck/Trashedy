@@ -1,12 +1,12 @@
 package com.aj.jeez.annotation.exceptions;
 
-public class ParameterNamingException extends Exception {
+public class ParamTypingException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	public ParameterNamingException() {}
+	public ParamTypingException() {}
 	
-	public ParameterNamingException(
+	public ParamTypingException(
 			String msg
 			) {
 		super(msg);
