@@ -18,7 +18,6 @@ import com.aj.moodtools.general.PatternsHolder;
 import com.aj.moodtools.lingua.Lingua;
 import com.aj.moodtools.mailing.Email;
 import com.aj.moodtools.services.Response;
-import com.aj.moodtools.services.ServiceCodes;
 import com.aj.moodtools.services.ServicesToolBox;
 import com.aj.moodtools.services.ShouldNeverOccurException;
 import com.aj.moodtools.servletspolicy.OfflinePostServlet;
@@ -41,14 +40,10 @@ public class SignupService {
 			requestParams=@Params({
 				@Param(value="username",rules={PatternsHolder.username}),
 				@Param(value="pass",rules={PatternsHolder.pass}),
-				@Param(value="email",rules={PatternsHolder.email})}))
+				@Param(value="email",rules={PatternsHolder.email}) }))
 	public static JSONObject registration(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
-
-		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
-		if(!PatternsHolder.isValidPass(params.getString("pass")))
-			return Response.issue(ServiceCodes.INVALID_PASS_FORMAT);
 
 		JSONObject emailCheck = UserIOCore.checkEmailCore(params);
 		if(emailCheck!=null) return emailCheck;
@@ -73,11 +68,7 @@ public class SignupService {
 					Lingua.get("welcomeMailSubject","fr-FR"),
 					Lingua.get("welcomeMailMessage","fr-FR")
 					+basedir+UserAccountConfirmationService.url+"?ckey="+ckey);
-		}catch (Exception e) {
-			commit.rollback(); //TODO a tester bcp
-			__.explode(e);
-		}
-
+		}catch (Exception e) {commit.rollback(); /*TODO a tester bcp*/	__.explode(e);}
 		return Response.reply(null,null,Caller.signature());
 	}
 

@@ -41,18 +41,12 @@ public class UserIOCore{
 	public static JSONObject checkEmailCore(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
-
-		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
-		if(!PatternsHolder.isValidEmail(params.getString("email")))
-			return Response.issue(ServiceCodes.INVALID_EMAIL_FORMAT);
-
-		//--DB VALIDATION
+		
 		if(THINGS.exists(JR.slice(params,"email"),collection))
 			return Response.issue(ServiceCodes.EMAIL_IS_TAKEN);
-
 		return null; //all right
 	}
-	 
+
 
 	/**
 	 * Check if username's input is valid (internal service's core)
@@ -65,19 +59,13 @@ public class UserIOCore{
 	public static JSONObject checkUsernameCore(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
-	
-		//--FORMAT VALIDATION (do all format validations bf remote calls like a db access) 
-		if(!PatternsHolder.isValidUsername(params.getString("username")))
-			return Response.issue(ServiceCodes.INVALID_USERNAME_FORMAT);
-	
-		//--DB VALIDATION
+		
 		if(THINGS.exists(JR.slice(params,"username"),collection))
 			return Response.issue(ServiceCodes.USERNAME_IS_TAKEN);		
-	
 		return null; //all right
 	}
-	
-	
+
+
 	/**
 	 * Determine the input format among the values of the InputType enumeration
 	 * according to possible input formats for the UserIO service

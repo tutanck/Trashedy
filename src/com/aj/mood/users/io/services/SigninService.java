@@ -15,6 +15,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.services.core.UserIOCore;
 import com.aj.moodtools.db.DBException;
 import com.aj.moodtools.general.InputType;
+import com.aj.moodtools.general.PatternsHolder;
 import com.aj.moodtools.services.Response;
 import com.aj.moodtools.services.ServiceCodes;
 import com.aj.moodtools.services.ServicesToolBox;
@@ -37,9 +38,9 @@ public class SigninService {
 	@WebService(
 			value=url,policy=OfflinePostServlet.class,
 			requestParams=@Params({
-					@Param("username"),
-					@Param("pass"),
-					@Param("did")}))
+				@Param(value="username",rules={PatternsHolder.username}),
+				@Param(value="pass",rules={PatternsHolder.pass}),
+				@Param("did")}))
 	public static JSONObject login(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {

@@ -20,9 +20,6 @@ public interface ServiceCodes {
 	int USER_NOT_CONFIRMED = -33;
 	
 	/* invalid formats -4* */
-	int INVALID_USERNAME_FORMAT = -41;
-	int INVALID_EMAIL_FORMAT = -42;
-	int INVALID_PASS_FORMAT = -43;
 	
 	/*admin error*/
 	int MRP_DOUBLING=-111;

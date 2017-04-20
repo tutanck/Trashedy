@@ -9,6 +9,7 @@ import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.services.core.UserIOCore;
 import com.aj.moodtools.db.DBException;
+import com.aj.moodtools.general.PatternsHolder;
 import com.aj.moodtools.services.Response;
 import com.aj.moodtools.services.ShouldNeverOccurException;
 import com.aj.moodtools.servletspolicy.OfflineGetServlet;
@@ -26,7 +27,7 @@ public class CheckEmailService {
 	 * @throws DBException
 	 * @throws AbsentKeyException */
 	@WebService(value=url,policy=OfflineGetServlet.class,
-			requestParams=@Params({@Param("email")}))
+			requestParams=@Params({ @Param(value="email",rules={PatternsHolder.email}) }))
 	public static JSONObject checkEmail(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{

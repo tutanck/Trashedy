@@ -9,6 +9,7 @@ import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.services.core.UserIOCore;
 import com.aj.moodtools.db.DBException;
+import com.aj.moodtools.general.PatternsHolder;
 import com.aj.moodtools.services.Response;
 import com.aj.moodtools.services.ShouldNeverOccurException;
 import com.aj.moodtools.servletspolicy.OfflineGetServlet;
@@ -26,7 +27,7 @@ public class CheckUsernameService {
 	 * @throws DBException
 	 * @throws AbsentKeyException */
 	@WebService(value=url,policy=OfflineGetServlet.class,
-			requestParams=@Params({@Param("username")}))
+			requestParams=@Params({ @Param(value="username",rules={PatternsHolder.username}) }))
 	public static JSONObject checkUsername(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
