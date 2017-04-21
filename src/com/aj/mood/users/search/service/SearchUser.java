@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import com.aj.moodtools.db.DBException;
 import com.aj.moodtools.services.Response;
 import com.aj.moodtools.services.ShouldNeverOccurException;
-import com.aj.tools.Caller;
 
 public class SearchUser {
 	/**
@@ -34,9 +33,7 @@ public class SearchUser {
 							.put("lastname",rs.getString("lastname")));
 							}*/
 	
-			return Response.reply(
-					new JSONObject().put("users",""/*jar*/),
-					null,Caller.whoIsAsking().hashCode());
+			return Response.reply(new JSONObject().put("users",""/*jar*/));
 		}
 	
 }

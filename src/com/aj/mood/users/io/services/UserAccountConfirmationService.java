@@ -3,7 +3,6 @@ package com.aj.mood.users.io.services;
 import org.json.JSONObject;
 
 import com.aj.regina.THINGS;
-import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
@@ -50,8 +49,8 @@ public class UserAccountConfirmationService {
 		//and we avoid more inconsistency damage/issues on the database
 		if(wr.getN()>1)
 			throw new ShouldNeverOccurException("Inconsistent DBCollection : "+UserIOCore.collection);
-	
-		return Response.reply(null,null,Caller.signature());
+		
+		return Response.reply(null);
 	}
 
 }

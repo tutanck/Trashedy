@@ -1,7 +1,6 @@
 package com.aj.mood.users.profile.service;
 
 import com.aj.regina.THINGS;
-import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
 
@@ -56,7 +55,7 @@ public class UpdateProfileService{
 
 		THINGS.putOne(JR.wrap("_id",params.get("uid")),clear,UserProfileCore.collection);
 
-		return Response.reply(null,null,Caller.signature());
+		return Response.reply(null);
 	}
 
 }

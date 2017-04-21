@@ -3,7 +3,6 @@ package com.aj.mood.users.io.services;
 import org.json.JSONObject;
 
 import com.aj.regina.THINGS;
-import com.aj.tools.Caller;
 import com.aj.tools.__;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
@@ -57,7 +56,7 @@ public class UserAccountRecoveryService {
 					Lingua.get("NewAccessKeySentMessage","fr-FR")+ secret);
 		}catch (Exception e) {__.explode(e);}
 		
-		return Response.reply(null,null,Caller.signature());
+		return Response.reply(null);
 	}
 
 }

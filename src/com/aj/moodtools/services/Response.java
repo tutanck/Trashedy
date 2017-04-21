@@ -24,15 +24,10 @@ public class Response {
 	 * @return 
 	 * @throws ShouldNeverOccurException */
 	public static JSONObject reply(
-			JSONObject result,
-			String message,
-			int replycode
+			JSONObject result
 			)throws JSONException, ShouldNeverOccurException{
-
 		return new JSONObject()
 				.put("status",_KANPEKI)
-				.put("rpcode",replycode)
-				.put("message",message)//warning or whatever
 				.put("result",result);
 	}
 

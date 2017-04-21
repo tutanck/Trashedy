@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 import com.mongodb.DBObject;
 import com.aj.regina.THINGS;
-import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
@@ -79,8 +78,7 @@ public class SigninService {
 
 		return Response.reply(
 				JR.wrap("himitsu", himitsu)
-				.put("username",user.get("username")),
-				null,Caller.signature());
+				.put("username",user.get("username")));
 	}
 
 	public static void main(String[] args) throws JSONException, DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {

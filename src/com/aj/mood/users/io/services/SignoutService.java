@@ -3,7 +3,6 @@ package com.aj.mood.users.io.services;
 import org.json.JSONObject;
 
 import com.aj.regina.THINGS;
-import com.aj.tools.Caller;
 import com.aj.tools.jr.JR;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.mood.users.io.services.core.UserIOCore;
@@ -32,8 +31,8 @@ public class SignoutService {
 		THINGS.remove(JR.wrap(
 				"skey",ServicesToolBox.scramble(params.getString("skey")))
 				,UserIOCore.session);
-		
-		return Response.reply(null,null,Caller.signature());
+	
+		return Response.reply(null);
 	}
 
 }

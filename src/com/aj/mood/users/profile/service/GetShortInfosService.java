@@ -1,7 +1,6 @@
 package com.aj.mood.users.profile.service;
 
 import com.aj.regina.THINGS;
-import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
@@ -46,8 +45,7 @@ import com.aj.moodtools.servletspolicy.OnlineGetServlet;
 		return Response.reply(
 				JR.wrap("username",user.get("username"))
 				.put("firstname",user.get("firstname"))
-				.put("lastname",user.get("lastname")),null,
-				Caller.signature());
+				.put("lastname",user.get("lastname")) );
 	}
 
 }

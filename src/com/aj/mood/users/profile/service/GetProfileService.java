@@ -1,7 +1,6 @@
 package com.aj.mood.users.profile.service;
 
 import com.aj.regina.THINGS;
-import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
@@ -62,7 +61,6 @@ public class GetProfileService{
 				.put("firstname",user.get("firstname"))
 				.put("lastname",user.get("lastname"))
 				.put("birthdate",user.get("birthdate"))
-				.put("phone",user.get("phone")),null,
-				Caller.signature());
+				.put("phone",user.get("phone")) );
 	}
 }

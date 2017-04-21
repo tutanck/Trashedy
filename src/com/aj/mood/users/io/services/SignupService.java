@@ -8,7 +8,6 @@ import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.regina.DBCommit;
 import com.aj.regina.THINGS;
-import com.aj.tools.Caller;
 import com.aj.tools.__;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
@@ -69,7 +68,8 @@ public class SignupService {
 					Lingua.get("welcomeMailMessage","fr-FR")
 					+basedir+UserAccountConfirmationService.url+"?ckey="+ckey);
 		}catch (Exception e) {commit.rollback(); /*TODO a tester bcp*/	__.explode(e);}
-		return Response.reply(null,null,Caller.signature());
+		
+		return Response.reply(null);
 	}
 
 }

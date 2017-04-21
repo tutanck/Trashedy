@@ -56,6 +56,4 @@ public class __ {
 	public static void explode(Throwable e) {e.printStackTrace();throw new RuntimeException(e);}
 
 
-
-
 }

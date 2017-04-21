@@ -2,7 +2,6 @@ package com.aj.mood.users.io.services;
 
 import org.json.JSONObject;
 
-import com.aj.tools.Caller;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.jeez.annotation.annotations.Param;
 import com.aj.jeez.annotation.annotations.Params;
@@ -34,7 +33,8 @@ public class CheckUsernameService {
 		JSONObject usernameCheck = UserIOCore.checkUsernameCore(params);
 		if(usernameCheck!=null) 
 			return usernameCheck;
-		return Response.reply(null,null,Caller.signature());
+		
+		return Response.reply(null);
 	}
 
 }
