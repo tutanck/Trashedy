@@ -2,10 +2,11 @@ package com.aj.regina;
 
 import org.bson.types.ObjectId;
 
-import com.aj.moodtools.db.DBException;
 import com.aj.tools.jr.JR;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
+
+import tools.db.DBException;
 
 public class DBCommit {
 
