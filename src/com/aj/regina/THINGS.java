@@ -40,7 +40,7 @@ public class THINGS{
 	
 
 	/**
-	 * @DESCRIPTION update {things} somewhere in the {collection} where {where} condition match
+	 * Update {things} somewhere in the {collection} where {where} condition match
 	 * @param things
 	 * @param where
 	 * @param collection
@@ -63,7 +63,7 @@ public class THINGS{
 
 
 	/**TODO : update _date
-	 * @DESCRIPTION update {things} everywhere in the {collection} where {where} condition match
+	 * Update {things} everywhere in the {collection} where {where} condition match
 	 * @param things
 	 * @param where
 	 * @param collection
@@ -88,7 +88,7 @@ public class THINGS{
 	//TODO faire un update et un upsert(add if not exists) : itere sur le json et remplace les value par des $set de values
 
 	/**TODO : update _date
-	 * @DESCRIPTION upsert {things} somewhere in the {collection} where {where} condition match
+	 * Upsert {things} somewhere in the {collection} where {where} condition match
 	 * @param where
 	 * @param things
 	 * @param collection

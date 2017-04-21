@@ -6,8 +6,8 @@ import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
 import com.mongodb.DBObject;
 
-import mood.user.io.db.UserSessionDB;
-import mood.user.profile.service.core.UserProfileCore;
+import mood.user.io.db.SessionDB;
+import mood.user.profile.service.core.ProfileCore;
 import tools.db.DBException;
 import tools.services.Response;
 import tools.services.ShouldNeverOccurException;
@@ -24,7 +24,7 @@ import com.aj.jeez.annotation.annotations.WebService;
  * Service classes are much more meaningful now , because DB access is automatic
  * This classes will take more significant decision on how their process and dispatch incoming data
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
-public class GetProfileService{
+public class GetProfileService extends ProfileCore{
 	public final static String url="/user/profile";
 
 	/** 
@@ -42,16 +42,16 @@ public class GetProfileService{
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
 		DBObject user=null;
 		JSONObject profile=new JSONObject();
+		
 		//Trick : like fb, an user can see his profile as someone else
 		//uther as a contraction of user-other (other user)
+		
 		if(params.has("uther")) 
 			THINGS.getOne(JR.renameKeys(
 					JR.slice(params,"uther"),"uther->_id"), 
-					UserProfileCore.collection);
+					collection);
 		else{
-			user = THINGS.getOne(JR.renameKeys(
-					JR.slice(UserSessionDB.clarifyParams(params), "uid"),"uid->_id"),
-					UserProfileCore.collection);
+			user = THINGS.getOne(JR.slice(SessionDB.decrypt(params, "uid")),collection);
 			profile.put("self",true);
 		}
 

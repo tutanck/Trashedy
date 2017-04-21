@@ -14,7 +14,7 @@ import com.aj.tools.jr.JR;
 
 /**
  * @author AJoan */
-public class UserSessionDB {
+public class SessionDB {
 
 	public static DBCollection collection = 
 			DBConnectionManager.getMongoDBCollection("session");
@@ -26,10 +26,11 @@ public class UserSessionDB {
 	 * and wrap it in the 'same' JSONObject containing others/previous params  
 	 * @param params
 	 * @return */
-	public static JSONObject clarifyParams(
-			JSONObject params
+	public static JSONObject decrypt(
+			JSONObject params,
+			String decryptedKeyName
 			){
-		return JR.replace(params,"skey","uid",
+		return JR.replace(params,"skey",decryptedKeyName,
 				 THINGS.getOne(
 							JR.wrap("skey",ServicesToolBox.scramble(params.getString("skey"))),
 							collection
@@ -44,13 +45,13 @@ public class UserSessionDB {
 	 * @return
 	 * @throws DBException
 	 * @throws AbsentKeyException */
-	public static boolean sessionExists(
+	public static boolean exists(
 			JSONObject params
 			) throws DBException, AbsentKeyException{
 		return THINGS.exists(
 				JR.wrap(
 						"skey",ServicesToolBox.scramble(params.getString("skey"))),
-				UserSessionDB.collection);
+				SessionDB.collection);
 	}
 
 }

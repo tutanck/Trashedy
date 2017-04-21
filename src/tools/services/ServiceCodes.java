@@ -21,6 +21,9 @@ public interface ServiceCodes {
 	
 	/* invalid formats -4* */
 	
+	/* existing relationships -5* */
+	int EXISTING_FOLLOW_REL = -51;
+	
 	/*admin error*/
 	int MRP_DOUBLING=-111;
 	

@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.JR;
 
-import mood.user.io.services.core.UserIOCore;
+import mood.user.io.services.core.IOCore;
 import tools.db.DBException;
 import tools.services.Response;
 import tools.services.ServicesToolBox;
@@ -16,7 +16,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 
 /**
  * @author Joan */
-public class SignoutService {
+public class SignoutService extends IOCore{
 	public final static String url="/signout";
 
 	/**
@@ -30,11 +30,11 @@ public class SignoutService {
 	public static JSONObject logout(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException {
-		THINGS.remove(JR.wrap(
-				"skey",ServicesToolBox.scramble(params.getString("skey")))
-				,UserIOCore.session);
+		THINGS.remove(JR.wrap("skey",
+				ServicesToolBox.scramble(params.getString("skey")))
+				,session);
 	
-		return Response.reply(null);
+		return Response.reply();
 	}
 
 }

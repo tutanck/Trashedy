@@ -6,7 +6,7 @@ import com.aj.tools.jr.JR;
 import com.mongodb.DBCollection;
 
 import mood.user.io.db.UserIODB;
-import mood.user.io.db.UserSessionDB;
+import mood.user.io.db.SessionDB;
 import tools.db.DBException;
 import tools.general.InputType;
 import tools.general.PatternsHolder;
@@ -24,10 +24,10 @@ import org.json.JSONObject;
  * Service classes are much more meaningful now , because DB access is automatic
  * This classes will take more significant decision on how their process and dispatch incoming data
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
-public class UserIOCore{
+public class IOCore{
 
 	public static DBCollection collection = UserIODB.collection;
-	public static DBCollection session = UserSessionDB.collection;
+	public static DBCollection session = SessionDB.collection;
 
 
 	/**

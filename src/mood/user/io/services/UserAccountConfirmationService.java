@@ -8,7 +8,7 @@ import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
 import com.mongodb.WriteResult;
 
-import mood.user.io.services.core.UserIOCore;
+import mood.user.io.services.core.IOCore;
 import tools.db.DBException;
 import tools.services.Response;
 import tools.services.ServiceCodes;
@@ -21,7 +21,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 
 /**
  * @author Joan */
-public class UserAccountConfirmationService {
+public class UserAccountConfirmationService extends IOCore {
 	public final static String url="/account/confirm";
 	
 	/** 
@@ -40,8 +40,8 @@ public class UserAccountConfirmationService {
 	
 		WriteResult wr =THINGS.replaceOne(
 				JR.renameKeys(params,"ckey->confirmed"), 
-				JR.wrap("$set",JR.wrap("confirmed", true)), 
-				UserIOCore.collection);
+				JR.wrap("$set",JR.wrap("confirmed", true))
+				,collection);
 	
 		if(wr.getN()<1)
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);
@@ -50,9 +50,9 @@ public class UserAccountConfirmationService {
 		//so that an ISE is returned back to the client
 		//and we avoid more inconsistency damage/issues on the database
 		if(wr.getN()>1)
-			throw new ShouldNeverOccurException("Inconsistent DBCollection : "+UserIOCore.collection);
+			throw new ShouldNeverOccurException("Inconsistent DBCollection : "+collection);
 		
-		return Response.reply(null);
+		return Response.reply();
 	}
 
 }

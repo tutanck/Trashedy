@@ -6,7 +6,7 @@ import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
 import com.mongodb.DBObject;
 
-import mood.user.profile.service.core.UserProfileCore;
+import mood.user.profile.service.core.ProfileCore;
 import tools.db.DBException;
 import tools.services.Response;
 import tools.services.ShouldNeverOccurException;
@@ -21,7 +21,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 
 /**
  * @author AJoan */
- public class GetShortInfosService{
+ public class GetShortInfosService extends ProfileCore{
 	 public final static String url="/user/infos";
  
 	/**
@@ -41,7 +41,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 		
 		DBObject user=  THINGS.getOne(
 				JR.wrap("_id",new ObjectId(params.getString("uther"))), 
-				UserProfileCore.collection);
+				collection);
 
 		return Response.reply(
 				JR.wrap("username",user.get("username"))

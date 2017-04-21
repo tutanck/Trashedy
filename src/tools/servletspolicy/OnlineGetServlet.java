@@ -12,7 +12,7 @@ import com.aj.jeez.policy.GetServlet;
 import com.aj.jeez.templating.TemplateParam;
 import com.aj.tools.__;
 
-import mood.user.io.db.UserSessionDB;
+import mood.user.io.db.SessionDB;
 
 /**
  * * @author Anagbla Joan */
@@ -35,6 +35,6 @@ public class OnlineGetServlet extends GetServlet{
 			HttpServletRequest request,
 			JSONObject params
 			)throws Exception{	
-		return UserSessionDB.sessionExists(params);
+		return SessionDB.exists(params);
 	}
 }

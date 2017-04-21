@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 import com.aj.jeez.policy.GetServlet;
 
-import mood.user.io.db.UserSessionDB;
+import mood.user.io.db.SessionDB;
 
 /**
  * * @author Anagbla Joan */

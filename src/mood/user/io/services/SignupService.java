@@ -12,7 +12,7 @@ import com.aj.tools.__;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
 
-import mood.user.io.services.core.UserIOCore;
+import mood.user.io.services.core.IOCore;
 import tools.db.DBException;
 import tools.general.PatternsHolder;
 import tools.lingua.Lingua;
@@ -24,7 +24,7 @@ import tools.servletspolicy.OfflinePostServlet;
 
 /**
  * @author Joan */
-public class SignupService {
+public class SignupService extends IOCore {
 	public final static String url="/signup";
 
 
@@ -45,10 +45,10 @@ public class SignupService {
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
 
-		JSONObject emailCheck = UserIOCore.checkEmailCore(params);
+		JSONObject emailCheck = checkEmailCore(params);
 		if(emailCheck!=null) return emailCheck;
 
-		JSONObject usernameCheck = UserIOCore.checkUsernameCore(params);
+		JSONObject usernameCheck = checkUsernameCore(params);
 		if(usernameCheck!=null) return usernameCheck;
 
 		//--DB WRITEACTION
@@ -56,8 +56,8 @@ public class SignupService {
 		DBCommit commit = THINGS.add(
 				JR.slice(params,"username","pass","email")
 				.put("confirmed", ckey)
-				.put("regdate", new Date()),
-				UserIOCore.collection);
+				.put("regdate", new Date())
+				,collection);
 
 		//TODO utiliser un .property pour gerer le nom de racine de l app
 		String basedir = "http://localhost:8080/Essais0";
@@ -70,7 +70,7 @@ public class SignupService {
 					+basedir+UserAccountConfirmationService.url+"?ckey="+ckey);
 		}catch (Exception e) {commit.rollback(); /*TODO a tester bcp*/	__.explode(e);}
 		
-		return Response.reply(null);
+		return Response.reply();
 	}
 
 }

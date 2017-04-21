@@ -7,7 +7,7 @@ import com.aj.tools.__;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
 
-import mood.user.io.services.core.UserIOCore;
+import mood.user.io.services.core.IOCore;
 import tools.db.DBException;
 import tools.general.PatternsHolder;
 import tools.lingua.Lingua;
@@ -25,7 +25,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 
 /**
  * @author Joan */
-public class UserAccountRecoveryService {
+public class UserAccountRecoveryService extends IOCore {
 	public final static String url="/account/recover";
 
 	/**
@@ -41,7 +41,7 @@ public class UserAccountRecoveryService {
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
 	
-		if(!THINGS.exists(JR.slice(params,"email"),UserIOCore.collection))
+		if(!THINGS.exists(JR.slice(params,"email"),collection))
 			return Response.issue(ServiceCodes.UNKNOWN_EMAIL_ADDRESS);
 	
 		//Generate temporary key (sequence of 32 hexadecimal digits)  
@@ -49,8 +49,8 @@ public class UserAccountRecoveryService {
 		String secret = ServicesToolBox.generateToken();
 		THINGS.replaceOne(
 				JR.slice(params,"email"),
-				JR.wrap("pass", secret),
-				UserIOCore.collection);
+				JR.wrap("pass", secret)
+				,collection);
 	
 		try {
 			Email.send(params.getString("email"),
@@ -58,7 +58,7 @@ public class UserAccountRecoveryService {
 					Lingua.get("NewAccessKeySentMessage","fr-FR")+ secret);
 		}catch (Exception e) {__.explode(e);}
 		
-		return Response.reply(null);
+		return Response.reply();
 	}
 
 }

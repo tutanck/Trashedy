@@ -4,8 +4,8 @@ import com.aj.regina.THINGS;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
 
-import mood.user.io.db.UserSessionDB;
-import mood.user.profile.service.core.UserProfileCore;
+import mood.user.io.db.SessionDB;
+import mood.user.profile.service.core.ProfileCore;
 import tools.db.DBException;
 import tools.services.Response;
 import tools.services.ServiceCodes;
@@ -23,7 +23,7 @@ import com.aj.jeez.annotation.annotations.WebService;
  * Service classes are much more meaningful now , because DB access is automatic
  * This classes will take more significant decision on how their process and dispatch incoming data
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
-public class UpdateProfileService{
+public class UpdateProfileService extends ProfileCore{
 	 public final static String url="/user/update";
 
 	/**
@@ -40,23 +40,23 @@ public class UpdateProfileService{
 	public static JSONObject updateProfile(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
-		JSONObject clear = UserSessionDB.clarifyParams(params);
+		JSONObject decrypted = SessionDB.decrypt(params,"uid");
 
-		if(clear.has("email") && THINGS.exists(
-				JR.slice(clear,"email")
+		if(decrypted.has("email") && THINGS.exists(
+				JR.slice(decrypted,"email")
 				.put("_id",JR.wrap("$ne",params.get("uid")))
-				,UserProfileCore.collection))
+				,collection))
 			return Response.issue(ServiceCodes.EMAIL_IS_TAKEN);
 
-		if(clear.has("phone") && THINGS.exists(
-				JR.slice(clear,"phone")
+		if(decrypted.has("phone") && THINGS.exists(
+				JR.slice(decrypted,"phone")
 				.put("_id",JR.wrap("$ne",params.get("uid")))
-				,UserProfileCore.collection))
+				,collection))
 			return Response.issue(ServiceCodes.PHONE_IS_TAKEN);	
 
-		THINGS.putOne(JR.wrap("_id",params.get("uid")),clear,UserProfileCore.collection);
+		THINGS.putOne(JR.wrap("_id",params.get("uid")),decrypted,collection);
 
-		return Response.reply(null);
+		return Response.reply();
 	}
 
 }

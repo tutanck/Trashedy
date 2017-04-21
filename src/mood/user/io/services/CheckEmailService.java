@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import com.aj.tools.jr.AbsentKeyException;
 
-import mood.user.io.services.core.UserIOCore;
+import mood.user.io.services.core.IOCore;
 import tools.db.DBException;
 import tools.general.PatternsHolder;
 import tools.services.Response;
@@ -17,7 +17,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 
 /**
  * @author Joan */
-public class CheckEmailService {
+public class CheckEmailService extends IOCore {
 	public final static String url="/check/email";
 	
 	/**
@@ -32,11 +32,11 @@ public class CheckEmailService {
 	public static JSONObject checkEmail(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
-		JSONObject emailCheck = UserIOCore.checkEmailCore(params);
+		JSONObject emailCheck = checkEmailCore(params);
 		if(emailCheck!=null) 
 			return emailCheck;
 		
-		return Response.reply(null);
+		return Response.reply();
 	}
 
 }

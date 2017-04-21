@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import com.aj.tools.jr.AbsentKeyException;
 
-import mood.user.io.services.core.UserIOCore;
+import mood.user.io.services.core.IOCore;
 import tools.db.DBException;
 import tools.general.PatternsHolder;
 import tools.services.Response;
@@ -17,7 +17,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 
 /**
  * @author Joan */
-public class CheckUsernameService {
+public class CheckUsernameService extends IOCore {
 	public final static String url="/check/username";
 
 	/**
@@ -32,11 +32,11 @@ public class CheckUsernameService {
 	public static JSONObject checkUsername(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
-		JSONObject usernameCheck = UserIOCore.checkUsernameCore(params);
+		JSONObject usernameCheck = checkUsernameCore(params);
 		if(usernameCheck!=null) 
 			return usernameCheck;
 		
-		return Response.reply(null);
+		return Response.reply();
 	}
 
 }

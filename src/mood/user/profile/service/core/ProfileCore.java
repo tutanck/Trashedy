@@ -6,6 +6,6 @@ import mood.user.io.db.UserIODB;
 
 /**
  * @author AJoan*/
-public class UserProfileCore{
+public class ProfileCore{
 	public static DBCollection collection = UserIODB.collection;
 }

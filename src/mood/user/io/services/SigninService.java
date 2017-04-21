@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 import com.mongodb.DBObject;
 
-import mood.user.io.services.core.UserIOCore;
+import mood.user.io.services.core.IOCore;
 import tools.db.DBException;
 import tools.general.InputType;
 import tools.general.PatternsHolder;
@@ -25,7 +25,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 
 /**
  * @author Joan */
-public class SigninService {
+public class SigninService extends IOCore {
 	public final static String url="/signin";
 
 	/**
@@ -47,36 +47,31 @@ public class SigninService {
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {
 
 		DBObject user;
-		InputType it = UserIOCore.determineFormat(params.getString("username"));
+		InputType it = determineFormat(params.getString("username"));
 		System.out.println("username input format : "+it);//Debug
 
 		JSONObject renamed = JR.renameKeys(params,"username->"+it.toString());
 		System.out.println("renamed: "+renamed);//Debug
 
-		if (THINGS.exists(
-				JR.slice(renamed,it.toString(),"pass")
-				,UserIOCore.collection))
-			user = THINGS.getOne(JR.slice(renamed,it.toString())
-					,UserIOCore.collection);
-		else return Response.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
+		if (!THINGS.exists(JR.slice(renamed,it.toString(),"pass"),collection))
+			return Response.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
 
-		if(!THINGS.exists(
-				JR.wrap("_id", user.get("_id"))
-				.put("confirmed", true)
-				,UserIOCore.collection))
+		user = THINGS.getOne(JR.slice(renamed,it.toString()),collection);
+
+		if(!THINGS.exists(JR.wrap("_id",
+				user.get("_id")).put("confirmed", true)
+				,collection))
 			return Response.issue(ServiceCodes.USER_NOT_CONFIRMED);
 
 		//2 different devices can't be connected at the same time
-		THINGS.remove(
-				JR.wrap("uid", user.get("_id"))
-				,UserIOCore.session);
+		THINGS.remove(JR.wrap("uid", user.get("_id")),session);
 
 		String himitsu = ServicesToolBox.generateToken();
 
 		THINGS.add(
 				JR.wrap("skey",ServicesToolBox.scramble(himitsu+params.getString("did")))
-				.put("uid", user.get("_id"))
-				,UserIOCore.session);
+				.put("uid",user.get("_id"))
+				,session);
 
 		return Response.reply(
 				JR.wrap("himitsu", himitsu)

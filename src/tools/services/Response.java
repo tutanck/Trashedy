@@ -10,8 +10,7 @@ public class Response {
 	private static int _ISSUE=-1;
 	private static int _KANPEKI=0;
 
-	/**
-	 * @description 
+	/** 
 	 * Return a predefined JSONObject containing
 	 * the reply code {rpcode},
 	 * a the status code [_KANPEKI] 
@@ -31,10 +30,16 @@ public class Response {
 				.put("result",result);
 	}
 
+	
+	public static JSONObject reply(
+			)throws JSONException, ShouldNeverOccurException{
+		return new JSONObject()
+				.put("status",_KANPEKI);
+	}
+
 
 
 	/**
-	 * @description 
 	 * Return a predefined JSONObject containing 
 	 * the issue's {issuecode},
 	 * and the {status} code [_ISSUE]
