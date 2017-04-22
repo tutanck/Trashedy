@@ -19,13 +19,11 @@ import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
 public class DeleteService extends GroupCore{
-	public final static String url="/user/group/create";
+	public final static String url="/user/group/delete";
 	
 	
 	@WebService(value=url,policy=OnlinePostServlet.class,
-			requestParams=@Params(value={
-					@Param("gid"),
-					@Param("members")}))
+			requestParams=@Params(value={@Param("gid")}))
 	public static JSONObject delete(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException{

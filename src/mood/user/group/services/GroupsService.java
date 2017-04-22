@@ -18,7 +18,7 @@ import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
 public class GroupsService extends GroupCore{
-	public final static String url="/user/group/create";
+	public final static String url="/user/groups/";
 
 
 	@WebService(value=url,policy=OnlinePostServlet.class)

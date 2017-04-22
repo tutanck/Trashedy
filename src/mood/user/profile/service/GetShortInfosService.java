@@ -24,8 +24,7 @@ import com.aj.jeez.annotation.annotations.WebService;
  public class GetShortInfosService extends ProfileCore{
 	 public final static String url="/user/infos";
  
-	/**
-	 * @description 
+	/** 
 	 * return username , firstname and lastname, etc 
 	 * @param params
 	 * @return

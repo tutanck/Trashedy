@@ -17,13 +17,13 @@ public class __ {
 
 	public static boolean falsy(Object object){return false;}
 
-	public static boolean isEmpty(String string) {return string.length()==0;}
-		
-	public static boolean isEmpty(Object ...objects) {return objects.length==0;}
-	
 	public static boolean isNull(Object object) {return object==null;}
+	
+	public static boolean isEmpty(String string) {return isNull(string) || string.length()==0;}
+		
+	public static boolean isEmpty(Object ...objects) {return isNull(objects) || objects.length==0;}
 
-	public static boolean isWhiteSpace(String string) {return isEmpty(string.trim());}
+	public static boolean isVoidSpace(String string) {return isNull(string) || isEmpty(string.trim());}
 
 	public static Set<String> toSet(String... strings) {return (!isNull(strings)&&!isEmpty((Object[])strings))?new HashSet<String>(Arrays.asList(strings)):Collections.emptySet();}
 
@@ -51,7 +51,11 @@ public class __ {
 
 	public static boolean civilized(String input,String ...rules) {return civilized(input,toSet(rules));}
 
-	public static boolean civilized(String input,Set<String>rules) {for(String rule : stringSet(rules))	if(!Pattern.compile(rule).matcher(input).matches()) return falsy(outln("__/civilized : This rude '"+input+"' doesn't respect the following rule '"+rule+"'")); return truly (outln("__/civilized : This civilized '"+input+"' respect all the rules '"+rules+"'"));}
+	public static boolean civilized(String input,Set<String>rules) {
+		for(String rule : stringSet(rules))	
+			if(/*__.isVoidSpace(input) ||*/ !Pattern.compile(rule).matcher(input).matches()) 
+				return falsy(outln("__/civilized : This rude '"+input+"' doesn't respect the following rule '"+rule+"'")); 
+		return truly (outln("__/civilized : This civilized '"+input+"' respect all the rules '"+rules+"'"));}
 
 	public static void explode(Throwable e) {e.printStackTrace();throw new RuntimeException(e);}
 

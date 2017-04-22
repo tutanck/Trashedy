@@ -25,9 +25,9 @@ public class PatternsHolder {
 	public static final String notNum="\\D"; //[^0-9]
 	public static final String nums="\\d+"; //[0-9]+
 	public static final String notNums="\\D+"; //[^0-9]+
-	public static final String email=".+@.+"; //.+@.+
+	public static final String email="(.+)@(.+)\\.(.+)"; //RFC is : .+@.+
 	public static final String pass = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,})";
-	public static final String username = "((?=.*[a-z])^[a-zA-Z](\\w{2,}))";
+	public static final String uname = "((?=.*[a-z])^[a-zA-Z](\\w{2,}))";
 
 	public static final Map<String,String> accents = new HashMap<String, String>();
 	
@@ -46,7 +46,7 @@ public class PatternsHolder {
 	
 	public static boolean isValidUsername(String input) {
 	return /*isValidWord(input) &&*/(Pattern.compile(
-			PatternsHolder.username
+			PatternsHolder.uname
 			).matcher(input).matches());
 	}
 	
@@ -105,7 +105,7 @@ public class PatternsHolder {
 			return InputType.NUMS;
 		
 		else if(Pattern.compile(
-				PatternsHolder.username
+				PatternsHolder.uname
 				).matcher(input).matches())
 			return InputType.USERNAME;
 

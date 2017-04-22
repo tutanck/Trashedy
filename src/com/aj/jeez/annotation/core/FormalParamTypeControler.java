@@ -61,7 +61,7 @@ public class FormalParamTypeControler {
 			Set<String> rules
 			)throws ParamTypingException, ParamNamingException, ParamRulingException{
 		
-		if(__.isWhiteSpace(name))
+		if(__.isVoidSpace(name))
 			throw new ParamNamingException("Param name must not be empty");
 		
 		if(!Pattern.compile("\\w+").matcher(name).matches())
@@ -71,7 +71,7 @@ public class FormalParamTypeControler {
 			throw new ParamTypingException("Param type must only be int,long,float,double,boolean or String");
 		
 		for(String rule : __.stringSet(rules))
-			if(__.isWhiteSpace(rule))
+			if(__.isVoidSpace(rule))
 				throw new ParamRulingException("Each rule must not be empty");
 	}
 	

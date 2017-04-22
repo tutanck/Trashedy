@@ -94,7 +94,7 @@ public abstract class JEEZServlet extends HttpServlet{
 	public void init() throws ServletException {
 		super.init();
 
-		System.out.println("JEEZServlet/init:: "+getClass().getCanonicalName()+" : new instance requested...");
+		__.outln("JEEZServlet/init:: "+getClass().getCanonicalName()+" : new instance requested...");
 
 		Enumeration<String> servletInitParamsNames = getInitParameterNames();
 		while(servletInitParamsNames.hasMoreElements()){ 
@@ -105,7 +105,7 @@ public abstract class JEEZServlet extends HttpServlet{
 
 				JSONObject jzsDriver = new JSONObject(paramValue);
 
-				System.out.println("JEEZServlet/init::jzsDriver="+jzsDriver);
+				__.outln("JEEZServlet/init::jzsDriver="+jzsDriver);
 
 				this.url=jzsDriver.getString("url");
 				this.HTTPMethod=jzsDriver.getInt("httpm");
@@ -130,10 +130,10 @@ public abstract class JEEZServlet extends HttpServlet{
 				} catch (ClassNotFoundException | CheckoutAnnotationMisuseException  | ParamTypingException | ParamNamingException | ParamRulingException e) 
 				{throw new ServletException(e);}
 
-				System.out.println("JEEZServlet/init::THIS : '"+toString()+"'");
+				__.outln("JEEZServlet/init::THIS : '"+toString()+"'");
 			} 
 		}
-		System.out.println("JEEZServlet/init::"+sC+"."+sM+" initialised and now waiting for call...");
+		__.outln("JEEZServlet/init::"+sC+"."+sM+" initialised and now waiting for call...");
 	}
 
 
@@ -165,7 +165,7 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletResponse response
 			)throws Exception {
 
-		System.out.println("JEEZServlet/beforeBusiness::"+sC+"."+sM+" --> before business...");
+		__.outln("JEEZServlet/beforeBusiness::"+sC+"."+sM+" --> before business...");
 
 		response.setContentType("text/plain");
 
@@ -173,31 +173,31 @@ public abstract class JEEZServlet extends HttpServlet{
 
 		Map<String,String>effectiveRequestParams=MapRefiner.refine(request.getParameterMap());
 
-		System.out.println("JEEZServlet/beforeBusiness::effectiveRequestParams : "+effectiveRequestParams+" - formalRequestParams : "+requestParams);
+		__.outln("JEEZServlet/beforeBusiness::effectiveRequestParams : "+effectiveRequestParams+" - formalRequestParams : "+requestParams);
 
 		for(TemplateParam expected : requestParams.getExpecteds()) {
 			JSONObject res = paramIsValid(effectiveRequestParams,expected,validParams,true);
 			if (!res.getBoolean("valid")){
-				System.out.println(" -> Not Valid");
+				__.outln(" -> Not Valid");
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL MISUSED");
 				return null;
 			}
-			System.out.println(" -> Valid");
+			__.outln(" -> Valid");
 			validParams = JR.merge(validParams,(JSONObject) res.get("validParams"));
 		}
 
 		for(TemplateParam optional : requestParams.getOptionals()){
 			JSONObject res = paramIsValid(effectiveRequestParams,optional,validParams,false);
 			if (!res.getBoolean("valid")){
-				System.out.println(" -> Not Valid");
+				__.outln(" -> Not Valid");
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "URL MISUSED");
 				return null;
 			}
-			System.out.println(" -> Valid");
+			__.outln(" -> Valid");
 			validParams = JR.merge(validParams,(JSONObject) res.get("validParams"));
 		}
 
-		System.out.println("JEEZServlet/beforeBusiness::Finally ValidParams:"+validParams);
+		__.outln("JEEZServlet/beforeBusiness::Finally ValidParams:"+validParams);
 
 		if(auth && !isAuth(request,validParams)){
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "USER UNAUTHENTICATED");
@@ -234,16 +234,15 @@ public abstract class JEEZServlet extends HttpServlet{
 		Set<String> paramRules = formalParam.getRules();
 
 		//Debug
-		System.out.print("    --->paramName:"+paramName);
-		System.out.print(" && paramType:"+paramType);
-		System.out.print(" = "+effectiveParams.get(paramName)+" ");
+		__.out("    --->paramName:"+paramName);
+		__.out(" && paramType:"+paramType);
+		__.out(" = "+effectiveParams.get(paramName)+" ");
 
 		//availability test
 		if( effectiveParams.containsKey(paramName) && 
 				effectiveParams.get(paramName)!=null &&
 				!effectiveParams.get(paramName).equals("") && 
 				!effectiveParams.get(paramName).equals("null") )
-			__.errln("ghghyuyfhgfrnnfbdc"+__.civilized(effectiveParams.get(paramName), paramRules));
 			if(__.civilized(effectiveParams.get(paramName), paramRules)) //civilization test
 				try {//typing test
 					if( EffectiveParamTyper.valid(
@@ -278,14 +277,14 @@ public abstract class JEEZServlet extends HttpServlet{
 			Object result
 			)throws Exception {
 
-		System.out.println("JEEZServlet/afterBusiness::"+sC+"."+sM+" --> after business...");
+		__.outln("JEEZServlet/afterBusiness::"+sC+"."+sM+" --> after business...");
 
 		if(!resultIsOK(result)) {
-			System.out.println("result failed to satisfy at least one clientsafe checkouts");
+			__.outln("result failed to satisfy at least one clientsafe checkouts");
 			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARILY UNAVAILABLE");
 			return;
 		}
-		System.out.println("result satisfied all clientsafe checkouts");
+		__.outln("result satisfied all clientsafe checkouts");
 		response.getWriter().print(result);
 	}	
 
@@ -309,12 +308,12 @@ public abstract class JEEZServlet extends HttpServlet{
 
 			for(Method checkout : entry.getValue()){
 				String chkName=checkClass+"."+checkout;
-				System.out.println("JEEZServlet/resultIsOK:: static call of : "+chkName+"("+result+")");
+				__.outln("JEEZServlet/resultIsOK:: static call of : "+chkName+"("+result+")");
 				Checkout chk = checkout.getAnnotation(Checkout.class);
 
 				try{
 					if(!(boolean)checkout.invoke(checkClass.newInstance(), new Object[]{result,this.jsonOutParams})){
-						System.out.println("result failed to satisfy checkout '"+chkName+"'");
+						__.outln("result failed to satisfy checkout '"+chkName+"'");
 						return !chk.value();							
 					}
 				}catch (Throwable t) {t.printStackTrace();return !chk.value();}
@@ -339,7 +338,7 @@ public abstract class JEEZServlet extends HttpServlet{
 			)throws Exception {			
 		Class<?> serviceClass=Class.forName(this.sC);	
 		Method m = serviceClass.getMethod(this.sM, new Class[]{JSONObject.class});
-		System.out.println("JEEZServlet/doBusiness:: static call of : "+this.sC+"."+m+"("+params+")");
+		__.outln("JEEZServlet/doBusiness:: static call of : "+this.sC+"."+m+"("+params+")");
 		return m.invoke(serviceClass.newInstance(), new Object[]{params});
 	}	 
 

@@ -27,7 +27,7 @@ public class UpdateProfileService extends ProfileCore{
 	 public final static String url="/user/update";
 
 	/**
-	 * @description update user's profile
+	 * update user's profile
 	 * @param params
 	 * @return
 	 * @throws DBException 

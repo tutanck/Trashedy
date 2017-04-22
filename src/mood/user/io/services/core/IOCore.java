@@ -60,7 +60,7 @@ public class IOCore{
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
 		
-		if(THINGS.exists(JR.slice(params,"username"),collection))
+		if(THINGS.exists(JR.slice(params,"uname"),collection))
 			return Response.issue(ServiceCodes.USERNAME_IS_TAKEN);		
 		return null; //all right
 	}

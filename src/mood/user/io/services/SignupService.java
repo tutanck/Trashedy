@@ -38,7 +38,7 @@ public class SignupService extends IOCore {
 	@WebService(
 			value=url,policy = OfflinePostServlet.class,
 			requestParams=@Params({
-				@Param(value="username",rules={PatternsHolder.username}),
+				@Param(value="uname",rules={PatternsHolder.uname}),
 				@Param(value="pass",rules={PatternsHolder.pass}),
 				@Param(value="email",rules={PatternsHolder.email}) }))
 	public static JSONObject registration(
@@ -54,7 +54,7 @@ public class SignupService extends IOCore {
 		//--DB WRITEACTION
 		String ckey =ServicesToolBox.generateToken();
 		DBCommit commit = THINGS.add(
-				JR.slice(params,"username","pass","email")
+				JR.slice(params,"uname","pass","email")
 				.put("confirmed", ckey)
 				.put("regdate", new Date())
 				,collection);

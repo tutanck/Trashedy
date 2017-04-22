@@ -12,7 +12,7 @@ public enum InputType {
 		  public String toString() {
 		    switch(this) {
 		      case EMAIL: return "email";
-		      case USERNAME: return "username";		
+		      case USERNAME: return "uname";		
 		      case PHONE: return "phone";
 		      case NUMS: return "nums";
 		      case AWORD: return "aword";

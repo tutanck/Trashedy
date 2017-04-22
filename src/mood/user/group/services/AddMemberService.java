@@ -20,7 +20,7 @@ import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
 public class AddMemberService extends GroupCore{
-	public final static String url="/user/group/create";
+	public final static String url="/user/group/member/add";
 
 
 	@WebService(value=url,policy=OnlinePostServlet.class,

@@ -19,13 +19,14 @@ import tools.db.DBException;
 import tools.services.Response;
 import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
-import tools.servletspolicy.OnlinePostServlet;
+import tools.servletspolicy.OnlineGetServlet;
+
 
 public class GroupMembersService extends GroupCore{
-	public final static String url="/user/group/create";
+	public final static String url="/user/group/members";
 
 
-	@WebService(value=url,policy=OnlinePostServlet.class,
+	@WebService(value=url,policy=OnlineGetServlet.class,
 			requestParams=@Params(value={@Param("gid")}))
 	public static JSONObject members(
 			JSONObject params

@@ -7,7 +7,6 @@ import com.mongodb.DBObject;
 
 import mood.user.io.services.core.IOCore;
 import tools.db.DBException;
-import tools.general.InputType;
 import tools.general.PatternsHolder;
 import tools.services.Response;
 import tools.services.ServiceCodes;
@@ -39,7 +38,7 @@ public class SigninService extends IOCore {
 	@WebService(
 			value=url,policy=OfflinePostServlet.class,
 			requestParams=@Params({
-				@Param(value="uname",rules={PatternsHolder.username}),
+				@Param(value="uname"),
 				@Param(value="pass",rules={PatternsHolder.pass}),
 				@Param("did")}))
 	public static JSONObject login(
@@ -47,16 +46,16 @@ public class SigninService extends IOCore {
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {
 
 		DBObject user;
-		InputType it = determineFormat(params.getString("username"));
-		System.out.println("username input format : "+it);//Debug
+		String format = determineFormat(params.getString("uname")).toString();
+		System.out.println("username input format : "+format);//Debug
 
-		JSONObject renamed = JR.renameKeys(params,"username->"+it.toString());
+		JSONObject renamed = JR.renameKeys(params,"uname->"+format);
 		System.out.println("renamed: "+renamed);//Debug
 
-		if (!THINGS.exists(JR.slice(renamed,it.toString(),"pass"),collection))
+		if (!THINGS.exists(JR.slice(renamed,format,"pass"),collection))
 			return Response.issue(ServiceCodes.WRONG_LOGIN_PASSWORD);
 
-		user = THINGS.getOne(JR.slice(renamed,it.toString()),collection);
+		user = THINGS.getOne(JR.slice(renamed,format),collection);
 
 		if(!THINGS.exists(JR.wrap("_id",
 				user.get("_id")).put("confirmed", true)

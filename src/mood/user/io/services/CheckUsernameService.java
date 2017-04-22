@@ -28,7 +28,7 @@ public class CheckUsernameService extends IOCore {
 	 * @throws DBException
 	 * @throws AbsentKeyException */
 	@WebService(value=url,policy=OfflineGetServlet.class,
-			requestParams=@Params({ @Param(value="username",rules={PatternsHolder.username}) }))
+			requestParams=@Params({ @Param(value="username",rules={PatternsHolder.uname}) }))
 	public static JSONObject checkUsername(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
