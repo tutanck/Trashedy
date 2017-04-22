@@ -29,7 +29,7 @@ public class UserAccountRecoveryService extends IOCore {
 	public final static String url="/account/recover";
 
 	/**
-	 * @description send an email with MD5 generated temporary access key for access recover to the user
+	 * Send an email with MD5 generated temporary access key for access recover to the user
 	 * @param params
 	 * @return
 	 * @throws DBException
@@ -47,9 +47,9 @@ public class UserAccountRecoveryService extends IOCore {
 		//Generate temporary key (sequence of 32 hexadecimal digits)  
 		//reset password temporarily until user redefine it! 
 		String secret = ServicesToolBox.generateToken();
-		THINGS.replaceOne(
+		THINGS.update(
 				JR.slice(params,"email"),
-				JR.wrap("pass", secret)
+				JR.wrap("$set",JR.wrap("pass", secret))
 				,collection);
 	
 		try {

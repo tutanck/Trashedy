@@ -22,9 +22,12 @@ public interface ServiceCodes {
 	/* invalid formats -4* */
 	
 	/* existing relationships -5* */
+	int EXISTING_RESOURCE = -50;
 	int EXISTING_FOLLOW_REL = -51;
+	int EXISTING_USER_GROUP_NAME = -52;
 	
 	/*admin error*/
 	int MRP_DOUBLING=-111;
+
 	
 }

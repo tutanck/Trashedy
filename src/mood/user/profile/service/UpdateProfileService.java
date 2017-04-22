@@ -44,17 +44,17 @@ public class UpdateProfileService extends ProfileCore{
 
 		if(decrypted.has("email") && THINGS.exists(
 				JR.slice(decrypted,"email")
-				.put("_id",JR.wrap("$ne",params.get("uid")))
+				.put("_id",JR.wrap("$ne",decrypted.get("uid")))
 				,collection))
 			return Response.issue(ServiceCodes.EMAIL_IS_TAKEN);
 
 		if(decrypted.has("phone") && THINGS.exists(
 				JR.slice(decrypted,"phone")
-				.put("_id",JR.wrap("$ne",params.get("uid")))
+				.put("_id",JR.wrap("$ne",decrypted.get("uid")))
 				,collection))
 			return Response.issue(ServiceCodes.PHONE_IS_TAKEN);	
 
-		THINGS.upsertOne(JR.wrap("_id",params.get("uid")),decrypted,collection);
+		THINGS.update(JR.wrap("_id",decrypted.get("uid")),decrypted,true,collection);
 
 		return Response.reply();
 	}

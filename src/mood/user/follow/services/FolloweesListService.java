@@ -19,16 +19,16 @@ import tools.servletspolicy.OnlineGetServlet;
 
 /**
  * @author AJoan */
-public class FollowersListService extends FollowCore{
-	public final static String url="/user/followers";
+public class FolloweesListService extends FollowCore{
+	public final static String url="/user/followees";
 
 	@WebService(value=url,policy=OnlineGetServlet.class)
-	public static JSONObject followers(
+	public static JSONObject followees(
 			JSONObject params
 			) throws ShouldNeverOccurException, AbsentKeyException, DBException{
 		ArrayList<String>fidList= new ArrayList<>(); 	
 
-		THINGS.get(JR.slice(SessionDB.decrypt(params,"uid"), "uid"), collection);
+		THINGS.get(JR.slice(SessionDB.decrypt(params,"fid"), "fid"), collection);
 
 		JSONArray followers=new JSONArray();
 		for(String fid : fidList)

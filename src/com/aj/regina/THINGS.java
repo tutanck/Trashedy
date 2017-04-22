@@ -7,6 +7,7 @@ import com.mongodb.*;
 
 import tools.db.DBException;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -74,6 +75,24 @@ public class THINGS{
 
 
 
+	/**
+	 * Update {things} in the {collection} where {where} condition match
+	 * @param things
+	 * @param where
+	 * @param collection
+	 * @param caller
+	 * @throws DBException */
+	public static DBCommit update(
+			JSONObject where,
+			JSONObject things,
+			boolean upsert,
+			DBCollection collection
+			) throws DBException{
+		return update(where,things,upsert,false,collection);
+	}
+	
+	
+	
 	/**
 	 * Update {things} in the {collection} where {where} condition match
 	 * @param things
@@ -188,10 +207,22 @@ public class THINGS{
 	 * Reformat a JSONObject into a BasicDBObject
 	 * @param json
 	 * @return */
-	private static BasicDBObject dressJSON(JSONObject json){
+	public static BasicDBObject dressJSON(JSONObject json){
 		return new BasicDBObject(json.toMap());
 	}
 
+	
+	/** 
+	 * Return a JSONArray equivalent to the {dbList}
+	 * @param map
+	 * @return */
+	public static JSONArray undressJSON(
+			BasicDBList dbList
+			){
+		return dbList.size() !=0 ? new JSONArray(dbList) : new JSONArray();
+	}
+	
+	
 
 	/**
 	 * 

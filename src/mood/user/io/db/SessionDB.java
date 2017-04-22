@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import com.mongodb.DBCollection;
 
-import tools.db.DBConnectionManager;
+import tools.db.DBManager;
 import tools.db.DBException;
 import tools.services.ServicesToolBox;
 
@@ -16,8 +16,7 @@ import com.aj.tools.jr.JR;
  * @author AJoan */
 public class SessionDB {
 
-	public static DBCollection collection = 
-			DBConnectionManager.getMongoDBCollection("session");
+	public static DBCollection collection = DBManager.collection("sessions");
 
 	
 	/**
@@ -25,11 +24,13 @@ public class SessionDB {
 	 * the given {raw-skey}(raw sessionKey) in params 
 	 * and wrap it in the 'same' JSONObject containing others/previous params  
 	 * @param params
-	 * @return */
+	 * @return 
+	 * @throws DBException 
+	 * @throws  */
 	public static JSONObject decrypt(
 			JSONObject params,
 			String decryptedKeyName
-			){
+			) throws DBException{
 		return JR.replace(params,"skey",decryptedKeyName,
 				 THINGS.getOne(
 							JR.wrap("skey",ServicesToolBox.scramble(params.getString("skey"))),

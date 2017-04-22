@@ -1,6 +1,4 @@
-package mood.user.follow.services;
-
-import java.util.Date;
+package mood.user.group.services;
 
 import org.json.JSONObject;
 
@@ -9,9 +7,10 @@ import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.AbsentKeyException;
+import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
 
-import mood.user.follow.services.core.FollowCore;
+import mood.user.group.services.core.GroupCore;
 import mood.user.io.db.SessionDB;
 import tools.db.DBException;
 import tools.services.Response;
@@ -19,25 +18,26 @@ import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
-/**
- * @author AJoan */
-public class ReplyFollowService extends FollowCore{
-	public final static String url="/user/follow/reply";
-
+public class DeleteService extends GroupCore{
+	public final static String url="/user/group/create";
+	
+	
 	@WebService(value=url,policy=OnlinePostServlet.class,
-			requestParams=@Params(value={@Param("uid")}))		
-	public static JSONObject replyFollow(
+			requestParams=@Params(value={
+					@Param("gid"),
+					@Param("members")}))
+	public static JSONObject delete(
 			JSONObject params
-			) throws  DBException, ShouldNeverOccurException, AbsentKeyException{
-
-		JSONObject rel = JR.slice(SessionDB.decrypt(params,"fid"), "uid");
-
-		if(!THINGS.exists(rel, collection))
+			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException{
+		
+		JSONObject group = JR.renameKeys(JR.slice(SessionDB.decrypt(params,"owner"),"owner","gid"),"gid->_id");
+			 
+		if(!THINGS.exists(group, collection))
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);			
-
-		THINGS.update(rel,rel.put("following",true).put("fdate", new Date()), collection);
+			
+			THINGS.update(group,group.put("$set",JR.wrap("open",false)),collection);
 
 		return Response.reply();
 	}
-
+	
 }

@@ -36,7 +36,7 @@ public class UnfollowService extends FollowCore{
 		if(!THINGS.exists(rel, collection))
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);			
 
-		THINGS.upsertOne(rel,rel.put("following",false).put("fdate", new Date()), collection);
+		THINGS.update(rel,rel.put("following",false).put("fdate", new Date()), collection);
 
 		return Response.reply();
 	}

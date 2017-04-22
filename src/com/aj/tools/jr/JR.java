@@ -20,6 +20,10 @@ public class JR {
 	}
 	
 	
+	/**
+	 * Return an JSONObject similar to {json}
+	 * @param json
+	 * @return */
 	public static JSONObject clone(
 			JSONObject json
 			){
@@ -117,7 +121,7 @@ public class JR {
 	}
 
 
-	/**
+	/** 
 	 * Subdivide a json's {trunc} in two json's branches following {subKeys} keys
 	 * One branch will contains all entries whose key is in {subKeys}
 	 * The other branch will contains all entries in initial {trunc} except whose key is in {subKeys}
@@ -125,25 +129,22 @@ public class JR {
 	 * @param subKeys
 	 * @return  
 	 * @throws AbsentKeyException */
-	public static List<JSONObject> branch(
+	public static Node<JSONObject> branch(
 			JSONObject trunk,
 			String...subKeys
 			) throws AbsentKeyException{
-		JSONObject branch0 = new JSONObject();
-		JSONObject branch1 = new JSONObject(trunk.toMap());
+		JSONObject yellow = new JSONObject();
+		JSONObject white = new JSONObject(trunk.toMap());
 
 		for(String key : new HashSet<String>(Arrays.asList(subKeys)))
 			if(trunk.has(key)){
-				branch0.put(key, trunk.get(key));
-				branch1.remove(key);
+				yellow.put(key, trunk.get(key));
+				white.remove(key);
 			}
 			else throw new
 			AbsentKeyException("The key '"+key+"' does not exist in '"+trunk+"'");
 
-		List<JSONObject>node = new ArrayList<>();
-		node.add(0,branch0);
-		node.add(1,branch1);
-		return node;
+		return new Node<JSONObject>(yellow,white);
 	}
 
 

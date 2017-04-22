@@ -39,7 +39,7 @@ public class SigninService extends IOCore {
 	@WebService(
 			value=url,policy=OfflinePostServlet.class,
 			requestParams=@Params({
-				@Param(value="username",rules={PatternsHolder.username}),
+				@Param(value="uname",rules={PatternsHolder.username}),
 				@Param(value="pass",rules={PatternsHolder.pass}),
 				@Param("did")}))
 	public static JSONObject login(

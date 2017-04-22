@@ -2,6 +2,7 @@ package mood.user.io.services;
 
 import org.json.JSONObject;
 
+import com.aj.regina.DBCommit;
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.InvalidKeyException;
@@ -38,11 +39,13 @@ public class UserAccountConfirmationService extends IOCore {
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException, InvalidKeyException{ 
 	
-		WriteResult wr =THINGS.replaceOne(
+		DBCommit commit = THINGS.update(
 				JR.renameKeys(params,"ckey->confirmed"), 
 				JR.wrap("$set",JR.wrap("confirmed", true))
 				,collection);
 	
+		WriteResult wr = commit.getWriteResult();
+		
 		if(wr.getN()<1)
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);
 	
