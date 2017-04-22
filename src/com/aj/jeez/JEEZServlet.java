@@ -1,4 +1,4 @@
-package com.aj.jeez.templating;
+package com.aj.jeez;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -28,6 +28,10 @@ import com.aj.jeez.annotation.exceptions.ParamRulingException;
 import com.aj.jeez.annotation.exceptions.ParamTypingException;
 import com.aj.jeez.checks.CheckExpectedOut;
 import com.aj.jeez.exceptions.JEEZError;
+import com.aj.jeez.templating.EffectiveParamTyper;
+import com.aj.jeez.templating.ParamsInflator;
+import com.aj.jeez.templating.TemplateParam;
+import com.aj.jeez.templating.TemplateParams;
 import com.aj.tools.MapRefiner;
 import com.aj.tools.Stretch;
 import com.aj.tools.__;

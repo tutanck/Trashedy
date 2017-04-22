@@ -7,8 +7,8 @@ import com.aj.tools.jr.JR;
 import mood.user.io.db.SessionDB;
 import mood.user.profile.service.core.ProfileCore;
 import tools.db.DBException;
+import tools.general.PatternsHolder;
 import tools.services.Response;
-import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
@@ -24,7 +24,7 @@ import com.aj.jeez.annotation.annotations.WebService;
  * This classes will take more significant decision on how their process and dispatch incoming data
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
 public class UpdateProfileService extends ProfileCore{
-	 public final static String url="/user/profile/update";
+	public final static String url="/user/profile/update";
 
 	/**
 	 * update user's profile
@@ -35,24 +35,30 @@ public class UpdateProfileService extends ProfileCore{
 	 * @throws AbsentKeyException */
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params(
-					value={@Param("username"),@Param("email")},
-			optionals={@Param("phone"),@Param("lastname"),@Param("firstname"),@Param("birthdate")}))
+					value={
+							@Param(value="uname",rules={PatternsHolder.uname}),
+							@Param(value="email",rules={PatternsHolder.email})},
+					optionals={
+							@Param(value="phone",rules={PatternsHolder.nums}), //TODO change pattern to better +33...
+							@Param("lname"),//TODO if needed
+							@Param("fname"),//TODO if needed
+							@Param("bdate")//TODO if needed
+					}))
 	public static JSONObject updateProfile(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
 		JSONObject decrypted = SessionDB.decrypt(params,"uid");
 
-		if(decrypted.has("email") && THINGS.exists(
-				JR.slice(decrypted,"email")
-				.put("_id",JR.wrap("$ne",decrypted.get("uid")))
-				,collection))
-			return Response.issue(ServiceCodes.EMAIL_IS_TAKEN);
+		JSONObject usernameCheck = checkUsername(params);
+		if(usernameCheck!=null) return usernameCheck;
 
-		if(decrypted.has("phone") && THINGS.exists(
-				JR.slice(decrypted,"phone")
-				.put("_id",JR.wrap("$ne",decrypted.get("uid")))
-				,collection))
-			return Response.issue(ServiceCodes.PHONE_IS_TAKEN);	
+		JSONObject emailCheck = checkEmail(params);
+		if(emailCheck!=null) return emailCheck;
+
+		if(decrypted.has("phone")){
+			JSONObject phoneCheck = checkPhone(params);
+			if(phoneCheck!=null) return emailCheck;
+		}
 
 		THINGS.update(JR.wrap("_id",decrypted.get("uid")),decrypted,true,collection);
 

@@ -8,8 +8,8 @@ import java.lang.annotation.ElementType;
 
 import javax.servlet.annotation.WebInitParam;
 
+import com.aj.jeez.JEEZServlet;
 import com.aj.jeez.policy.GetServlet;
-import com.aj.jeez.templating.JEEZServlet;
 
 /**
  * @author AJoan */

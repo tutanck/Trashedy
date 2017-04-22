@@ -10,7 +10,7 @@ public class TemplateParams {
 	private final Set<TemplateParam> expecteds;
 	private final Set<TemplateParam> optionals;
 
-	TemplateParams(){
+	public TemplateParams(){
 		this.expecteds=new HashSet<>();
 		this.optionals=new HashSet<>();
 	}

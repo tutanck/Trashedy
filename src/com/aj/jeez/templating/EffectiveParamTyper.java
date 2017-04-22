@@ -7,7 +7,7 @@ import com.aj.tools.__;
 
 public class EffectiveParamTyper{
 
-	static boolean valid(
+	public static boolean valid(
 			String name,
 			int formalType,
 			String effectiveStringValue,

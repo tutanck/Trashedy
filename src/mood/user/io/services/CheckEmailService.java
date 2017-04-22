@@ -32,7 +32,9 @@ public class CheckEmailService extends IOCore {
 	public static JSONObject checkEmail(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
-		JSONObject emailCheck = checkEmailCore(params);
+		
+		JSONObject emailCheck = checkEmail(params);
+		
 		if(emailCheck!=null) 
 			return emailCheck;
 		

@@ -32,7 +32,9 @@ public class CheckUsernameService extends IOCore {
 	public static JSONObject checkUsername(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
-		JSONObject usernameCheck = checkUsernameCore(params);
+		
+		JSONObject usernameCheck = checkUsername(params);
+		
 		if(usernameCheck!=null) 
 			return usernameCheck;
 		

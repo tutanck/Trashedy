@@ -6,7 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.aj.jeez.templating.JEEZServlet;
+import com.aj.jeez.JEEZServlet;
 
 /**
  * * @author Anagbla Joan */

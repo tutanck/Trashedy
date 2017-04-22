@@ -45,13 +45,13 @@ public class SignupService extends IOCore {
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
 
-		JSONObject emailCheck = checkEmailCore(params);
+		JSONObject emailCheck = checkEmail(params);
 		if(emailCheck!=null) return emailCheck;
 
-		JSONObject usernameCheck = checkUsernameCore(params);
+		JSONObject usernameCheck = checkUsername(params);
 		if(usernameCheck!=null) return usernameCheck;
 
-		//--DB WRITEACTION
+		//--DB WRITE_ACTION
 		String ckey =ToolBox.generateToken();
 		DBCommit commit = THINGS.add(
 				JR.slice(params,"uname","pass","email")

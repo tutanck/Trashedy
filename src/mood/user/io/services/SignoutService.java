@@ -30,9 +30,8 @@ public class SignoutService extends IOCore{
 	public static JSONObject logout(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException {
-		THINGS.remove(JR.wrap("skey",
-				ToolBox.scramble(params.getString("skey")))
-				,session);
+		
+		THINGS.remove(JR.wrap("skey",ToolBox.scramble(params.getString("skey"))),session);
 	
 		return Response.reply();
 	}

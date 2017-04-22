@@ -35,6 +35,8 @@ public class OnlinePostServlet extends PostServlet{
 			HttpServletRequest request,
 			JSONObject params
 			)throws Exception{	
-		return SessionDB.exists(params);
+		
+		return true;//TODO uncmt
+		//return SessionDB.exists(params);
 	}
 }

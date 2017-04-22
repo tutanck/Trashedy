@@ -16,7 +16,6 @@ import tools.services.ShouldNeverOccurException;
 
 import java.util.regex.Pattern;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -34,11 +33,10 @@ public class IOCore{
 	 * Check if email's input is valid (internal service's core)
 	 * @param params
 	 * @return
-	 * @throws JSONException
 	 * @throws ShouldNeverOccurException
 	 * @throws DBException
 	 * @throws AbsentKeyException */
-	public static JSONObject checkEmailCore(
+	public static JSONObject checkEmail(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
 		
@@ -52,11 +50,10 @@ public class IOCore{
 	 * Check if username's input is valid (internal service's core)
 	 * @param params
 	 * @return
-	 * @throws JSONException
 	 * @throws ShouldNeverOccurException
 	 * @throws DBException
 	 * @throws AbsentKeyException */
-	public static JSONObject checkUsernameCore(
+	public static JSONObject checkUsername(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
 		
