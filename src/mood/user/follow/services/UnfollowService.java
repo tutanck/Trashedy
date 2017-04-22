@@ -19,6 +19,8 @@ import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
+/**
+ * @author AJoan */
 public class UnfollowService extends FollowCore{
 	public final static String url="/user/unfollow";
 
@@ -34,7 +36,7 @@ public class UnfollowService extends FollowCore{
 		if(!THINGS.exists(rel, collection))
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);			
 
-		THINGS.putOne(rel,rel.put("following",false).put("fdate", new Date()), collection);
+		THINGS.upsertOne(rel,rel.put("following",false).put("fdate", new Date()), collection);
 
 		return Response.reply();
 	}

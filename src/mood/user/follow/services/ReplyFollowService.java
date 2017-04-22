@@ -19,9 +19,10 @@ import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
+/**
+ * @author AJoan */
 public class ReplyFollowService extends FollowCore{
 	public final static String url="/user/follow/reply";
-
 
 	@WebService(value=url,policy=OnlinePostServlet.class,
 			requestParams=@Params(value={@Param("uid")}))		
@@ -34,7 +35,7 @@ public class ReplyFollowService extends FollowCore{
 		if(!THINGS.exists(rel, collection))
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);			
 
-		THINGS.putOne(rel,rel.put("following",true).put("fdate", new Date()), collection);
+		THINGS.upsertOne(rel,rel.put("following",true).put("fdate", new Date()), collection);
 
 		return Response.reply();
 	}

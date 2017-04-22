@@ -3,6 +3,7 @@ package com.aj.regina;
 import org.bson.types.ObjectId;
 
 import com.aj.tools.jr.JR;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 
@@ -12,31 +13,44 @@ public class DBCommit {
 
 	private DBCollection coll;
 	private DBAction action;
-	private ObjectId thingID;
+	private BasicDBObject where;
+	private BasicDBObject things;
 	private WriteResult wr;
 
 	public DBCommit(
 			DBCollection coll,
-			ObjectId thingID,
+			BasicDBObject where,
+			BasicDBObject things,
+			DBAction action, 
+			WriteResult wr		
+			){
+		this(coll, things, action, wr);
+		this.where=where;
+	}
+
+	public DBCommit(
+			DBCollection coll,
+			BasicDBObject things,
 			DBAction action, 
 			WriteResult wr		
 			){
 		this.wr=wr;
 		this.action=action;
-		this.thingID=thingID;
+		this.things=things;
 		this.coll=coll;
 	}
 
 
 	public WriteResult rollback() throws DBException{
 		switch (action) {
-		case ADD : return THINGS.remove(JR.wrap("_id",thingID),coll).getWriteResult();
+		case ADD : return THINGS.remove(JR.wrap("_id",(ObjectId)things.get("_id")),coll).getWriteResult();
 		default: throw new IllegalArgumentException();
 		}
 	}
 
 	public DBAction getAction() {return action;} 
 	public WriteResult getWriteResult() {return wr;}
-	public ObjectId getThingID() {return thingID;}
+	public BasicDBObject getWhere() {return where;}
+	public BasicDBObject getThings() {return things;}
 	public DBCollection getCollection() {return coll;}
 }

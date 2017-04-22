@@ -16,10 +16,10 @@ import tools.services.Response;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlineGetServlet;
 
-
+/**
+ * @author AJoan */
 public class FollowersListService extends FollowCore{
 	public final static String url="/user/followers";
-
 
 	@WebService(value=url,policy=OnlineGetServlet.class)
 	public static JSONObject friendList(

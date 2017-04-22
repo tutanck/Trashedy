@@ -18,6 +18,8 @@ import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
+/**
+ * @author AJoan */
 public class FollowService extends FollowCore {
 	public final static String url="/user/follow";
 	

@@ -54,7 +54,7 @@ public class UpdateProfileService extends ProfileCore{
 				,collection))
 			return Response.issue(ServiceCodes.PHONE_IS_TAKEN);	
 
-		THINGS.putOne(JR.wrap("_id",params.get("uid")),decrypted,collection);
+		THINGS.upsertOne(JR.wrap("_id",params.get("uid")),decrypted,collection);
 
 		return Response.reply();
 	}

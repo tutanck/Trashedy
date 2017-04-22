@@ -7,21 +7,20 @@ import com.mongodb.*;
 
 import tools.db.DBException;
 
-import org.bson.types.ObjectId;
 import org.json.JSONObject;
 
 /**
  * @author AJoan
  *
  * Using THINGS allows :
- * More logical not concerning database in services
- * we prefer convert incoming JSON into BSON (binary format)
+ * -More logical not concerning database in services
+ * -Conversion of incoming JSON into BSON (binary format)
  * before insertion into the database : https://www.mongodb.com/json-and-bson */
 public class THINGS{
 
 
 	/**
-	 * @DESCRIPTION insert {things} in the {collection}
+	 * Insert {things} in the {collection}
 	 * @param things
 	 * @param collection
 	 * @param caller
@@ -29,112 +28,71 @@ public class THINGS{
 	public static DBCommit add(
 			JSONObject things,
 			DBCollection collection
-	) throws DBException{
+			) throws DBException{
+		WriteResult wr = null;
 		DBAction action = DBAction.ADD;
+
 		BasicDBObject doc = dressJSON(things).append("_date",new Date());
-		WriteResult wr = collection.insert(doc);
+
+		try{ wr = collection.insert(doc); }
+		catch(Exception e){DBException.forward(e);}
+
 		logDBAction(things,collection,Caller.whoIsAsking(),action);
-		return new DBCommit(collection,(ObjectId)doc.get("_id"),action, wr);
-	}
-	
-	
 
-	/**
-	 * Update {things} somewhere in the {collection} where {where} condition match
+		return new DBCommit(collection,doc,action, wr);
+	}
+
+
+
+	/** TODO update date
+	 * Update {things} in the {collection} where {where} condition match
 	 * @param things
 	 * @param where
 	 * @param collection
 	 * @param caller
 	 * @throws DBException */
-	public static WriteResult replaceOne(
+	public static DBCommit update(
 			JSONObject where,
 			JSONObject things,
+			boolean upsert,
+			boolean multi,
 			DBCollection collection
-	) throws DBException{
-		WriteResult wr = collection.update(
-				dressJSON(where),
-				dressJSON(things),
-				false,false
-		);
-		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.UPDATEONE);
-		return wr;
-	}
+			) throws DBException{
+		WriteResult wr = null;
+		DBAction action = updateAction(upsert,multi);
 
+		BasicDBObject whr = dressJSON(where);
+		BasicDBObject thngs = dressJSON(things);
 
+		try{ wr = collection.update(whr,thngs,upsert,multi); }
+		catch(Exception e){DBException.forward(e);}
 
-	/**TODO : update _date
-	 * Update {things} everywhere in the {collection} where {where} condition match
-	 * @param things
-	 * @param where
-	 * @param collection
-	 * @param caller
-	 * @throws DBException */
-	public static WriteResult replaceAll(
-			JSONObject where,
-			JSONObject things,
-			DBCollection collection,
-			String caller
-	) throws DBException{
-		WriteResult wr = collection.update(
-				dressJSON(where),
-				dressJSON(things),
-				false,true
-		);
-		logDBAction(things,collection,caller,DBAction.UPDATEALL);
-		return wr;
-	}
+		logDBAction(things,collection,Caller.whoIsAsking(),action);
 
-
-	//TODO faire un update et un upsert(add if not exists) : itere sur le json et remplace les value par des $set de values
-
-	/**TODO : update _date
-	 * Upsert {things} somewhere in the {collection} where {where} condition match
-	 * @param where
-	 * @param things
-	 * @param collection
-	 * @param caller
-	 * @throws DBException */
-	public static WriteResult putOne(
-			JSONObject where,
-			JSONObject things,
-			DBCollection collection
-	) throws DBException{
-		WriteResult wr = collection.update(
-				dressJSON(where),
-				dressJSON(things).append("_date",new Date()),
-				true,false
-		);
-		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.PUTONE);
-		return wr;
+		return new DBCommit(collection,whr,thngs,action, wr);
 	}
 
 
 
 	/**
-	 * @DESCRIPTION upsert {things} everywhere in the {collection} where {where} condition match
+	 * Update {things} in the {collection} where {where} condition match
 	 * @param things
 	 * @param where
 	 * @param collection
 	 * @param caller
 	 * @throws DBException */
-	public static WriteResult putAll(
+	public static DBCommit update(
 			JSONObject where,
 			JSONObject things,
 			DBCollection collection
 			) throws DBException{
-		WriteResult wr = collection.update(
-				dressJSON(where),
-				dressJSON(things).append("_date",new Date()),
-				true,true
-		);
-		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.PUTALL);
-		return wr;
+		return update(where,things,false,false,collection);
 	}
 
 
 
 	/**
-	 * @DESCRIPTION match if {things} exists in database(
+	 * Match if {things} exists in database(
 	 * NB: A thing is literally an entry in the map (<K,V>)
 	 * @param things
 	 * @param collection
@@ -143,55 +101,66 @@ public class THINGS{
 	public static boolean exists(
 			JSONObject things,
 			DBCollection collection
-	) throws DBException{
-		boolean response = collection.find(
-				dressJSON(things)
-		).limit(1).hasNext(); //limit 1 is for optimisation : https://blog.serverdensity.com/checking-if-a-document-exists-mongodb-slow-findone-vs-find/
+			) throws DBException{
+		boolean response = false; 
+
+		try{ response = collection.find(dressJSON(things)).limit(1).hasNext(); }		//limit 1 is for optimization : https://blog.serverdensity.com/checking-if-a-document-exists-mongodb-slow-findone-vs-find/
+		catch(Exception e){DBException.forward(e);}
+
 		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.EXISTS);
+
 		return response;
 	}
 
 
 	/**
-	 * @DESCRIPTION returns things in the map from the table using SQL select requests
+	 * Returns things in the map from the table using SQL select requests
 	 * @param things
 	 * @param collection
 	 * @param caller
-	 * @return */
+	 * @return 
+	 * @throws DBException */
 	public static DBObject getOne(
 			JSONObject things,
 			DBCollection collection
-	){
-		DBObject dbo = collection.findOne(
-				dressJSON(things)
-		);
+			) throws DBException{
+		DBObject dbo = null;
+
+		try{ dbo=collection.findOne(dressJSON(things)); }
+		catch(Exception e){DBException.forward(e);}
+
 		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.GETONE);
+
 		return dbo;
 	}
 
 
 
 	/**
-	 * @DESCRIPTION returns things in the map from the table using SQL select requests
+	 * Returns things in the map from the table using SQL select requests
 	 * @param things
 	 * @param collection
 	 * @param caller
-	 * @return */
+	 * @return 
+	 * @throws DBException */
 	public static DBCursor get(
 			JSONObject things,
 			DBCollection collection
-	){
-		DBCursor dbc = collection.find(
-				dressJSON(things)
-		);
-		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.GET);
+			) throws DBException{
+		DBCursor dbc = null;
+
+		try{ dbc = collection.find(dressJSON(things)); }
+		catch(Exception e){DBException.forward(e);}
+
+		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.GETALL);
+
 		return dbc;
 	}
 
 
 
 	/**
-	 * @DESCRIPTION remove things from the table using SQL delete requests
+	 * Remove things from the table using SQL delete requests
 	 * @param things
 	 * @param collection
 	 * @param caller
@@ -200,29 +169,46 @@ public class THINGS{
 	public static DBCommit remove(
 			JSONObject things,
 			DBCollection collection
-	) throws DBException{
+			) throws DBException{
+		WriteResult wr =null;
 		DBAction action = DBAction.REMOVE;
+
 		BasicDBObject doc = dressJSON(things);
-		WriteResult wr = collection.remove(doc);
+
+		try{ wr = collection.remove(doc); }
+		catch(Exception e){DBException.forward(e);}
+
 		logDBAction(things,collection,Caller.whoIsAsking(),action);
-		return new DBCommit(collection,(ObjectId)doc.get("_id"),action, wr);
+
+		return new DBCommit(collection,doc,action,wr);
 	}
 
-	
+
 	/**
-	 * @description 
 	 * Reformat a JSONObject into a BasicDBObject
 	 * @param json
 	 * @return */
 	private static BasicDBObject dressJSON(JSONObject json){
-		return new BasicDBObject(
-				json.toMap()
-		);
+		return new BasicDBObject(json.toMap());
 	}
 
-	
+
 	/**
-	 * @description 
+	 * 
+	 * @param upsert
+	 * @param multi
+	 * @return */
+	private static DBAction updateAction(
+			boolean upsert,
+			boolean multi
+			){
+		return upsert?
+				(multi?DBAction.UPSERTALL:DBAction.UPSERTONE)
+				:(multi?DBAction.UPDATEALL:DBAction.UPDATEONE);
+	}
+
+
+	/**
 	 * Print a database related action that happened 
 	 * @param things
 	 * @param collection
@@ -233,41 +219,41 @@ public class THINGS{
 			DBCollection collection,
 			String caller,
 			DBAction action
-	) {
+			) {
 		switch (action) {
-			case ADD:
-				System.out.println("This Things : '"+things+"' have been added to coll '"+collection.getFullName()+"' at the request of '"+caller+"'");
-				break;
+		case ADD:
+			System.out.println("This Things : '"+things+"' have been added to coll '"+collection.getFullName()+"' at the request of '"+caller+"'");
+			break;
 
-			case UPDATEONE:
-				System.out.println("This Things : '"+things+"' have been updated once in coll '"+collection.getFullName()+"' at the request of '"+caller+"'");
-				break;
+		case UPDATEONE:
+			System.out.println("This Things : '"+things+"' have been updated once in coll '"+collection.getFullName()+"' at the request of '"+caller+"'");
+			break;
 
-			case UPDATEALL:
-				System.out.println("This Things : '"+things+"' have been updated everywhere in coll '"+collection.getFullName()+"' at the request of '"+caller+"'");
-				break;
+		case UPDATEALL:
+			System.out.println("This Things : '"+things+"' have been updated everywhere in coll '"+collection.getFullName()+"' at the request of '"+caller+"'");
+			break;
 
-			case PUTONE:
-				System.out.println("This Things : '"+things+"' have been upserted once in coll '"+collection.getFullName()+"' at the request of '"+caller+"'");
-				break;
+		case UPSERTONE:
+			System.out.println("This Things : '"+things+"' have been upserted once in coll '"+collection.getFullName()+"' at the request of '"+caller+"'");
+			break;
 
-			case PUTALL:
-				System.out.println("This Things : '"+things+"' have been upserted everywhere in coll'"+collection.getFullName()+"' at the request of '"+caller+"'");
-				break;
+		case UPSERTALL:
+			System.out.println("This Things : '"+things+"' have been upserted everywhere in coll'"+collection.getFullName()+"' at the request of '"+caller+"'");
+			break;
 
-			case REMOVE:
-				System.out.println("This Things : '"+things+"' have been removed everywhere in coll '"+collection.getFullName()+"' at the request of '"+caller+"'");
-				break;
+		case REMOVE:
+			System.out.println("This Things : '"+things+"' have been removed everywhere in coll '"+collection.getFullName()+"' at the request of '"+caller+"'");
+			break;
 
-			case EXISTS:
-				System.out.println(caller +" asked if this Things : '"+things+"' are currently present in coll '"+collection.getFullName()+"'");
-				break;
+		case EXISTS:
+			System.out.println(caller +" asked if this Things : '"+things+"' are currently present in coll '"+collection.getFullName()+"'");
+			break;
 
-			case GETONE:
-				System.out.println(caller +" asked to retrieve this Things : '"+things+"' once from coll '"+collection.getFullName()+"'");
-				break;
+		case GETONE:
+			System.out.println(caller +" asked to retrieve this Things : '"+things+"' once from coll '"+collection.getFullName()+"'");
+			break;
 
-			default: System.out.println("I'v no idea wtf you're searching to log for!");
+		default: System.out.println("I'v no idea wtf you're searching to log for!");
 		}
 	}
 }
