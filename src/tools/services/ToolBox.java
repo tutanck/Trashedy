@@ -18,7 +18,7 @@ import org.json.JSONObject;
 /** 
  * @author AJoan
  * **@goodToKnow ! FLUENT STYLE CODE*/
-public class ServicesToolBox {
+public class ToolBox {
 
 
 	/**

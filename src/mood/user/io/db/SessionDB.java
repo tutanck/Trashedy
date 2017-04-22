@@ -6,7 +6,7 @@ import com.mongodb.DBCollection;
 
 import tools.db.DBManager;
 import tools.db.DBException;
-import tools.services.ServicesToolBox;
+import tools.services.ToolBox;
 
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.AbsentKeyException;
@@ -33,7 +33,7 @@ public class SessionDB {
 			) throws DBException{
 		return JR.replace(params,"skey",decryptedKeyName,
 				 THINGS.getOne(
-							JR.wrap("skey",ServicesToolBox.scramble(params.getString("skey"))),
+							JR.wrap("skey",ToolBox.scramble(params.getString("skey"))),
 							collection
 							).get("uid"));
 	}
@@ -50,9 +50,7 @@ public class SessionDB {
 			JSONObject params
 			) throws DBException, AbsentKeyException{
 		return THINGS.exists(
-				JR.wrap(
-						"skey",ServicesToolBox.scramble(params.getString("skey"))),
-				SessionDB.collection);
+				JR.wrap("skey",ToolBox.scramble(params.getString("skey"))),collection);
 	}
 
 }

@@ -14,7 +14,7 @@ import tools.lingua.Lingua;
 import tools.mailing.Email;
 import tools.services.Response;
 import tools.services.ServiceCodes;
-import tools.services.ServicesToolBox;
+import tools.services.ToolBox;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OfflinePostServlet;
 
@@ -46,7 +46,7 @@ public class UserAccountRecoveryService extends IOCore {
 	
 		//Generate temporary key (sequence of 32 hexadecimal digits)  
 		//reset password temporarily until user redefine it! 
-		String secret = ServicesToolBox.generateToken();
+		String secret = ToolBox.generateToken();
 		THINGS.update(
 				JR.slice(params,"email"),
 				JR.wrap("$set",JR.wrap("pass", secret))

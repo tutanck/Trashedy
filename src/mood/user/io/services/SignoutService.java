@@ -8,7 +8,7 @@ import com.aj.tools.jr.JR;
 import mood.user.io.services.core.IOCore;
 import tools.db.DBException;
 import tools.services.Response;
-import tools.services.ServicesToolBox;
+import tools.services.ToolBox;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
@@ -31,7 +31,7 @@ public class SignoutService extends IOCore{
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException {
 		THINGS.remove(JR.wrap("skey",
-				ServicesToolBox.scramble(params.getString("skey")))
+				ToolBox.scramble(params.getString("skey")))
 				,session);
 	
 		return Response.reply();

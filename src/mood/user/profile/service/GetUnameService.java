@@ -9,6 +9,7 @@ import com.mongodb.DBObject;
 import mood.user.profile.service.core.ProfileCore;
 import tools.db.DBException;
 import tools.services.Response;
+import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlineGetServlet;
 
@@ -21,11 +22,11 @@ import com.aj.jeez.annotation.annotations.WebService;
 
 /**
  * @author AJoan */
- public class GetShortInfosService extends ProfileCore{
-	 public final static String url="/user/infos";
+ public class GetUnameService extends ProfileCore{
+	 public final static String url="/user/proile/get/short";
  
 	/** 
-	 * return username , firstname and lastname, etc 
+	 * return uname , fname and lname 
 	 * @param params
 	 * @return
 	 * @throws DBException
@@ -38,14 +39,14 @@ import com.aj.jeez.annotation.annotations.WebService;
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {		 
 		
-		DBObject user=  THINGS.getOne(
+		DBObject user =  THINGS.getOne(
 				JR.wrap("_id",new ObjectId(params.getString("uther"))), 
 				collection);
-
-		return Response.reply(
-				JR.wrap("username",user.get("username"))
-				.put("firstname",user.get("firstname"))
-				.put("lastname",user.get("lastname")) );
+		
+		return (user==null) ?
+				Response.issue(ServiceCodes.UNKNOWN_USER) 
+				: Response.reply(
+				JR.wrap("uname",user.get("uname")) );
 	}
 
 }

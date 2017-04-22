@@ -18,7 +18,7 @@ import tools.general.PatternsHolder;
 import tools.lingua.Lingua;
 import tools.mailing.Email;
 import tools.services.Response;
-import tools.services.ServicesToolBox;
+import tools.services.ToolBox;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OfflinePostServlet;
 
@@ -52,7 +52,7 @@ public class SignupService extends IOCore {
 		if(usernameCheck!=null) return usernameCheck;
 
 		//--DB WRITEACTION
-		String ckey =ServicesToolBox.generateToken();
+		String ckey =ToolBox.generateToken();
 		DBCommit commit = THINGS.add(
 				JR.slice(params,"uname","pass","email")
 				.put("confirmed", ckey)

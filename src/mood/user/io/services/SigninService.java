@@ -10,7 +10,7 @@ import tools.db.DBException;
 import tools.general.PatternsHolder;
 import tools.services.Response;
 import tools.services.ServiceCodes;
-import tools.services.ServicesToolBox;
+import tools.services.ToolBox;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OfflinePostServlet;
 
@@ -65,10 +65,10 @@ public class SigninService extends IOCore {
 		//2 different devices can't be connected at the same time
 		THINGS.remove(JR.wrap("uid", user.get("_id")),session);
 
-		String himitsu = ServicesToolBox.generateToken();
+		String himitsu = ToolBox.generateToken();
 
 		THINGS.add(
-				JR.wrap("skey",ServicesToolBox.scramble(himitsu+params.getString("did")))
+				JR.wrap("skey",ToolBox.scramble(himitsu+params.getString("did")))
 				.put("uid",user.get("_id"))
 				,session);
 

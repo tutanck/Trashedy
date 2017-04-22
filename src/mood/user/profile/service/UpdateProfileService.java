@@ -24,7 +24,7 @@ import com.aj.jeez.annotation.annotations.WebService;
  * This classes will take more significant decision on how their process and dispatch incoming data
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
 public class UpdateProfileService extends ProfileCore{
-	 public final static String url="/user/update";
+	 public final static String url="/user/profile/update";
 
 	/**
 	 * update user's profile
