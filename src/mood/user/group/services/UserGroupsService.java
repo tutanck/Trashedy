@@ -17,7 +17,7 @@ import tools.services.Response;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
-public class GroupsService extends GroupCore{
+public class UserGroupsService extends GroupCore{
 	public final static String url="/user/groups/";
 
 

@@ -52,7 +52,7 @@ public abstract class JEEZServlet extends HttpServlet{
 	/**
 	 * HTTP method
 	 */
-	private Integer HTTPMethod=null;
+	private String HTTPMethod=null;
 
 	/**
 	 * The qualified name of the class where to find 
@@ -112,7 +112,7 @@ public abstract class JEEZServlet extends HttpServlet{
 				__.outln("JEEZServlet/init::jzsDriver="+jzsDriver);
 
 				this.url=jzsDriver.getString("url");
-				this.HTTPMethod=jzsDriver.getInt("httpm");
+				this.HTTPMethod=jzsDriver.getString("httpm");
 				this.sC=jzsDriver.getString("sc");
 				this.sM=jzsDriver.getString("sm");
 
@@ -144,14 +144,13 @@ public abstract class JEEZServlet extends HttpServlet{
 
 	/**
 	 * The default method that check the connectivity of the related service
+	 * default implementation returns always false
 	 * @param request 
 	 * @throws Exception */
 	protected boolean isAuth(
 			HttpServletRequest request,
 			JSONObject params
-			) throws Exception{
-		return request.getSession(false)!=null;
-	}
+			) throws Exception{	return false; }
 
 
 

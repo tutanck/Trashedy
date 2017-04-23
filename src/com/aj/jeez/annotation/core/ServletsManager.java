@@ -180,13 +180,13 @@ public class ServletsManager {
 					(serviceID+": Collision detected between "+group+" parameters : '"+param.value()+"' is duplicated");
 	}
 
-	private static int determineHTTPMethod(
+	private static String determineHTTPMethod(
 			Class<?> policy
 			) throws WebServiceAnnotationMisuseException{
 		if(GetServlet.class.isAssignableFrom(policy))
-			return 0;
+			return "get";
 		else if(PostServlet.class.isAssignableFrom(policy))
-			return 1;
+			return "post";
 		else 
 			throw new WebServiceAnnotationMisuseException
 			("WebService policy must be a descendant of one of the following : "
