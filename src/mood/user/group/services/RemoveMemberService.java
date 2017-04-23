@@ -24,21 +24,20 @@ public class RemoveMemberService extends GroupCore{
 
 
 	@WebService(value=url,policy=OnlinePostServlet.class,
-			requestParams=@Params(value={
-					@Param("gid"),
-					@Param("mid")}))
+			requestParams=@Params(value={@Param("gid"),@Param("mid")}))
 	public static JSONObject remove(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException{
 
 		Node<JSONObject> node = JR.branch(params, "mid");	
 
-		JSONObject group = JR.renameKeys(JR.slice(SessionDB.decrypt(node.white(),"owner"),"owner","gid"),"gid->_id");
+		JSONObject group = JR.renameKeys(JR.slice(SessionDB.decrypt(node.white(),"owner"),"owner","gid")
+				,"gid->_id").put("open",true);
 
 		if(!THINGS.exists(group, collection))
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);	
 
-		THINGS.update(group,group.put("$pull",JR.wrap("members",node.yellow().getString("mid"))),collection);
+		THINGS.update(group,JR.wrap("$pull",JR.wrap("members",node.yellow().getString("mid"))),collection);
 
 		return Response.reply();
 	}

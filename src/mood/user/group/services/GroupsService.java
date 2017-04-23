@@ -26,17 +26,16 @@ public class GroupsService extends GroupCore{
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException{
 
-		JSONObject owner = JR.renameKeys(JR.slice(SessionDB.decrypt(params,"owner"),"owner"));
-
-		DBCursor dbc = THINGS.get(owner,collection);
+		DBCursor dbc = THINGS.get(
+				JR.slice(SessionDB.decrypt(params,"owner"),"owner"),collection);
 
 		JSONArray jar = new JSONArray();
 		while (dbc.hasNext()){			 
 			DBObject dbo=dbc.next();			
 			jar.put(JR.wrap("gid",dbo.get("_id")) 
-					.put("gname",dbo.get("name"))
-					.put("gowner",dbo.get("owner"))
-					.put("gdate",dbo.get("date")));
+					.put("name",dbo.get("name"))
+					.put("owner",dbo.get("owner"))
+					.put("gdate",dbo.get("gdate")));
 		}
 		
 		return Response.reply(jar);

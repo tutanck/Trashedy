@@ -29,12 +29,13 @@ public class CreateService extends GroupCore{
 			JSONObject params
 			) throws  DBException, ShouldNeverOccurException, AbsentKeyException{
 
-		JSONObject group = JR.slice(SessionDB.decrypt(params,"owner"),"owner","name");
+		JSONObject group = JR.slice(SessionDB.decrypt(params,"owner"),"owner","name")
+				.put("open",true);
 
-		if(THINGS.exists(group.put("open",true), collection))
+		if(THINGS.exists(group, collection))
 			return Response.issue(ServiceCodes.EXISTING_USER_GROUP_NAME);			
 
-		THINGS.add(	group.put("open",true).put("cdate", new Date())	, collection);
+		THINGS.add(	group.put("gdate", new Date()),collection );
 
 		return Response.reply();
 	}

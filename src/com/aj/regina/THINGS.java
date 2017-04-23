@@ -216,7 +216,7 @@ public class THINGS{
 	 * Return a JSONArray equivalent to the {dbList}
 	 * @param map
 	 * @return */
-	public static JSONArray undressJSON(
+	public static JSONArray undressArray(
 			BasicDBList dbList
 			){
 		return dbList.size() !=0 ? new JSONArray(dbList) : new JSONArray();

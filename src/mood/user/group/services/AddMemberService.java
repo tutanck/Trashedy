@@ -19,26 +19,28 @@ import tools.services.ServiceCodes;
 import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
+/**
+ * @author Joan */
 public class AddMemberService extends GroupCore{
 	public final static String url="/user/group/member/add";
 
 
 	@WebService(value=url,policy=OnlinePostServlet.class,
-			requestParams=@Params(value={
-					@Param("gid"),
-					@Param("mid")}))
+			requestParams=@Params(value={@Param("gid"),@Param("mid")}))
 	public static JSONObject add(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException{
 
 		Node<JSONObject> node = JR.branch(params, "mid");	
 
-		JSONObject group = JR.renameKeys(JR.slice(SessionDB.decrypt(node.white(),"owner"),"owner","gid"),"gid->_id");
+		JSONObject group = JR.renameKeys(
+				JR.slice(SessionDB.decrypt(node.white(),"owner"),"owner","gid")
+				,"gid->_id").put("open",true);
 
-		if(!THINGS.exists(group, collection))
+		if(!THINGS.exists(group,collection))
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);	
 
-		THINGS.update(group,group.put("$addToSet",JR.wrap("members",node.yellow().getString("mid"))),collection);
+		THINGS.update(group,JR.wrap("$addToSet",JR.wrap("members",node.yellow().getString("mid"))),collection);
 
 		return Response.reply();
 	}

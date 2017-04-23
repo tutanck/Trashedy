@@ -7,6 +7,7 @@ import com.aj.jeez.annotation.annotations.Param;
 import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.regina.THINGS;
+import com.aj.tools.__;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
@@ -32,19 +33,22 @@ public class GroupMembersService extends GroupCore{
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException{
 
-		JSONObject group = JR.renameKeys(JR.slice(SessionDB.decrypt(params,"owner"),"owner","gid"),"gid->_id");
-
-		DBObject dbo = THINGS.getOne(group,collection);
+		DBObject dbo = THINGS.getOne( 
+				JR.renameKeys(JR.slice(SessionDB.decrypt(params,"owner"),"owner","gid")
+				,"gid->_id").put("open",true),collection);
 		
 		if(dbo == null)
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);	
 
 		JSONArray jar = new JSONArray();
-		for(Object member : THINGS.undressJSON((BasicDBList) dbo.get("members"))){
-			String mid = (String)member;	
+		for(Object memberID : THINGS.undressArray((BasicDBList) dbo.get("members"))){
+			String mid = (String)memberID;
+			DBObject member = THINGS.getOne(JR.wrap("_id",mid),UserIODB.collection);
+			if(member==null) __.explode(new ShouldNeverOccurException("Inconsistent database transaction : abort!"));
 			jar.put(JR.wrap("mid",mid));
-			jar.put(JR.wrap("uname",THINGS.getOne(JR.wrap("_id",mid), UserIODB.collection)));
+			jar.put(JR.wrap("uname",member.get("uname")));
 		}
+		
 		return Response.reply(jar);
 	}
 

@@ -10,11 +10,16 @@ public class CheckExpectedOut {
 
 	@Checkout
 	public static boolean checkExpectedOut(
-			JSONObject result,
+			Object result,
 			TemplateParams jsonOut
 			){
+		if(! (result instanceof JSONObject)) 
+			return false;
+		
 		for(TemplateParam tp : jsonOut.getExpecteds())
-			if(!result.has(tp.getName())) return false;
+			if(! ((JSONObject) result).has(tp.getName()) ) 
+				return false;
+		
 		return true;
-	};	
+	}	
 }

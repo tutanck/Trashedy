@@ -209,13 +209,16 @@ public class JR {
 			String...keyMapString
 			) throws AbsentKeyException, InvalidKeyException{
 		JSONObject aliasJSON = new JSONObject(json.toMap());
+	
 		for(String keyEntry : keyMapString){
 			if(!keyEntry.contains("->")) 
 				throw new 
 				InvalidKeyException("The key entry '"+keyEntry+"' does not contains the universal seprator '->'");
+			
 			String [] entry= keyEntry.split("->");
 			String oldKey = entry[0].trim();
 			String newKey = entry[1].trim();
+			
 			if(json.has(oldKey)){
 				aliasJSON.remove(oldKey);
 				aliasJSON.put(newKey, json.get(oldKey));

@@ -35,7 +35,6 @@ public class OnlineGetServlet extends GetServlet{
 			HttpServletRequest request,
 			JSONObject params
 			)throws Exception{
-		return true; 
-		//return SessionDB.exists(params); TODO uncmt
+		return SessionDB.exists(params);
 	}
 }

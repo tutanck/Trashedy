@@ -28,12 +28,13 @@ public class DeleteService extends GroupCore{
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException{
 		
-		JSONObject group = JR.renameKeys(JR.slice(SessionDB.decrypt(params,"owner"),"owner","gid"),"gid->_id");
+		JSONObject group = JR.renameKeys(JR.slice(SessionDB.decrypt(params,"owner"),"owner","gid")
+				,"gid->_id").put("open",true);
 			 
 		if(!THINGS.exists(group, collection))
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);			
 			
-			THINGS.update(group,group.put("$set",JR.wrap("open",false)),collection);
+			THINGS.update(group,JR.wrap("$set",JR.wrap("open",false)),collection);
 
 		return Response.reply();
 	}
