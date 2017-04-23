@@ -24,12 +24,12 @@ public class FollowService extends FollowCore {
 	public final static String url="/user/follow";
 	
 	@WebService(value=url,policy=OnlinePostServlet.class,
-			requestParams=@Params(value={@Param("fid")}))
+			requestParams=@Params(value={@Param("fid")}))//fid=followedID
 	public static JSONObject follow(
 			JSONObject params
 			) throws  DBException, ShouldNeverOccurException, AbsentKeyException{
 		
-		JSONObject rel = JR.slice(SessionDB.decrypt(params,"uid"), "uid","fid");
+		JSONObject rel = JR.slice(SessionDB.decrypt(params,"uid"),"uid","fid");
 		 
 		if(THINGS.exists(rel, collection))
 			return Response.issue(ServiceCodes.EXISTING_FOLLOW_REL);			

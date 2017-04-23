@@ -40,9 +40,9 @@ public class UpdateProfileService extends ProfileCore{
 							@Param(value="email",rules={PatternsHolder.email})},
 					optionals={
 							@Param(value="phone",rules={PatternsHolder.nums}), //TODO change pattern to better +33...
-							@Param("lname"),//TODO if needed
-							@Param("fname"),//TODO if needed
-							@Param("bdate")//TODO if needed
+							@Param("lname"),//TODO rules if needed
+							@Param("fname"),//TODO rules  if needed
+							@Param("bdate")//TODO rules if needed
 					}))
 	public static JSONObject updateProfile(
 			JSONObject params

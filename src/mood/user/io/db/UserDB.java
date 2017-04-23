@@ -7,7 +7,7 @@ import tools.db.DBManager;
 
 /**
  * @author AJoan */
-public class UserIODB {
+public class UserDB {
 
 	public static DBCollection collection = DBManager.collection("users");	
 }

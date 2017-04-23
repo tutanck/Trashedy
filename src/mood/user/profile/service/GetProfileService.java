@@ -59,6 +59,7 @@ public class GetProfileService extends ProfileCore{
 				Response.issue(ServiceCodes.UNKNOWN_USER) 
 				: Response.reply(
 						profile
+						.put("type","user")
 						.put("uname",user.get("uname"))
 						.put("email",user.get("email"))
 						.put("fname",user.get("fname")) //firstName

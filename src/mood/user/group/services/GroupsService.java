@@ -33,6 +33,7 @@ public class GroupsService extends GroupCore{
 		while (dbc.hasNext()){			 
 			DBObject dbo=dbc.next();			
 			jar.put(JR.wrap("gid",dbo.get("_id")) 
+					.put("type","group")
 					.put("name",dbo.get("name"))
 					.put("owner",dbo.get("owner"))
 					.put("gdate",dbo.get("gdate")));

@@ -5,7 +5,7 @@ import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
 import com.mongodb.DBCollection;
 
-import mood.user.io.db.UserIODB;
+import mood.user.io.db.UserDB;
 import mood.user.io.db.SessionDB;
 import tools.db.DBException;
 import tools.general.InputType;
@@ -25,7 +25,7 @@ import org.json.JSONObject;
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
 public class IOCore{
 
-	public static DBCollection collection = UserIODB.collection;
+	public static DBCollection collection = UserDB.collection;
 	public static DBCollection session = SessionDB.collection;
 
 

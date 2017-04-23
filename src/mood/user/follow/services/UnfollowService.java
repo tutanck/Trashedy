@@ -1,7 +1,5 @@
 package mood.user.follow.services;
 
-import java.util.Date;
-
 import org.json.JSONObject;
 
 import com.aj.jeez.annotation.annotations.Param;
@@ -26,17 +24,17 @@ public class UnfollowService extends FollowCore{
 
 
 	@WebService(value=url,policy=OnlinePostServlet.class,
-			requestParams=@Params(value={@Param("fid")}))
+			requestParams=@Params(value={@Param("fid")}))//fid=followedID
 	public static JSONObject unfollow(
 			JSONObject params
 			) throws DBException, AbsentKeyException, ShouldNeverOccurException{
 
-		JSONObject rel = JR.slice(SessionDB.decrypt(params,"uid"), "uid","fid");
+		JSONObject rel = JR.slice(SessionDB.decrypt(params,"uid"),"uid","fid");
 
 		if(!THINGS.exists(rel, collection))
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);			
 
-		THINGS.update(rel,rel.put("following",false).put("fdate", new Date()), collection);
+		THINGS.update(rel,JR.wrap("$set",JR.wrap("following",false)), collection);
 
 		return Response.reply();
 	}

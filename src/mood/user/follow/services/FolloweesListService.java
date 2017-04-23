@@ -1,7 +1,5 @@
 package mood.user.follow.services;
 
-import java.util.ArrayList;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -9,6 +7,8 @@ import com.aj.jeez.annotation.annotations.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 
 import mood.user.follow.services.core.FollowCore;
 import mood.user.io.db.SessionDB;
@@ -26,21 +26,21 @@ public class FolloweesListService extends FollowCore{
 	public static JSONObject followees(
 			JSONObject params
 			) throws ShouldNeverOccurException, AbsentKeyException, DBException{
-		ArrayList<String>fidList= new ArrayList<>(); 	
+		JSONArray followees=new JSONArray();
 
-		THINGS.get(JR.slice(SessionDB.decrypt(params,"fid"), "fid"), collection);
+		DBCursor dbc = THINGS.get(JR.slice(SessionDB.decrypt(params,"uid"),"uid"),collection);
 
-		JSONArray followers=new JSONArray();
-		for(String fid : fidList)
-			followers.put(new JSONObject()
-					.put("uid",fid)
-					.put("type","follower")
-					.put("username",
-							THINGS.getOne(
-									JR.slice(SessionDB.decrypt(params,"uid"), "uid"), collection)
-							.get("username")));
-		
-		return Response.reply(JR.wrap("followers",followers));
+		while(dbc.hasNext()){
+			DBObject dbo = dbc.next();
+			followees.put(
+				JR.wrap("fid",dbo.get("fid"))
+				.put("type","user")
+				.put("uname",
+						THINGS.getOne(JR.wrap("fid",dbo.get("fid")),collection)
+						.get("uname"))
+				);
+		}
+		return Response.reply(JR.wrap("followees",followees));
 	}
 
 

@@ -15,7 +15,7 @@ import com.mongodb.*;
 
 import mood.user.group.services.core.GroupCore;
 import mood.user.io.db.SessionDB;
-import mood.user.io.db.UserIODB;
+import mood.user.io.db.UserDB;
 import tools.db.DBException;
 import tools.services.Response;
 import tools.services.ServiceCodes;
@@ -35,20 +35,22 @@ public class GroupMembersService extends GroupCore{
 
 		DBObject dbo = THINGS.getOne( 
 				JR.renameKeys(JR.slice(SessionDB.decrypt(params,"owner"),"owner","gid")
-				,"gid->_id").put("open",true),collection);
-		
+						,"gid->_id").put("open",true),collection);
+
 		if(dbo == null)
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);	
 
 		JSONArray jar = new JSONArray();
 		for(Object memberID : THINGS.undressArray((BasicDBList) dbo.get("members"))){
 			String mid = (String)memberID;
-			DBObject member = THINGS.getOne(JR.wrap("_id",mid),UserIODB.collection);
+			DBObject member = THINGS.getOne(JR.wrap("_id",mid),UserDB.collection);
 			if(member==null) __.explode(new ShouldNeverOccurException("Inconsistent database transaction : abort!"));
-			jar.put(JR.wrap("mid",mid));
-			jar.put(JR.wrap("uname",member.get("uname")));
+			jar.put( JR.wrap("mid",mid)
+					.put("type","groupmember")
+					.put("uname",member.get("uname"))
+					);
 		}
-		
+
 		return Response.reply(jar);
 	}
 

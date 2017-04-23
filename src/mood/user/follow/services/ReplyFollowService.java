@@ -30,12 +30,12 @@ public class ReplyFollowService extends FollowCore{
 			JSONObject params
 			) throws  DBException, ShouldNeverOccurException, AbsentKeyException{
 
-		JSONObject rel = JR.slice(SessionDB.decrypt(params,"fid"), "uid");
+		JSONObject rel = JR.slice(SessionDB.decrypt(params,"fid"),"fid","uid");//fid=followedID
 
 		if(!THINGS.exists(rel, collection))
 			return Response.issue(ServiceCodes.UNKNOWN_RESOURCE);			
 
-		THINGS.update(rel,rel.put("following",true).put("fdate", new Date()), collection);
+		THINGS.update(rel,JR.wrap("$set",JR.wrap("following",true)).put("fdate", new Date()), collection);
 
 		return Response.reply();
 	}

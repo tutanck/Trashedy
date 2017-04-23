@@ -46,7 +46,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 		return (user==null) ?
 				Response.issue(ServiceCodes.UNKNOWN_USER) 
 				: Response.reply(
-				JR.wrap("uname",user.get("uname")) );
+				JR.wrap("uname",user.get("uname")).put("type","user") );
 	}
 
 }

@@ -9,7 +9,7 @@ import com.aj.tools.jr.JR;
 import com.mongodb.DBCollection;
 
 import mood.user.io.db.SessionDB;
-import mood.user.io.db.UserIODB;
+import mood.user.io.db.UserDB;
 import tools.db.DBException;
 import tools.services.Response;
 import tools.services.ServiceCodes;
@@ -18,7 +18,7 @@ import tools.services.ShouldNeverOccurException;
 /**
  * @author AJoan*/
 public class ProfileCore{
-	public static DBCollection collection = UserIODB.collection;
+	public static DBCollection collection = UserDB.collection;
 	
 	
 	/**
