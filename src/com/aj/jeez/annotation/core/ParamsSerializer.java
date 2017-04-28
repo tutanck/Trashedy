@@ -10,21 +10,17 @@ import com.aj.jeez.exceptions.JEEZError;
 public class ParamsSerializer {
 
 	static JSONArray serialize(
-			Param[]params,
-			boolean serializable
+			Param[]params
 			){
 		JSONArray jar = new JSONArray();
 	
 		for(Param param : params){
 			JSONObject jo = new JSONObject();
-			if(serializable)
 				try {
 					jo.put("type", FormalParamTypeControler.typeToInt(param.type()));
 				}catch (ParamTypingException e) {
 					throw new JEEZError("#SNO : internal typing error");
 				}
-			else
-				jo.put("type", param.type().getCanonicalName());
 			jar.put(jo
 					.put("name", param.value())
 					.put("rules", param.rules()));

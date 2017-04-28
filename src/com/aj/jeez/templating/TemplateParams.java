@@ -17,16 +17,15 @@ public class TemplateParams {
 
 	public boolean addExpected(TemplateParam expected){
 		if(expected==null) return false;
-		if(expecteds.contains(expected))
-			return false;
+		if(expecteds.contains(expected)) return false;
 		return __.truly(expecteds.add(expected));
 		
 	}
+	
 
 	public boolean addOptional(TemplateParam optional){
 		if(optional==null) return false;
-		if(expecteds.contains(optional))
-			return false;
+		if(expecteds.contains(optional)) return false;
 		return __.truly(optionals.add(optional));
 	}
 

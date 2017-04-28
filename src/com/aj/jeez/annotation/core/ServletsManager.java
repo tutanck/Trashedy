@@ -11,11 +11,11 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebInitParam;
-import javax.servlet.http.HttpServlet;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
 
+import com.aj.jeez.JEEZServlet;
 import com.aj.jeez.annotation.annotations.Param;
 import com.aj.jeez.annotation.annotations.Params;
 import com.aj.jeez.annotation.annotations.WebService;
@@ -41,7 +41,7 @@ public class ServletsManager {
 			for(Method service : classServices.getValue()){
 				WebService ws = service.getAnnotation(WebService.class);
 				String wsid=ws.value();
-				if(!hs.add(wsid) || wsid.length()==0)
+				if(wsid.trim().length() == 0 || !hs.add(wsid))
 					throw new WebServiceAnnotationMisuseException
 					("Invalid service url pattern detected '"+wsid+"' for WebService '"+classServices.getKey().getCanonicalName()+"."+service.getName()+"' : A service url must be unique and not empty");
 			}		
@@ -72,7 +72,7 @@ public class ServletsManager {
 			String className,
 			Method service,
 			JSONObject router
-			) throws WebServiceAnnotationMisuseException, ParamTypingException, ClassNotFoundException, ParamNamingException, WebInitParameterSettingException{
+			) throws WebServiceAnnotationMisuseException, ParamTypingException, ClassNotFoundException, ParamNamingException, WebInitParameterSettingException {
 
 		String serviceID = className+"."+service.getName();
 
@@ -88,7 +88,7 @@ public class ServletsManager {
 		Param [] expOut=jop.value();
 		Param [] optOut=jop.optionals();
 
-		Class<? extends HttpServlet>policy=ws.policy();
+		Class<? extends JEEZServlet>policy=ws.policy();
 		Class<?>[]clazzTab = ws.checkClasses();
 
 
@@ -120,10 +120,12 @@ public class ServletsManager {
 		JSONObject jzcDriver = new JSONObject()				
 				.put("auth",auth)
 				.put("httpm", determineHTTPMethod(policy))
-				.put("expin",ParamsSerializer.serialize(expIN,true))
-				.put("expout",ParamsSerializer.serialize(expOut,true))
-				.put("optin",ParamsSerializer.serialize(optIN,true))
-				.put("optout",ParamsSerializer.serialize(optOut,true));
+				.put("httpmc", determineHTTPMethodCode(policy))
+				.put("expin",ParamsSerializer.serialize(expIN))
+				.put("expout",ParamsSerializer.serialize(expOut))
+				.put("optin",ParamsSerializer.serialize(optIN))
+				.put("optout",ParamsSerializer.serialize(optOut));
+		router.put(url,jzcDriver);
 
 
 		/*** REGISTRATION PHASE */
@@ -137,23 +139,15 @@ public class ServletsManager {
 			detectInitParamSettingFailure(sr.setInitParameter(wip.name(),wip.value()),serviceID,wip.name());
 
 		//Service parameters setting
-		JSONObject jzsDriver=new JSONObject()
-				.put("auth",auth)
-				.put("httpm", determineHTTPMethod(policy))
+		JSONObject jzsDriver = jzcDriver
 				.put("url",url)
 				.put("ckc",Stretch.stretchClasses(clazzTab))
 				.put("sc", className)
-				.put("sm", service.getName())
-				.put("expin",ParamsSerializer.serialize(expIN,false))
-				.put("expout",ParamsSerializer.serialize(expOut,false))
-				.put("optin",ParamsSerializer.serialize(optIN,false))
-				.put("optout",ParamsSerializer.serialize(optOut,false));
+				.put("sm", service.getName());
 		detectInitParamSettingFailure(sr.setInitParameter(JZID,jzsDriver.toString()),serviceID,JZID);
 
-		return router.put(url,jzcDriver);
+		return jzcDriver;
 	}
-
-
 
 
 	private static void detectInitParamSettingFailure(
@@ -180,6 +174,7 @@ public class ServletsManager {
 					(serviceID+": Collision detected between "+group+" parameters : '"+param.value()+"' is duplicated");
 	}
 
+
 	private static String determineHTTPMethod(
 			Class<?> policy
 			) throws WebServiceAnnotationMisuseException{
@@ -191,7 +186,20 @@ public class ServletsManager {
 			throw new WebServiceAnnotationMisuseException
 			("WebService policy must be a descendant of one of the following : "
 					+GetServlet.class.getCanonicalName()+","+PostServlet.class.getCanonicalName());
+	}
 
+	
+	private static int determineHTTPMethodCode(
+			Class<?> policy
+			) throws WebServiceAnnotationMisuseException {
+		if(GetServlet.class.isAssignableFrom(policy))
+			return 0;
+		else if(PostServlet.class.isAssignableFrom(policy))
+			return 1;
+		else 
+			throw new WebServiceAnnotationMisuseException
+			("WebService policy must be a descendant of one of the following : "
+					+GetServlet.class.getCanonicalName()+","+PostServlet.class.getCanonicalName());
 	}
 
 }

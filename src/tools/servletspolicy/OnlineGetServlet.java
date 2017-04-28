@@ -21,13 +21,13 @@ public class OnlineGetServlet extends GetServlet{
 
 	@Override
 	public void init() throws ServletException {
-		super.init();
 		super.auth=true;
 		try {
 			super.requestParams.addExpected(new TemplateParam("skey"));
 		} catch (ParamTypingException | ParamNamingException | ParamRulingException e) {
 			__.explode(e);
 		}
+		super.init();//template mode (annotations does not override templating if init is called last)
 	}
 
 	@Override

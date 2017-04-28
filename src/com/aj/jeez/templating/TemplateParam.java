@@ -11,9 +11,7 @@ import com.aj.tools.__;
 public class TemplateParam {
 
 	private final String name;
-
 	private final Class<?> type;
-
 	private final Set<String> rules;
 
 	public TemplateParam(
@@ -44,9 +42,14 @@ public class TemplateParam {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj==null)return false; 
+ 		if(obj==null)return false; 
 		return obj instanceof TemplateParam ? 
 				((TemplateParam)obj).name.equals(name) : false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.name.hashCode();
 	}
 
 	@Override

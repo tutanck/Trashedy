@@ -53,6 +53,8 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * HTTP method
 	 */
 	private String HTTPMethod=null;
+	
+	private int HTTPMethodCode=0;
 
 	/**
 	 * The qualified name of the class where to find 
@@ -94,7 +96,6 @@ public abstract class JEEZServlet extends HttpServlet{
 
 
 
-
 	public void init() throws ServletException {
 		super.init();
 
@@ -113,9 +114,10 @@ public abstract class JEEZServlet extends HttpServlet{
 
 				this.url=jzsDriver.getString("url");
 				this.HTTPMethod=jzsDriver.getString("httpm");
+				this.HTTPMethodCode=jzsDriver.getInt("httpmc");
 				this.sC=jzsDriver.getString("sc");
 				this.sM=jzsDriver.getString("sm");
-
+				
 				if(this.auth==null)
 					this.auth = jzsDriver.getBoolean("auth");
 
@@ -244,7 +246,7 @@ public abstract class JEEZServlet extends HttpServlet{
 		//availability test
 		if( effectiveParams.containsKey(paramName) && 
 				effectiveParams.get(paramName)!=null &&
-				!effectiveParams.get(paramName).equals("") && 
+				!(effectiveParams.get(paramName).trim().length()==0) && //<=> equal("")
 				!effectiveParams.get(paramName).equals("null") )
 			if(__.civilized(effectiveParams.get(paramName), paramRules)) //civilization test
 				try {//typing test
@@ -380,6 +382,7 @@ public abstract class JEEZServlet extends HttpServlet{
 		jz+="service:"+this.sC+"."+this.sM;
 		jz+=" - url:"+this.url;
 		jz+=" - method:"+this.HTTPMethod;
+		jz+=" - methodCode:"+this.HTTPMethodCode;
 		jz+=" - auth:"+this.auth;	
 		List<String> ckList= new ArrayList<>();
 		for(Map.Entry<Class<?>,Set<Method>> entry : checkouts.entrySet())

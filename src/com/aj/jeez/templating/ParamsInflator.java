@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.aj.jeez.annotation.exceptions.ParamNamingException;
 import com.aj.jeez.annotation.exceptions.ParamRulingException;
 import com.aj.jeez.annotation.exceptions.ParamTypingException;
+import com.aj.jeez.exceptions.JEEZError;
 
 public class ParamsInflator {
 
@@ -39,7 +40,21 @@ public class ParamsInflator {
 			rules.add(jarRules.getString(i));
 
 		return new TemplateParam(jsonParam.getString("name"),
-				Class.forName(jsonParam.getString("type")),rules);
+				intToType(jsonParam.getInt("type")),rules);
+	}
+
+	private static Class<?> intToType(
+			int intType
+			) throws ParamTypingException{
+		switch (intType) {
+		case 0:return String.class;
+		case 1:return int.class;
+		case 2:return long.class;
+		case 3:return float.class;
+		case 4:return double.class;
+		case 5:return boolean.class;	
+		default:throw new JEEZError("#SNO : internal typing error");	
+		}
 	}
 
 }
