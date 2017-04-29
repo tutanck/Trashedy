@@ -83,13 +83,13 @@ function send(url,response_processor,data={},error_manager,async=true){
 	if(!jz_configured_()) 
 		throw JEEZ+fn+"JEEZ routes not loaded";
 
-	var config=getConfig(url);
+	var config=config_(url);
 	clog(fn,"route config: ",url,"->",JSON.stringify(config));
 
 	check_params(config.expin,true);
 	check_params(config.optin);
 
-	jz_send_ajax_request_(getUrl(url),response_processor,error_manager,data,config.httpm,"text",async);
+	jz_send_ajax_request_(url_(url),response_processor,error_manager,data,config.httpm,"text",async);
 
 
 	/*INTERNAL TOOLS*/
@@ -175,15 +175,16 @@ function jz_send_ajax_request_(url,response_processor,error_manager,data={},HTTP
 
 function jz_configured_(){return !isEmpty(JZAPPROUTES);}
 
-function getConfig(url){ return JZAPPROUTES[jz_slash_bf(url,0)]; }
+function config_(url){ return JZAPPROUTES[jz_slash_bf(url,0)]; }
 
-function getUrl(url){ return JZAPPSERVER ? JZAPPSERVER+jz_unslash(url,0) : jz_unslash(url,0); }
+function url_(url){ return JZAPPSERVER ? JZAPPSERVER+jz_unslash(url,0) : jz_unslash(url,0); }
 
 function jz_unslash(s,i){return (s.charAt(i)==="\/")? [s.slice(0,i),"",s.slice(i+1)].join(''):s;}
 
 function jz_slash_bf(s,i){return (s.charAt(i)!=="\/")? [s.slice(0,i),"\/",s.slice(i)].join(''):s;}
 
 function jz_slash_af(s,i){return (s.charAt(i)!=="\/")? [s.slice(0,i+1),"\/",s.slice(i+1)].join(''):s;}
+
 
 function clog(){
 	var str=JEEZ;
