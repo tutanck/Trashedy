@@ -125,8 +125,7 @@ public class ServletsManager {
 				.put("expout",ParamsSerializer.serialize(expOut))
 				.put("optin",ParamsSerializer.serialize(optIN))
 				.put("optout",ParamsSerializer.serialize(optOut));
-		router.put(url,jzcDriver);
-
+	
 
 		/*** REGISTRATION PHASE */
 
@@ -139,14 +138,14 @@ public class ServletsManager {
 			detectInitParamSettingFailure(sr.setInitParameter(wip.name(),wip.value()),serviceID,wip.name());
 
 		//Service parameters setting
-		JSONObject jzsDriver = jzcDriver
+		JSONObject jzsDriver =  new JSONObject(jzcDriver.toMap())
 				.put("url",url)
 				.put("ckc",Stretch.stretchClasses(clazzTab))
 				.put("sc", className)
 				.put("sm", service.getName());
 		detectInitParamSettingFailure(sr.setInitParameter(JZID,jzsDriver.toString()),serviceID,JZID);
 
-		return jzcDriver;
+		return router.put(url,jzcDriver);
 	}
 
 

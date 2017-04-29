@@ -53,7 +53,7 @@ public class ParamsInflator {
 		case 3:return float.class;
 		case 4:return double.class;
 		case 5:return boolean.class;	
-		default:throw new JEEZError("#SNO : internal typing error");	
+		default:throw new JEEZError("#SNO : InternalTypingError");	
 		}
 	}
 

@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @author Joan */
 public class __ {
 
-	public static boolean truly(Object obj){return true;}
+	public static boolean truthy(Object obj){return true;}
 
 	public static boolean falsy(Object object){return false;}
 
@@ -25,21 +25,21 @@ public class __ {
 
 	public static boolean isVoidSpace(String string) {return isNull(string) || isEmpty(string.trim());}
 
-	public static Set<String> toSet(String... strings) {return (!isNull(strings)&&!isEmpty((Object[])strings))?new HashSet<String>(Arrays.asList(strings)):Collections.emptySet();}
+	public static Set<String> toSet(String... strings) {return isEmpty((Object[])strings) ? Collections.emptySet() : new HashSet<String>(Arrays.asList(strings));}
 
-	public static Set<Object> toSet(Object... objects) {return (!isNull(objects)&&!isEmpty(objects))?new HashSet<Object>(Arrays.asList(objects)):Collections.emptySet();}
+	public static Set<Object> toSet(Object... objects) {return (isEmpty(objects)) ? Collections.emptySet() : new HashSet<Object>(Arrays.asList(objects));}
 
-	public static List<String> toList(String... strings) {return (!isNull(strings)&&!isEmpty((Object[])strings))?(List<String>) Arrays.asList(strings):Collections.emptyList();}
+	public static List<String> toList(String... strings) {return (isEmpty((Object[])strings)) ? Collections.emptyList() : (List<String>) Arrays.asList(strings);}
 
-	public static List<Object> toList(Object... objects) {return (!isNull(objects)&&!isEmpty(objects))?Arrays.asList(objects):Collections.emptyList();}
+	public static List<Object> toList(Object... objects) {return (isEmpty(objects)) ? Collections.emptyList() : Arrays.asList(objects);}
 
-	public static Set<?> safe(Set<?> set) {return !isNull(set)?set:Collections.EMPTY_SET;}
+	public static Set<?> safe(Set<?> set) {return isNull(set) ? Collections.EMPTY_SET : set;}
 
-	public static Set<String> stringSet(Set<String> set) {return !isNull(set)?set:Collections.emptySet();}
+	public static Set<String> stringSet(Set<String> set) {return isNull(set) ? Collections.emptySet() : set;}
 
-	public static List<?> safe(List<?> list) {return !isNull(list)?list:Collections.EMPTY_LIST;}
+	public static List<?> safe(List<?> list) {return isNull(list) ? Collections.EMPTY_LIST : list;}
 
-	public static Map<?,?> safe(Map<?,?> map) {return !isNull(map)?map:Collections.EMPTY_MAP;}
+	public static Map<?,?> safe(Map<?,?> map) {return isNull(map) ? Collections.EMPTY_MAP : map;}
 
 	public static Void outln(Object object){System.out.println(object);return null;}
 
@@ -55,9 +55,8 @@ public class __ {
 		for(String rule : stringSet(rules))	
 			if(/*__.isVoidSpace(input) ||*/ !Pattern.compile(rule).matcher(input).matches()) 
 				return falsy(outln("__/civilized : This rude '"+input+"' doesn't respect the following rule '"+rule+"'")); 
-		return truly (outln("__/civilized : This civilized '"+input+"' respect all the rules '"+rules+"'"));}
+		return truthy (outln("__/civilized : This civilized '"+input+"' respect all the rules '"+rules+"'"));}
 
 	public static void explode(Throwable e) {e.printStackTrace();throw new RuntimeException(e);}
-
 
 }

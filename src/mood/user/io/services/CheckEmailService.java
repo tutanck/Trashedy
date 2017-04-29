@@ -33,7 +33,7 @@ public class CheckEmailService extends IOCore {
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
 		
-		JSONObject emailCheck = checkEmail(params);
+		JSONObject emailCheck = IOCore.checkEmail(params);
 		
 		if(emailCheck!=null) 
 			return emailCheck;
