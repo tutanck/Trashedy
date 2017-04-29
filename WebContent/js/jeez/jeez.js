@@ -29,35 +29,33 @@ var JZAPPROUTES;
 })();//true ->debug
 
 
-function check(url,input){
+function check(url,field){
 	var fn="check: ";
 
 	if( isFalsy(field) || isFalsy(field.name) )
 		throw JEEZ+fn+"Input to check is not defined";
-	
-	if( isFalsy(field) || isFalsy(field.name) )
-		throw JEEZ+fn+"Input to check is unknown";
 
-	if( isEmpty(field.value) )	return status(1,-1);
-	
-	if( isEmpty(field.value) )	return status(1,-1);
-	
-	if( isEmpty(field.value) )	return status(1,-1);
+	var _def=find_param_def_(config_(url),field.name);
 
-	return status(0);
+	if(!_def)
+		throw JEEZ+fn+"Input to check is undefined on server";
 
-	function status(status,cause){ return {"status":status,"cause":cause}; }
+	try{
+		valid_(_def,field.value,_def.expected);
+	}catch(e){
+		if(e instanceof JEEZInvalidParameterException)
+			return status(1,field,e.invalidity);
+	}
+	return status_();
 }
 
-
-connect('signup')
+connect("signup",clog,["f"])
 function connect(url,response_processor,fields,error_manager,async=true){
 	var fn="connect: ";
 	var index = new Map();
 	var data={};
 
-	for(let fi in new Set(fields)){
-		let field = fields[fi];
+	for(let field of new Set(fields)){
 		if( isEmpty(field) || isEmpty(field.name) || isEmpty(field.value) ){
 			clog(fn,"Warning: Array 'fields' contains an empty field");
 			continue;
@@ -69,41 +67,38 @@ function connect(url,response_processor,fields,error_manager,async=true){
 	clog(fn,"data = '"+JSON.stringify(data)+"'");
 
 	try{
-		send(url,response_processor,error_manager,data);
+		requst(url,response_processor,error_manager,data);
 	}catch(e){
 		if(e instanceof JEEZInvalidParameterException)
-			return {"field":index.get(e.fparamName),"invalidity":e.invalidity};
+			return status(1,index.get(e.fparamName),e.invalidity);
 	}
+	return status_();
 }
 
 
-function send(url,response_processor,data={},error_manager,async=true){	
-	var fn="send: ";
-
+function requst(url,response_processor,data={},error_manager,async=true){	
+	var fn="requst: ";
+	
 	if(!jz_configured_()) 
 		throw JEEZ+fn+"JEEZ routes not loaded";
 
 	var config=config_(url);
 	clog(fn,"route config: ",url,"->",JSON.stringify(config));
 
-	check_params(config.expin,true);
-	check_params(config.optin);
+	_check_params(config.expin,true);
+	_check_params(config.optin);
 
 	jz_send_ajax_request_(url_(url),response_processor,error_manager,data,config.httpm,"text",async);
 
-
-	/*INTERNAL TOOLS*/
-
-	/**
-	 * check all params */
-	function check_params(params,expected=false){ 
+	
+	function _check_params(params,expected=false){ 
 		for(let pi in params){
 			let fparam = params[pi]; //formal param def
 			valid_(fparam,data[fparam.name],expected); 
 		}
 	}
+	
 }
-
 
 
 function valid_(formal,effval,expected){
@@ -115,15 +110,14 @@ function valid_(formal,effval,expected){
 	clog (fn,"formal =",JSON.stringify(formal));
 
 	let fname=formal.name;
-	let ftype=getJSFType(formal.type);
 	let frules=formal.rules;
-
+	
 	if(isEmpty(effval))
 		if(expected) 
 			throw new JEEZInvalidParameterException(fname,-1,JEEZ+fn+"Missing expected parameter '"+fname+"'");
 		else return;
 
-	if(!ftype === typeof effval)
+	if(getJSFType(formal.type) !== typeof effval)
 		throw new JEEZInvalidParameterException(fname,0,JEEZ+fn+"Incompatible type for parameter '"+fname+"', expected was "+ftype);
 
 	for(let ri in frules){
@@ -166,7 +160,7 @@ function jz_send_ajax_request_(url,response_processor,error_manager,data={},HTTP
 					"about '"+JSON.stringify(data)+"' with '"+HTTPMethod+"' method " +
 					"in '"+dataType+"' dialect");
 			clog("\n"+JSON.stringify(XHR) + " - " + testStatus + " - " + errorThrown); 
-			if(!isEmpty(error_manager)) error_manager(); 
+			if(!isEmpty(error_manager)) error_manager(XHR, testStatus, errorThrown); 
 		}
 	});
 }
@@ -176,6 +170,33 @@ function jz_send_ajax_request_(url,response_processor,error_manager,data={},HTTP
 function jz_configured_(){return !isEmpty(JZAPPROUTES);}
 
 function config_(url){ return JZAPPROUTES[jz_slash_bf(url,0)]; }
+
+function find_param_def_(config,fname){ 
+	var found={};
+	var matrix=[];
+	matrix.push(config.expin);
+	matrix.push(config.optin);
+
+	for(let i in matrix){
+		let array = matrix[i];
+		for(let pi in array)
+			if(array[pi].name===fname){
+				let param = array[pi];
+				if(i==0)
+					found["expected"]=true;
+				else
+					if(i==1)
+						found["expected"]=false;
+					else throw "JEEZError : unable to prior param def"
+					found.name=param.name;
+				found.type=param.type;
+				found.rules=param.rules;
+				return found;
+			}
+	}
+}
+
+function status_(status=0,field,cause){ return {"status":status,"field":field,"cause":cause}; }
 
 function url_(url){ return JZAPPSERVER ? JZAPPSERVER+jz_unslash(url,0) : jz_unslash(url,0); }
 
