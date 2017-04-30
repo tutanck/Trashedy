@@ -21,13 +21,13 @@ public class Lingua {
 	private static final Map<String,String> quodNAKSM = new HashMap<String, String>();
 	static 
 	{
-		quodWMS.put("fr-FR","[Mood] Bienvenu sur Mood.");
-		quodWMS.put("en-GB","[Mood] Welcome on Mood.");
-		quodWMM.put("fr-FR","Bienvenu sur Mood. \nMerci de confirmer votre compte en cliquant sur le bouton/lien ci-dessous : \n ");
-		quodWMM.put("en-GB","Welcome on Mood.\nPlease, confirm your account by clicking the button/link below : \n");
+		quodWMS.put("fr-FR","[Md] Bienvenu sur Md.");
+		quodWMS.put("en-GB","[Md] Welcome on Md.");
+		quodWMM.put("fr-FR","Bienvenu sur Md. \nMerci de confirmer votre compte en cliquant sur le bouton/lien ci-dessous : \n ");
+		quodWMM.put("en-GB","Welcome on Md.\nPlease, confirm your account by clicking the button/link below : \n");
 		
-		quodNAKSS.put("fr-FR","[Mood] Recuperez votre compte.");
-		quodNAKSS.put("en-GB","[Mood] Regain access to your account.");		
+		quodNAKSS.put("fr-FR","[Md] Recuperez votre compte.");
+		quodNAKSS.put("en-GB","[Md] Regain access to your account.");		
 		quodNAKSM.put("en-GB","\nYou can use this temporary password to reconnect to you account: \n\n");
 		quodNAKSM.put("fr-FR","\nVous pouvez utiliser ce mot de passe temporaire pour vous reconnecter:\n\n");
 

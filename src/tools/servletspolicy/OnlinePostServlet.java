@@ -12,7 +12,7 @@ import com.aj.jeez.policy.PostServlet;
 import com.aj.jeez.templating.TemplateParam;
 import com.aj.tools.__;
 
-import mood.user.io.db.SessionDB;
+import md.user.io.db.SessionDB;
 
 /**
  * * @author Anagbla Joan */

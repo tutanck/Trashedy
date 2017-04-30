@@ -12,7 +12,7 @@ public class DBManager {
 
 	public static String mongo_host = "127.0.0.1"; //Mongo server address
 	public static int mongo_port = 27017; //Mongo server port
-	public static String mongo_db = "mood_db"; //Mongo Database's name
+	public static String mongo_db = "essais"; //Mongo Database's name
 
 
 	/**

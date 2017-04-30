@@ -190,7 +190,7 @@ public class PropIO {
 	public static void main(String[] args) throws JSONException, IOException, AbsentKeyException, InvalidKeyException {
 		PropIO jeez=new PropIO("jeez.properties");
 		jeez.clear();
-		jeez.put(JR.wrap("rootpackage->mood"));
+		jeez.put(JR.wrap("rootpackage->md"));
 		
 		/*PropertiesIO io=new PropertiesIO("test.properties");
 		System.out.println(io);

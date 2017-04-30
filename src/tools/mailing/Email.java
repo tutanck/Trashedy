@@ -12,9 +12,9 @@ import javax.mail.internet.MimeMessage;
 
 public class Email {
 
-	private final static String username = "socialnetwork.mood@gmail.com"; 
-	private final static String password = "MoodSN12";
-	private final static String from="socialnetwork.mood@gmail.com"; 
+	private final static String username = "tutanck@gmail.com";
+	private final static String password = "Alinda12"; 
+	private final static String from="Joan"; 
 
 	public static void send(String to, String subject, String contenu) {
 		
@@ -49,7 +49,4 @@ public class Email {
 			Transport.send(msg);
 		}catch (MessagingException e){ System.out.println("Erreur d'envoi, cause: " + e);}
 	}
-	
-	public static void main(String[] args) {
-		send("socialnetwork.mood@gmail.com", "subject", "contenu"); }
 }

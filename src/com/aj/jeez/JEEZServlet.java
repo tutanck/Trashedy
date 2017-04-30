@@ -283,7 +283,8 @@ public abstract class JEEZServlet extends HttpServlet{
 			)throws Exception {
 
 		__.outln("JEEZServlet/afterBusiness::"+sC+"."+sM+" --> after business...");
-
+		__.outln("JEEZServlet/afterBusiness:: result: "+result);
+		
 		if(!resultIsOK(result)) {
 			__.outln("result failed to satisfy at least one clientsafe checkouts");
 			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARILY UNAVAILABLE");
@@ -343,7 +344,7 @@ public abstract class JEEZServlet extends HttpServlet{
 			)throws Exception {			
 		Class<?> serviceClass=Class.forName(this.sC);	
 		Method m = serviceClass.getMethod(this.sM, new Class[]{JSONObject.class});
-		__.outln("JEEZServlet/doBusiness:: static call of : "+this.sC+"."+m+"("+params+")");
+		__.outln("JEEZServlet/doBusiness:: static call of : "+this.sC+"."+m.getName()+"("+params+")  (formal : "+this.sC+"."+m+")");
 		return m.invoke(serviceClass.newInstance(), new Object[]{params});
 	}	 
 

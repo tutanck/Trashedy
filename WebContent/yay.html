@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>YAY</title>
+<script type="text/javascript">
+	JZAPPSERVER = "http://localhost:8080/Essais0";
+	JZAPPROUTER = "/jz/app/routes"; 
+</script>
+<script type="text/javascript" src="js/jquery/jquery-3.1.1.js"></script>
+<script type="text/javascript" src="js/jquery/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="js/jeez/jeez.js"></script>
+</head>
+<body>
+	<div align="center">
+		<br> <br> <br> <br> <br> <br> <br>
+		<form id="search-form" name="form0"
+			onsubmit="connect('/check/email',clog,null,[this.email])"
+			action="javascript:(function(){return;})()" autocomplete="off">
+			<input id="itext" name="email" type="text" onkeyup="check('/check/email',this)"
+				placeholder="Enter an valid email address" size="50%" />
+		</form>
+
+		<br> <br>
+		<hr>
+		<br> <br>
+		<div id="founds" class="trouvail"></div>
+	</div>
+</body>
+<script type="text/javascript">	$("#itext").focus(); </script>
+</html>

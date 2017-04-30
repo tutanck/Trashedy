@@ -29,7 +29,27 @@ var JZAPPROUTES;
 })();//true ->debug
 
 
-function check(url,field){
+
+function warn_(state,messages){
+	var fn="warn_: ";
+//TODO msg 
+
+	if(state.status) {
+		clog(fn,state.e);
+		var field = state.field;
+		
+		if(!document.getElementById("jztag"+field.id))
+			printDivAfter(field.id,"<center><font color='red'>Le champ "+field.name +" est obligatoire.</font></center>");
+		else
+			printHTML("#jztag"+field.id,"<center><font color='red'>Le champ "+field.name +" est obligatoire.</font></center>");
+	}else {
+		if(document.getElementById("jztag"+field.id))
+			printHTML("#jztag"+field.id,"");
+	}
+}
+
+
+function check(url,field,ok_callback,immediate_callback=warn_,messages){
 	var fn="check: ";
 
 	if( isFalsy(field) || isFalsy(field.name) )
@@ -44,16 +64,21 @@ function check(url,field){
 		valid_(_def,field.value,_def.expected);
 	}catch(e){
 		if(e instanceof JEEZInvalidParameterException)
-			return status(1,field,e.invalidity);
+			immediate_callback(state_(1,field,e.invalidity,e),messages);
 	}
-	return status_();
+
+	immediate_callback(url,field);
 }
 
-connect("signup",clog,["f"])
-function connect(url,response_processor,fields,error_manager,async=true){
+
+
+function connect(url,response_processor,ajax_error_manager,fields=[],immediate_callback=warn_,async=true){
 	var fn="connect: ";
 	var index = new Map();
 	var data={};
+
+	if( Object.prototype.toString.call( fields ) !== '[object Array]' )
+		throw "fields must be an array of inputs";
 
 	for(let field of new Set(fields)){
 		if( isEmpty(field) || isEmpty(field.name) || isEmpty(field.value) ){
@@ -67,37 +92,43 @@ function connect(url,response_processor,fields,error_manager,async=true){
 	clog(fn,"data = '"+JSON.stringify(data)+"'");
 
 	try{
-		requst(url,response_processor,error_manager,data);
+		requst(url,response_processor,ajax_error_manager,data);
 	}catch(e){
 		if(e instanceof JEEZInvalidParameterException)
-			return status(1,index.get(e.fparamName),e.invalidity);
+			immediate_callback(state_(1,index.get(e.fparamName),e.invalidity,e));
 	}
-	return status_();
+	
+	immediate_callback(state_());
 }
 
 
-function requst(url,response_processor,data={},error_manager,async=true){	
+function requst(url,response_processor,ajax_error_manager,data={},async=true){	
 	var fn="requst: ";
-	
+
 	if(!jz_configured_()) 
 		throw JEEZ+fn+"JEEZ routes not loaded";
 
+	data = isStrongEmpty(data)? {}:data;
+
 	var config=config_(url);
+	if(!config) 
+		throw JEEZ+fn+"No route found on server for url '"+url+"'";
+
 	clog(fn,"route config: ",url,"->",JSON.stringify(config));
 
 	_check_params(config.expin,true);
 	_check_params(config.optin);
 
-	jz_send_ajax_request_(url_(url),response_processor,error_manager,data,config.httpm,"text",async);
+	jz_send_ajax_request_(url_(url),response_processor,ajax_error_manager,data,config.httpm,"text",async);
 
-	
+
 	function _check_params(params,expected=false){ 
 		for(let pi in params){
 			let fparam = params[pi]; //formal param def
 			valid_(fparam,data[fparam.name],expected); 
 		}
 	}
-	
+
 }
 
 
@@ -111,7 +142,7 @@ function valid_(formal,effval,expected){
 
 	let fname=formal.name;
 	let frules=formal.rules;
-	
+
 	if(isEmpty(effval))
 		if(expected) 
 			throw new JEEZInvalidParameterException(fname,-1,JEEZ+fn+"Missing expected parameter '"+fname+"'");
@@ -127,16 +158,12 @@ function valid_(formal,effval,expected){
 	}
 
 
-	/**
-	 * Get JavaScript Formal Type */
-	function getJSFType(intType){ 
+	function getJSFType(intType){// Get JavaScript Formal Type  
 		switch (intType) { 
-		case 0:return "string"; 
-		case 1:return "number";
-		case 2:return "number";
-		case 3:return "number"; 
-		case 4:return "number"; case 5:return "boolean";	
-		default:throw JEEZ+fn+"JEEZError#SNO : InternalTypingError"; 
+		case 0: return "string"; 
+		case 1:	case 2:	case 3:	case 4: return "number";
+		case 5: return "boolean";	
+		default: throw JEEZ+fn+"JEEZError#SNO : InternalTypingError"; 
 		} 
 	}
 }
@@ -165,11 +192,13 @@ function jz_send_ajax_request_(url,response_processor,error_manager,data={},HTTP
 	});
 }
 
-/*GLOBAL TOOLS*/
+
 
 function jz_configured_(){return !isEmpty(JZAPPROUTES);}
 
 function config_(url){ return JZAPPROUTES[jz_slash_bf(url,0)]; }
+
+function url_(url){ return JZAPPSERVER ? JZAPPSERVER+jz_unslash(url,0) : jz_unslash(url,0); }
 
 function find_param_def_(config,fname){ 
 	var found={};
@@ -187,8 +216,9 @@ function find_param_def_(config,fname){
 				else
 					if(i==1)
 						found["expected"]=false;
-					else throw "JEEZError : unable to prior param def"
-					found.name=param.name;
+					else throw "JEEZError#SNO : unable to prior param def";
+
+				found.name=param.name;
 				found.type=param.type;
 				found.rules=param.rules;
 				return found;
@@ -196,9 +226,7 @@ function find_param_def_(config,fname){
 	}
 }
 
-function status_(status=0,field,cause){ return {"status":status,"field":field,"cause":cause}; }
-
-function url_(url){ return JZAPPSERVER ? JZAPPSERVER+jz_unslash(url,0) : jz_unslash(url,0); }
+function state_(status=0,field,cause,e){ return {"status":status,"field":field,"cause":cause,"e":e}; }
 
 function jz_unslash(s,i){return (s.charAt(i)==="\/")? [s.slice(0,i),"",s.slice(i+1)].join(''):s;}
 
@@ -214,14 +242,24 @@ function clog(){
 	console.log(str);
 }
 
+function isStrongFalsy(value){ 
+	return value === undefined 
+	|| value === null
+}
+
 function isFalsy(value){ 
 	return value == undefined 
 	|| value == null
 }
 
 function isEmpty(value){ 
-	return value == undefined 
-	|| value == null
+	return isFalsy(value)
+	|| new RegExp('^\\s*$').test(value)
+	|| value == "null"
+}
+
+function isStrongEmpty(value){ 
+	return isStrongFalsy(value)
 	|| new RegExp('^\\s*$').test(value)
 	|| value == "null"
 }
@@ -233,3 +271,10 @@ function JEEZInvalidParameterException(fparamName,invalidity,message) {
 	this.message = (message || "");
 }
 JEEZInvalidParameterException.prototype = new Error();
+
+function printDivAfter(dom,val){
+	$("#"+dom).after("<div id=\"jztag"+dom+"\" class=\"warning-wrapper\">"
+			+val+"</div>\n");
+}
+
+function printHTML(dom,htm){$(dom).html(htm); }
