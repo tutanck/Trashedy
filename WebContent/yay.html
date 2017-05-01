@@ -14,11 +14,15 @@
 <body>
 	<div align="center">
 		<br> <br> <br> <br> <br> <br> <br>
+
 		<form id="search-form" name="form0"
 			onsubmit="connect('/check/email',clog,null,[this.email])"
 			action="javascript:(function(){return;})()" autocomplete="off">
-			<input id="itext" name="email" type="text" onkeyup="check('/check/email',this)"
+
+			<input id="itext" name="email" type="text"
+				onkeyup="check('/check/email',this)"
 				placeholder="Enter an valid email address" size="50%" />
+
 		</form>
 
 		<br> <br>

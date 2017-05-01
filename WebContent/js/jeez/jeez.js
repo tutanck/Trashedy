@@ -30,26 +30,9 @@ var JZAPPROUTES;
 
 
 
-function warn_(state,messages){
-	var fn="warn_: ";
-//TODO msg 
+/**Extras*/
 
-	if(state.status) {
-		clog(fn,state.e);
-		var field = state.field;
-		
-		if(!document.getElementById("jztag"+field.id))
-			printDivAfter(field.id,"<center><font color='red'>Le champ "+field.name +" est obligatoire.</font></center>");
-		else
-			printHTML("#jztag"+field.id,"<center><font color='red'>Le champ "+field.name +" est obligatoire.</font></center>");
-	}else {
-		if(document.getElementById("jztag"+field.id))
-			printHTML("#jztag"+field.id,"");
-	}
-}
-
-
-function check(url,field,ok_callback,immediate_callback=warn_,messages){
+function check(url,field,callback=educate,messages){
 	var fn="check: ";
 
 	if( isFalsy(field) || isFalsy(field.name) )
@@ -59,29 +42,62 @@ function check(url,field,ok_callback,immediate_callback=warn_,messages){
 
 	if(!_def)
 		throw JEEZ+fn+"Input to check is undefined on server";
+	
+	var fields=[]; fields.push(field);
 
 	try{
 		valid_(_def,field.value,_def.expected);
 	}catch(e){
 		if(e instanceof JEEZInvalidParameterException)
-			immediate_callback(state_(1,field,e.invalidity,e),messages);
+			return callback(fields,state_(1,field,e.invalidity,e),messages,url);
+		else throw e;
 	}
-
-	immediate_callback(url,field);
+	callback(fields,state_(),messages,url);
 }
 
 
+function warn(state,messages){//	TODO msg 
+	var fn="warn: ";
+	clog(fn,"state:",JSON.stringify(state));	
 
-function connect(url,response_processor,ajax_error_manager,fields=[],immediate_callback=warn_,async=true){
+	if(state.status) {
+		var field = state.field;
+		clog(fn,"error:",state.e+".","guilty_field:",state.field.name);
+
+		if(!document.getElementById("jzTag"+field.id))
+			printDivAfter(field.id,"<center><font color='red'> The "+field.name +" field is invalid.</font></center>");
+		else
+			printHTML("#jzTag"+field.id,"<center><font color='red'>The "+field.name +" field is invalid.</font></center>");
+	}
+}
+
+function clear(fields){
+	var fn="clear: ";
+
+	if( Object.prototype.toString.call( fields ) !== '[object Array]' )
+		throw JEEZ+fn+"fields must be an array of inputs";
+
+	for(let fi in fields){
+		let field=fields[fi];
+		clog(fn,"clearing:",field.name);
+		if(document.getElementById("jzTag"+field.id))
+			printHTML("#jzTag"+field.id,"");
+	}
+}
+
+
+function educate(fields,state,messages){ state.status ? warn(state,messages) : clear(fields); }
+
+function connect(url,ajax_response_processor,ajax_error_manager,fields=[],immediate_callback=educate,async=true){
 	var fn="connect: ";
 	var index = new Map();
 	var data={};
 
 	if( Object.prototype.toString.call( fields ) !== '[object Array]' )
-		throw "fields must be an array of inputs";
+		throw JEEZ+fn+"fields must be an array of inputs";
 
 	for(let field of new Set(fields)){
-		if( isEmpty(field) || isEmpty(field.name) || isEmpty(field.value) ){
+		if( isEmpty(field) || isEmpty(field.name) ){
 			clog(fn,"Warning: Array 'fields' contains an empty field");
 			continue;
 		}
@@ -92,17 +108,21 @@ function connect(url,response_processor,ajax_error_manager,fields=[],immediate_c
 	clog(fn,"data = '"+JSON.stringify(data)+"'");
 
 	try{
-		requst(url,response_processor,ajax_error_manager,data);
+		requst(url,ajax_response_processor,ajax_error_manager,data);
 	}catch(e){
 		if(e instanceof JEEZInvalidParameterException)
-			immediate_callback(state_(1,index.get(e.fparamName),e.invalidity,e));
+			return immediate_callback(fields,state_(1,index.get(e.fparamName),e.invalidity,e));
+		else throw e;
 	}
-	
-	immediate_callback(state_());
+	immediate_callback(fields,state_());
 }
 
 
-function requst(url,response_processor,ajax_error_manager,data={},async=true){	
+
+
+
+/**JEEZ*/
+function requst(url,ajax_response_processor,ajax_error_manager,data={},async=true){	
 	var fn="requst: ";
 
 	if(!jz_configured_()) 
@@ -119,7 +139,7 @@ function requst(url,response_processor,ajax_error_manager,data={},async=true){
 	_check_params(config.expin,true);
 	_check_params(config.optin);
 
-	jz_send_ajax_request_(url_(url),response_processor,ajax_error_manager,data,config.httpm,"text",async);
+	jz_send_ajax_request_(url_(url),ajax_response_processor,ajax_error_manager,data,config.httpm,"text",async);
 
 
 	function _check_params(params,expected=false){ 
@@ -128,7 +148,6 @@ function requst(url,response_processor,ajax_error_manager,data={},async=true){
 			valid_(fparam,data[fparam.name],expected); 
 		}
 	}
-
 }
 
 
@@ -201,6 +220,8 @@ function config_(url){ return JZAPPROUTES[jz_slash_bf(url,0)]; }
 function url_(url){ return JZAPPSERVER ? JZAPPSERVER+jz_unslash(url,0) : jz_unslash(url,0); }
 
 function find_param_def_(config,fname){ 
+	var fn="find_param_def_: ";
+
 	var found={};
 	var matrix=[];
 	matrix.push(config.expin);
@@ -216,7 +237,7 @@ function find_param_def_(config,fname){
 				else
 					if(i==1)
 						found["expected"]=false;
-					else throw "JEEZError#SNO : unable to prior param def";
+					else throw JEEZ+fn+"JEEZError#SNO : unable to prior param def";
 
 				found.name=param.name;
 				found.type=param.type;
@@ -272,9 +293,6 @@ function JEEZInvalidParameterException(fparamName,invalidity,message) {
 }
 JEEZInvalidParameterException.prototype = new Error();
 
-function printDivAfter(dom,val){
-	$("#"+dom).after("<div id=\"jztag"+dom+"\" class=\"warning-wrapper\">"
-			+val+"</div>\n");
-}
+function printDivAfter(dom,val){ $("#"+dom).after("<div id=\"jzTag"+dom+"\" class=\"warning-wrapper\">"+val+"</div>\n"); }
 
-function printHTML(dom,htm){$(dom).html(htm); }
+function printHTML(dom,htm){ $(dom).html(htm); }
