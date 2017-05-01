@@ -1,6 +1,5 @@
 package conf;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.aj.jeez.annotation.annotations.WebService;
@@ -14,7 +13,7 @@ public class AppRouterService {
 	@WebService(url)
 	public static JSONObject getRouter(
 			JSONObject params
-			) throws JSONException  {
+			)  {
 		return StartupListener.router;
 	}
 }

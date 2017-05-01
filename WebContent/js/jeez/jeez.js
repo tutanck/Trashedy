@@ -176,7 +176,7 @@ function valid_(formal,effval,expected){
 			throw new JEEZInvalidParameterException(fname,1,JEEZ+fn+"Parameter '"+fname+"' does not match the rule '"+frule+"'");
 	}
 
-
+	//TODO USE parse iof
 	function getJSFType(intType){// Get JavaScript Formal Type  
 		switch (intType) { 
 		case 0: return "string"; 
