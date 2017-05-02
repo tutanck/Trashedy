@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Hello</title>
+
+<script type="text/javascript">
+	// 	JZAPPSERVER = "http://localhost:8080/Essais0"; //Not required if  on the same server
+	JZAPPROUTER = "/jz/app/routes";
+</script>
+
+<script type="text/javascript" src="js/jquery/jquery-3.1.1.js"></script>
+<script type="text/javascript" src="js/jquery/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="js/jeez/jeez.js"></script>
+
+</head>
+<body>
+	<div align="center">
+		<h1 id='eltID' ></h1>
+
+		<script type="text/javascript">
+		requst("/hello",print);
+		function print(txt){
+			document.getElementById("eltID").innerHTML = txt;
+		}
+		</script>
+
+	</div>
+</body>
+</html>
