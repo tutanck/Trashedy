@@ -1,0 +1,1 @@
+hideOnClick(elt('signin-modal'))

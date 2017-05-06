@@ -33,12 +33,4 @@ $(document).ready(function(){
         },
         omitWeeks: true
     });
-
-    $('.init-slider').owlCarousel({
-        items:1,
-        merge:true,
-        loop:true,
-        video:true,
-        smartSpeed: 600
-    });
 });
