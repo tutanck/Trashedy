@@ -3,9 +3,7 @@
 <head>
 <title>zEvents</title>
 <link type="text/css" rel="stylesheet" href="css/signup.css" />
-<script type="text/javascript">
-	JZAPPROUTER = "/jz/app/routes"; 
-</script>
+<script type="text/javascript">	JZAPPROUTER = "/jz/app/routes"; </script>
 <script type="text/javascript" src="js/jquery/jquery-3.1.1.js"></script>
 <script type="text/javascript" src="js/jquery/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="js/jeez/jeez.js"></script>
@@ -15,22 +13,27 @@
 
 <h1>Bienvenue sur zEvents</h1>
 
-<button id='signup-goal-btn' onclick="toggleOnClick( [elt('signup-modal')],[this,elt('signin-goal-btn')] )" style="width:auto;">Inscription</button>
+<button id='signup-goal-btn' onclick="show( elt('signup-modal') )" style="width:auto;">Inscription</button>
 
-<button id='signin-goal-btn' onclick="toggleOnClick([elt('signup-modal')],[this,elt('signup-goal-btn')])" style="width:auto;">Connexion</button>
+<button id='signin-goal-btn' onclick="show( elt('signup-modal') )" style="width:auto;">Connexion</button>
 
 <div id="signup-modal" class="modal">
 
-  <form class="modal-content animate" action="/signup">
+  <form class="modal-content animate" 
+  onsubmit="connect('/signup',clog,null,[this.email,this.uname,this.pass])" 
+  action="javascript:(function(){return;})()">
     <div class="container">
       
-      <input type="text" placeholder="Email" name="email" required>
+      <input id="email-input" type="text" placeholder="Email" name="email" 
+      onkeyup="connect('/check/email',clog,null,[this])">
       
-      <input type="text" placeholder="Nom d'utilisateur" name="uname" required>
+      <input id="uname-input" type="text" placeholder="Nom d'utilisateur" name="uname" 
+      onkeyup="connect('/check/uname',clog,null,[this])">
 
-      <input type="password" placeholder="Mot de passe" name="pass" required>
+      <input id="pass-input" type="password" placeholder="Mot de passe" name="pass"
+      onkeyup="check('/signup',this)">
       
-      <input type="password" placeholder="Confirmation du mot de passe" name="passchk" required>
+      <input id="passchk-input" type="password" placeholder="Confirmation du mot de passe" name="passchk" >
       
       <div class="clearfix" align="center">
         <button type="submit" class="signupbtn">Inscription</button>

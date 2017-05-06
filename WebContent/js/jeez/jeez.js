@@ -41,8 +41,8 @@ function check(url,field,callback=educate,messages){
 	var _def=find_param_def_(config_(url),field.name);
 
 	if(!_def)
-		throw JEEZ+fn+"Input to check is undefined on server";
-	
+		throw JEEZ+fn+"Input '"+field.name+"' is undefined for url '"+url+"'";
+
 	var fields=[]; fields.push(field);
 
 	try{
@@ -62,31 +62,37 @@ function warn(state,messages){//	TODO msg
 
 	if(state.status) {
 		var field = state.field;
-		clog(fn,"error:",state.e+".","guilty_field:",state.field.name);
-
+		
+		clog(fn,"error:",state.e+".","guilty_field:",field.name);
+		
+		var invalidmsg=" field is invalid";
+		
 		if(!document.getElementById("jzTag"+field.id))
-			printDivAfter(field.id,"<center><font color='red'> The "+field.name +" field is invalid.</font></center>");
+			printDivAfter(field.id,"<center><font color='red'> "+field.name +invalidmsg+"</font></center>");
 		else
-			printHTML("#jzTag"+field.id,"<center><font color='red'>The "+field.name +" field is invalid.</font></center>");
+			printHTML("#jzTag"+field.id,"<center><font color='red'> "+field.name +invalidmsg+"</font></center>");
 	}
 }
 
-function clear(fields){
+clear = 
+	function (field){
 	var fn="clear: ";
+	clog(fn,"clearing:",field.name);
+	if(document.getElementById("jzTag"+field.id))
+		printHTML("#jzTag"+field.id,"");
+}
+
+function clear_all(fields){
+	var fn="clear_all: ";
 
 	if( Object.prototype.toString.call( fields ) !== '[object Array]' )
 		throw JEEZ+fn+"fields must be an array of inputs";
 
-	for(let fi in fields){
-		let field=fields[fi];
-		clog(fn,"clearing:",field.name);
-		if(document.getElementById("jzTag"+field.id))
-			printHTML("#jzTag"+field.id,"");
-	}
+	for(let fi in fields) clear(fields[fi]);
 }
 
 
-function educate(fields,state,messages){ state.status ? warn(state,messages) : clear(fields); }
+function educate(fields,state,messages){ state.status ? warn(state,messages) : clear_all(fields); }
 
 function connect(url,ajax_response_processor,ajax_error_manager,fields=[],immediate_callback=educate,async=true){
 	var fn="connect: ";
@@ -95,14 +101,19 @@ function connect(url,ajax_response_processor,ajax_error_manager,fields=[],immedi
 
 	if( Object.prototype.toString.call( fields ) !== '[object Array]' )
 		throw JEEZ+fn+"fields must be an array of inputs";
-
+	
 	for(let field of new Set(fields)){
 		if( isEmpty(field) || isEmpty(field.name) ){
 			clog(fn,"Warning: Array 'fields' contains an empty field");
 			continue;
 		}
+		
+		if(isEmpty(field.id))
+			throw fn+"field "+field.name+" must have an 'id' attribute";
+		
 		index.set(field.name,field);
 		data[field.name]=field.value;
+		clear(field);
 	}
 
 	clog(fn,"data = '"+JSON.stringify(data)+"'");
@@ -111,7 +122,10 @@ function connect(url,ajax_response_processor,ajax_error_manager,fields=[],immedi
 		requst(url,ajax_response_processor,ajax_error_manager,data);
 	}catch(e){
 		if(e instanceof JEEZInvalidParameterException)
-			return immediate_callback(fields,state_(1,index.get(e.fparamName),e.invalidity,e));
+			if(e.invalidity===-1 && isFalsy(index.get(e.fparamName)))
+				throw e; 
+			else
+				return immediate_callback(fields,state_(1,index.get(e.fparamName),e.invalidity,e));
 		else throw e;
 	}
 	immediate_callback(fields,state_());
@@ -140,7 +154,6 @@ function requst(url,ajax_response_processor,ajax_error_manager,data={},async=tru
 	_check_params(config.optin);
 
 	jz_send_ajax_request_(url_(url),ajax_response_processor,ajax_error_manager,data,config.httpm,"text",async);
-
 
 	function _check_params(params,expected=false){ 
 		for(let pi in params){
@@ -221,6 +234,8 @@ function url_(url){ return JZAPPSERVER ? JZAPPSERVER+jz_unslash(url,0) : jz_unsl
 
 function find_param_def_(config,fname){ 
 	var fn="find_param_def_: ";
+	
+	clog(fn+"fname:"+fname,", config: "+JSON.stringify(config));
 
 	var found={};
 	var matrix=[];

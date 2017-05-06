@@ -18,7 +18,7 @@ import com.aj.jeez.annotation.annotations.WebService;
 /**
  * @author Joan */
 public class CheckUsernameService extends IOCore {
-	public final static String url="/check/username";
+	public final static String url="/check/uname";
 
 	/**
 	 * Check if username's input is valid 
@@ -28,7 +28,7 @@ public class CheckUsernameService extends IOCore {
 	 * @throws DBException
 	 * @throws AbsentKeyException */
 	@WebService(value=url,policy=OfflineGetServlet.class,
-			requestParams=@Params({ @Param(value="username",rules={PatternsHolder.uname}) }))
+			requestParams=@Params({ @Param(value="uname",rules={PatternsHolder.uname}) }))
 	public static JSONObject checkUsername(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
