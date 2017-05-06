@@ -2,6 +2,7 @@ var JEEZ="JEEZ: ";
 var JZAPPSERVER;
 var JZAPPROUTER;
 var JZAPPROUTES;
+var JZDEBUG;
 
 (function jz_init(debug){
 	var fn="jz_init: ", router_url;
@@ -23,10 +24,13 @@ var JZAPPROUTES;
 
 	jz_send_ajax_request_(router_url,routes_,null,{},"get","text",false);
 
-	clog(fn,"Jeez loaded and ready for use..");
-
-	function routes_(routes){JZAPPROUTES=JSON.parse(routes);if(debug)clog(JSON.stringify(JZAPPROUTES))} 
-})();//true ->debug
+	function routes_(routes){
+		clog(fn,"Jeez loaded and ready for use..");
+		JZAPPROUTES=JSON.parse(routes);
+		if(debug)
+			clog(JSON.stringify(JZAPPROUTES))
+	} 
+})(JZDEBUG);
 
 
 
@@ -62,11 +66,11 @@ function warn(state,messages){//	TODO msg
 
 	if(state.status) {
 		var field = state.field;
-		
+
 		clog(fn,"error:",state.e+".","guilty_field:",field.name);
-		
+
 		var invalidmsg=" field is invalid";
-		
+
 		if(!document.getElementById("jzTag"+field.id))
 			printDivAfter(field.id,"<center><font color='red'> "+field.name +invalidmsg+"</font></center>");
 		else
@@ -101,16 +105,16 @@ function connect(url,ajax_response_processor,ajax_error_manager,fields=[],immedi
 
 	if( Object.prototype.toString.call( fields ) !== '[object Array]' )
 		throw JEEZ+fn+"fields must be an array of inputs";
-	
+
 	for(let field of new Set(fields)){
 		if( isEmpty(field) || isEmpty(field.name) ){
 			clog(fn,"Warning: Array 'fields' contains an empty field");
 			continue;
 		}
-		
+
 		if(isEmpty(field.id))
 			throw fn+"field "+field.name+" must have an 'id' attribute";
-		
+
 		index.set(field.name,field);
 		data[field.name]=field.value;
 		clear(field);
@@ -234,7 +238,7 @@ function url_(url){ return JZAPPSERVER ? JZAPPSERVER+jz_unslash(url,0) : jz_unsl
 
 function find_param_def_(config,fname){ 
 	var fn="find_param_def_: ";
-	
+
 	clog(fn+"fname:"+fname,", config: "+JSON.stringify(config));
 
 	var found={};

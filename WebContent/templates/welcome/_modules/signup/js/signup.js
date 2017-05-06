@@ -1,1 +1,0 @@
-hideOnClick(elt('signup-modal'))

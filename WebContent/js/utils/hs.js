@@ -18,6 +18,7 @@ hide =
 hideOnClick = 
 	function (elt){
 	window.addEventListener("click", function(event) {
+		//console.log(event.target,elt); //debug
 		if (event.target == elt) 	
 			hide(elt)
 	})
@@ -29,4 +30,16 @@ showOnClick =
 		if (event.target == elt) 	
 			show(elt.id)
 	})
+}
+
+
+loadGhost = 
+	function (idcontainer,load,idelt){
+	$(document).ready(
+			function() {
+				$(idcontainer).load(load,
+						function() {
+					hideOnClick(elt(idelt));
+				});
+			});
 }

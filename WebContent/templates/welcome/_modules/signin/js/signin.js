@@ -1,1 +1,0 @@
-hideOnClick(elt('signin-modal'))

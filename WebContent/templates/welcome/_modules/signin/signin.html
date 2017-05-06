@@ -1,0 +1,24 @@
+<div id="signin-modal" class="modal">
+  
+  <form class="modal-content animate" 
+  onsubmit="connect('/signin',clog,null,[this.uname,this.pass])"
+	action="javascript:(function(){return;})()" >
+     
+    <div class="container">
+      
+      <input id="uname-input" type="text" placeholder="Enter Username" name="uname" required
+      onkeyup="connect('/check/uname',clog,null,[this])">
+
+      <input id="pass-input" type="password" placeholder="Enter Password" name="pass" required
+      onkeyup="check('/signin',this)">
+        
+      <button type="submit" class="btn btn-default signinbtn">Connexion</button>
+      
+      <div class="btn btn-link" role="button"><a href="#">Mot de passe oubli&eacute;</a></div>
+      
+    </div>
+     
+  </form>
+  
+</div>
+

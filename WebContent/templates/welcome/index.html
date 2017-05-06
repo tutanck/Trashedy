@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html class="no-js">
     <head>
+   		<title>zEvents</title>
+    
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>zEvents</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
@@ -21,18 +22,25 @@
         <link rel="stylesheet" href="css/responsive.css">
         
         <!-- jQuery -->
-        <script src="../../js/jquery/jquery-3.1.1.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         
         <!-- Jeez -->
-		<script type="text/javascript">JZAPPROUTER = "/jz/app/routes"</script>
+        <script type="text/javascript">JZAPPSERVER="http://localhost:8080/Essais0"</script>
+		<script type="text/javascript">JZAPPROUTER="jz/app/routes"</script>
 		<script type="text/javascript" src="../../js/jeez/jeez.js"></script>
 		
 		<!-- Utils -->
 		<script src="../../js/utils/hs.js"></script>
+		<script src="../../js/utils/countdown.js"></script>
 		
-		<!-- Business -->
-<!-- 	<link type="text/css" rel="stylesheet" href="_modules/signup/css/signup.css" /> -->
-		<script type="text/javascript" src="_modules/signup/js/signup.js"></script>
+		<!-- Business -->	
+		<link type="text/css" rel="stylesheet" href="_modules/_common/css/welcome-modals.css" />
+		<link type="text/css" rel="stylesheet" href="_modules/_common/css/zoomanimation.css" />
+		<link type="text/css" rel="stylesheet" href="_modules/_common/css/zoomanimation.css" />
+		<link type="text/css" rel="stylesheet" href="_modules/signup/css/signup.css" />
+		<link type="text/css" rel="stylesheet" href="_modules/signin/css/signin.css" />
+		<script src="_modules/signup/js/signup.js"></script>
+		<script src="_modules/signin/js/signin.js"></script>
     </head>
 
     <body id="body">   
@@ -45,13 +53,14 @@
 	                        <h1 class="wow fadeInDown">Bienvenue sur zEvents</h1>
 	                        <p class="wow fadeInDown" data-wow-delay="0.3s">Cr&eacute;&eacute;z et partagez des &eacute;v&egrave;nements entre amis.</p>
 	                        <div class="wow fadeInDown" data-wow-delay="0.3s">
-	                        	<button onclick="show( elt('signup-modal') )" id='signup-goal-btn' class="btn btn-default btn-home" role="button">Inscription</button>
-	                        	<button onclick="show( elt('signup-modal') )" id='signin-goal-btn' class="btn btn-default btn-home" role="button">Connexion</button>
+	                        	<button onclick="show( elt('signup-modal') )" id='signup-goal-btn' class="btn btn-default btn-home">Inscription</button>
+	                        	<button onclick="show( elt('signin-modal') )" id='signin-goal-btn' class="btn btn-default btn-home">Connexion</button>
 	                        </div>
 	                    </div>
 	                </div>
 	              
-	              <div id="modal-container"></div>
+	              <div id="modal-signup-container"></div>
+	              <div id="modal-signin-container"></div>
 	              
 	                <div class="col-md-6 wow zoomIn">
 	                    <div class="block">
@@ -60,29 +69,25 @@
 	                            <ul id="countdown_dashboard">
 	                                <li>
 	                                    <div class="dash days_dash">
-	                                        <div class="digit">0</div>
-	                                        <div class="digit">0</div>
+	                                        <div id="daydash" class="digit">0</div>
 	                                        <span class="dash_title">Jours</span>
 	                                    </div>
 	                                </li>
 	                                <li>
 	                                    <div class="dash hours_dash">
-	                                        <div class="digit">0</div>
-	                                        <div class="digit">0</div>
+	                                        <div id="hourdash" class="digit">0</div>
 	                                        <span class="dash_title">Heures</span>
 	                                    </div>
 	                                </li>
 	                                <li>
 	                                    <div class="dash minutes_dash">
-	                                        <div class="digit">0</div>
-	                                        <div class="digit">0</div>
+	                                        <div id="mindash" class="digit">0</div>
 	                                        <span class="dash_title">Minutes</span>
 	                                    </div>
 	                                </li>
 	                                <li>
 	                                    <div class="dash seconds_dash">
-	                                        <div class="digit">0</div>
-	                                        <div class="digit">0</div>
+	                                        <div id="secdash" class="digit">0</div>
 	                                        <span class="dash_title">Secondes</span>
 	                                    </div>
 	                                </li>
@@ -108,18 +113,17 @@
         </footer>
 
         <!-- Js -->
-        <script src="js/jquery.lwtCountdown-1.0.js"></script>
         <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.nav.js"></script>
-        <script src="js/wow.min.js"></script>
+         <script src="js/wow.min.js"></script>
         <script src="js/main.js"></script>
         
 		<!-- Homemade -->
         <script>
-		$(document).ready(function(){$("#modal-container").load("_modules/signup/signup.html");});
+    		loadGhost("#modal-signup-container","_modules/signup/signup.html","signup-modal")
+    		loadGhost("#modal-signin-container","_modules/signin/signin.html","signin-modal")
+    		
+    		countdown(new Date(2017,4,25,18,30,0),"daydash","hourdash","mindash","secdash")
 		</script>
-        
-        
         
     </body>
 </html>

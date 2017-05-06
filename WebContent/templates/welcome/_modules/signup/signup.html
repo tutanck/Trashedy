@@ -1,10 +1,9 @@
-
-
 <div id="signup-modal" class="modal">
 
   <form class="modal-content animate" 
   onsubmit="connect('/signup',clog,null,[this.email,this.uname,this.pass])" 
   action="javascript:(function(){return;})()">
+    
     <div class="container">
       
       <input id="email-input" type="text" placeholder="Email" name="email" 
@@ -16,14 +15,15 @@
       <input id="pass-input" type="password" placeholder="Mot de passe" name="pass"
       onkeyup="check('/signup',this)">
       
-      <input id="passchk-input" type="password" placeholder="Confirmation du mot de passe" name="passchk" >
+      <input id="passchk-input" type="password" 
+      placeholder="Confirmation du mot de passe" name="passchk" >
       
-      <div class="clearfix" align="center">
-        <button type="submit" class="signupbtn">Inscription</button>
+      <div align="center">
+        <button type="submit" class="btn btn-default signupbtn">Inscription</button>
       </div>
       
     </div>
+    
   </form>
 
 </div>
-
