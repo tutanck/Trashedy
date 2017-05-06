@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>zEvents</title>
+<link type="text/css" rel="stylesheet" href="css/signup.css" />
+<script type="text/javascript">
+	JZAPPROUTER = "/jz/app/routes"; 
+</script>
+<script type="text/javascript" src="js/jquery/jquery-3.1.1.js"></script>
+<script type="text/javascript" src="js/jquery/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="js/jeez/jeez.js"></script>
+<script type="text/javascript" src="js/utils/hs.js"></script>
+</head>
+<body>
+
+<h1>Bienvenue sur zEvents</h1>
+
+<button id='signup-goal-btn' onclick="toggleOnClick( [elt('signup-modal')],[this,elt('signin-goal-btn')] )" style="width:auto;">Inscription</button>
+
+<button id='signin-goal-btn' onclick="toggleOnClick([elt('signup-modal')],[this,elt('signup-goal-btn')])" style="width:auto;">Connexion</button>
+
+<div id="signup-modal" class="modal">
+
+  <form class="modal-content animate" action="/signup">
+    <div class="container">
+      
+      <input type="text" placeholder="Email" name="email" required>
+      
+      <input type="text" placeholder="Nom d'utilisateur" name="uname" required>
+
+      <input type="password" placeholder="Mot de passe" name="pass" required>
+      
+      <input type="password" placeholder="Confirmation du mot de passe" name="passchk" required>
+      
+      <div class="clearfix" align="center">
+        <button type="submit" class="signupbtn">Inscription</button>
+      </div>
+      
+    </div>
+  </form>
+
+</div>
+
+<script type="text/javascript" src="js/signup.js"></script>
+</body>
+</html>
