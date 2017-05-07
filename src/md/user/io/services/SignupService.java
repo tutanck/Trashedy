@@ -23,7 +23,7 @@ import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OfflinePostServlet;
 
 /**
- * @author Joan */
+ * @author AJoan */
 public class SignupService extends IOCore {
 	public final static String url="/signup";
 

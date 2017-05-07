@@ -36,3 +36,27 @@ input[type=text], input[type=password] {
 	border: 1px solid #ccc;
 	box-sizing: border-box;
 }
+
+
+/* Set a style for all buttons */
+.signupbtn, .signinbtn, .recoverybtn {
+	background-color: #90EE90;
+	color: white;
+	padding: 14px 20px;
+	margin: 8px 0;
+	border: none;
+	width: 50%;
+	opacity: 0.8;
+}
+
+.signupbtn:hover, .signinbtn:hover, .recoverybtn:hover {
+	background-color: #00FF7F;
+	color: white;
+}
+
+/* Change styles for signup button on extra small screens */
+@media screen and (max-width: 700px) {
+	.signupbtn, .signinbtn, .recoverybtn {
+		width: 100%;
+	}
+}

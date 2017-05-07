@@ -28,6 +28,7 @@ public interface ServiceCodes {
 	
 	/*admin error*/
 	int MRP_DOUBLING=-111;
+	int ALERT_NOT_SENT=-112;
 
 	
 }
