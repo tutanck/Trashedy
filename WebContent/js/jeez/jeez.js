@@ -8,7 +8,7 @@ var ON_JZ_LOAD_FAILURE;
 (jz_init = function (debug){
 	var fn="jz_init: ", router_url;
 
-	clog(fn,"Jeez loading started..");
+	clog(fn,"Jeez loading..");
 
 	if(!JZAPPROUTER)
 		throw JEEZ+fn+"jeez config variable 'JZAPPROUTER' is undefined.";
@@ -56,7 +56,7 @@ check =
 	if(!_def)
 		throw JEEZ+fn+"Incoming parameter '"+field.name+"' is undefined for url '"+url+"'";
 
-	if(isEmpty(field.value)) return;
+	if(isEmpty(field.value)) return clear(field);
 
 	var fields=[]; fields.push(field);
 
@@ -162,7 +162,7 @@ soft_connect =
 	if(isEmpty(field.id))
 		throw fn+"field '"+field.name+"' must have an valid 'id' attribute";
 	
-	if(isEmpty(field.value)) return;
+	if(isEmpty(field.value)) return clear(field);
 	
 	var fields =[];
 	fields.push(field);
