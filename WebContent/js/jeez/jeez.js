@@ -112,10 +112,6 @@ clear_all =
 educate = 
 	function (fields,state,messages){ state.status ? warn(state,messages) : clear_all(fields); }
 
-connect_one = function(){
-
-}
-
 connect = 
 	function (url,ajax_response_processor,ajax_error_manager,fields=[],immediate_callback=educate,async=true){
 	var fn="connect: ";
@@ -132,7 +128,7 @@ connect =
 		}
 
 		if(isEmpty(field.id))
-			throw fn+"field "+field.name+" must have an 'id' attribute";
+			throw fn+"field "+field.name+" must have an valid 'id' attribute";
 
 		index.set(field.name,field);
 		data[field.name]=field.value;
@@ -154,6 +150,25 @@ connect =
 	immediate_callback(fields,state_());
 }
 
+
+soft_connect = 
+	function(url,ajax_response_processor,ajax_error_manager,field,immediate_callback=educate,async=true){
+	var fn ="soft_connect: ";
+	
+	
+	if( isEmpty(field) || isEmpty(field.name) )
+		throw fn+"'field' parameter must be defined and have an valid 'name' attribute";
+
+	if(isEmpty(field.id))
+		throw fn+"field '"+field.name+"' must have an valid 'id' attribute";
+	
+	if(isEmpty(field.value)) return;
+	
+	var fields =[];
+	fields.push(field);
+	
+	connect(url,ajax_response_processor,ajax_error_manager,fields,immediate_callback,async);
+}
 
 
 
