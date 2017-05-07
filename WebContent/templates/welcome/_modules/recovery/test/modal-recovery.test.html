@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link type="text/css" rel="stylesheet" href="../css/signup.css" />
+<link type="text/css" rel="stylesheet" href="../css/recovery.css" />
 <link type="text/css" rel="stylesheet" href="../../_common/css/welcome-modals.css" />
 <link type="text/css" rel="stylesheet" href="../../_common/css/zoomanimation.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -15,12 +15,14 @@
 </head>
 <body>
 
-	<button onclick="show( elt('signup-modal') )">Open</button>
+	<button onclick="show( elt('recovery-modal') )">Open</button>
 
 	<div id="modal-container"></div>
 
 	<script>
-		loadGhost("#modal-container","../signup.html","signup-modal")
+		loadGhost("#modal-container",
+				"../recovery.html",
+				"recovery-modal")
 	</script>
 </body>
 </html>

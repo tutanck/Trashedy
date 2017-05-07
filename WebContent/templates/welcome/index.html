@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="no-js">
     <head>
-   		<title>zEvents</title>
+   		<title>ZEvents</title>
     
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,9 +36,9 @@
 		<!-- Business -->	
 		<link type="text/css" rel="stylesheet" href="_modules/_common/css/welcome-modals.css" />
 		<link type="text/css" rel="stylesheet" href="_modules/_common/css/zoomanimation.css" />
-		<link type="text/css" rel="stylesheet" href="_modules/_common/css/zoomanimation.css" />
 		<link type="text/css" rel="stylesheet" href="_modules/signup/css/signup.css" />
 		<link type="text/css" rel="stylesheet" href="_modules/signin/css/signin.css" />
+		<link type="text/css" rel="stylesheet" href="_modules/recovery/css/recovery.css" />
 		<script src="_modules/signup/js/signup.js"></script>
 		<script src="_modules/signin/js/signin.js"></script>
     </head>
@@ -50,7 +50,7 @@
 	            <div class="row">
 	                <div class="col-md-6">
 	                    <div class="block">
-	                        <h1 class="wow fadeInDown">Bienvenue sur zEvents</h1>
+	                        <h1 class="wow fadeInDown">Bienvenue sur ZEvents</h1>
 	                        <p class="wow fadeInDown" data-wow-delay="0.3s">Cr&eacute;&eacute;z et partagez des &eacute;v&egrave;nements entre amis.</p>
 	                        <div class="wow fadeInDown" data-wow-delay="0.3s">
 	                        	<button onclick="show( elt('signup-modal') )" id='signup-goal-btn' class="btn btn-default btn-home">Inscription</button>
@@ -61,6 +61,7 @@
 	              
 	              <div id="modal-signup-container"></div>
 	              <div id="modal-signin-container"></div>
+	              <div id="modal-recovery-container"></div>
 	              
 	                <div class="col-md-6 wow zoomIn">
 	                    <div class="block">
@@ -121,7 +122,8 @@
         <script>
     		loadGhost("#modal-signup-container","_modules/signup/signup.html","signup-modal")
     		loadGhost("#modal-signin-container","_modules/signin/signin.html","signin-modal")
-    		
+    		loadGhost("#modal-recovery-container","_modules/recovery/recovery.html","recovery-modal")
+	
     		countdown(new Date(2017,4,25,18,30,0),"daydash","hourdash","mindash","secdash")
 		</script>
         

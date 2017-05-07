@@ -15,6 +15,13 @@ hide =
 	elt.style.display='none'
 }
 
+
+swap = 
+	function (oldelt,newelt){
+	hide(oldelt);
+	show(newelt);
+}
+
 hideOnClick = 
 	function (elt){
 	window.addEventListener("click", function(event) {

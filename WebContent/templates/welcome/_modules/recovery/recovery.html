@@ -1,0 +1,20 @@
+<div id="recovery-modal" class="modal">
+
+  <form class="modal-content animate" 
+  onsubmit="connect('/account/recover',clog,null,[this.email])" 
+  action="javascript:(function(){return;})()">
+    
+    <div class="container">
+      
+      <input id="email-input" type="text" placeholder="Email" name="email" 
+      onkeyup="connect('/check/email',clog,null,[this])">
+      
+      <div align="center">
+        <button type="submit" class="btn btn-default recoverybtn">R&eacute;cup&eacute;rez votre compte</button>
+      </div>
+      
+    </div>
+    
+  </form>
+
+</div>
