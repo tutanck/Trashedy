@@ -4,7 +4,7 @@ ON_JZ_LOAD_FAILURE = function(XHR, testStatus, errorThrown){
 	data={};
 	
 	data.msg =
-	"XHR="+"\n"+JSON.stringify(XHR)+
+	"XHR="+JSON.stringify(XHR)+
 	"\ntestStatus="+ testStatus+
 	"\nerrorThrown=" + errorThrown+
 	"\nJZAPPSERVER="+JZAPPSERVER+
@@ -12,7 +12,5 @@ ON_JZ_LOAD_FAILURE = function(XHR, testStatus, errorThrown){
 	"\nJZDEBUG="+JZDEBUG+
 	"\nJZAPPROUTES="+JZAPPROUTES;
 	
-	jz_send_ajax_request_("http://localhost:8080/Essais0/alertme",chill,null,data,"post","text",true);
+	jz_send_ajax_request_("http://localhost:8080/Essais0/alertme",(function(){}),null,data,"post","text",true);
 }
-
-chill = function (){}

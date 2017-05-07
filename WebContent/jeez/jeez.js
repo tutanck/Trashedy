@@ -5,7 +5,7 @@ var JZAPPROUTES;
 var JZDEBUG;
 var ON_JZ_LOAD_FAILURE;
 
-(jz_init = function (debug){
+(function jz_init(debug){
 	var fn="jz_init: ", router_url;
 
 	clog(fn,"Jeez loading..");
@@ -44,8 +44,7 @@ var ON_JZ_LOAD_FAILURE;
 
 /**Extras*/
 
-check = 
-	function (url,field,callback=educate,messages){
+function check (url,field,callback=educate,messages){
 	var fn="check: ";
 
 	if( isFalsy(field) || isFalsy(field.name) )
@@ -71,8 +70,7 @@ check =
 }
 
 
-warn = 
-	function (state,messages){//	TODO msg 
+function warn(state,messages){//	TODO msg 
 	var fn="warn: ";
 	clog(fn,"state:",JSON.stringify(state));	
 
@@ -90,16 +88,14 @@ warn =
 	}
 }
 
-clear = 
-	function (field){
+function clear(field){
 	var fn="clear: ";
 	clog(fn,"clearing:",field.name);
 	if(document.getElementById("jzTag"+field.id))
 		printHTML("#jzTag"+field.id,"");
 }
 
-clear_all = 
-	function (fields){
+function clear_all(fields){
 	var fn="clear_all: ";
 
 	if( Object.prototype.toString.call( fields ) !== '[object Array]' )
@@ -109,8 +105,7 @@ clear_all =
 }
 
 
-educate = 
-	function (fields,state,messages){ state.status ? warn(state,messages) : clear_all(fields); }
+function educate(fields,state,messages){ state.status ? warn(state,messages) : clear_all(fields); }
 
 connect = 
 	function (url,ajax_response_processor,ajax_error_manager,fields=[],immediate_callback=educate,async=true){
@@ -151,8 +146,7 @@ connect =
 }
 
 
-soft_connect = 
-	function(url,ajax_response_processor,ajax_error_manager,field,immediate_callback=educate,async=true){
+function soft_connect(url,ajax_response_processor,ajax_error_manager,field,immediate_callback=educate,async=true){
 	var fn ="soft_connect: ";
 	
 	
@@ -174,8 +168,7 @@ soft_connect =
 
 
 /**JEEZ*/
-requst = 
-	function (url,ajax_response_processor,ajax_error_manager,data={},async=true){	
+function requst(url,ajax_response_processor,ajax_error_manager,data={},async=true){	
 	var fn="requst: ";
 
 	if(!jz_configured_()) 
@@ -203,8 +196,7 @@ requst =
 }
 
 
-valid_ = 
-	function (formal,effval,expected){
+function valid_(formal,effval,expected){
 	var fn="valid_: ";
 
 	if(isFalsy(formal))
@@ -254,29 +246,25 @@ function jz_send_ajax_request_(url,response_processor,error_manager,data={},HTTP
 		dataType : dataType,
 		async:async,
 		success : response_processor,
-		error : function(XHR, testStatus, errorThrown) {
+		error : function(jqXHR, testStatus, errorThrown) {
 			clog(fn,"Unable to talk with the server at '"+url+"' " +
 					"about '"+JSON.stringify(data)+"' with '"+HTTPMethod+"' method " +
 					"in '"+dataType+"' dialect");
-			clog("\n"+JSON.stringify(XHR) + " - " + testStatus + " - " + errorThrown); 
-			if(!isEmpty(error_manager)) error_manager(XHR, testStatus, errorThrown); 
+			clog("\n"+JSON.stringify(jqXHR) + " - " + testStatus + " - " + errorThrown); 
+			if(!isEmpty(error_manager)) error_manager(jqXHR, testStatus, errorThrown); 
 		}
 	});
 }
 
 
 
-jz_configured_ = 
-	function (){return !isEmpty(JZAPPROUTES);}
+function jz_configured_(){return !isEmpty(JZAPPROUTES);}
 
-config_ = 
-	function (url){ return JZAPPROUTES[jz_slash_bf(url,0)]; }
+function config_(url){ return JZAPPROUTES[jz_slash_bf(url,0)]; }
 
-url_ = 
-	function (url){ return JZAPPSERVER ? JZAPPSERVER+jz_unslash(url,0) : jz_unslash(url,0); }
+function url_(url){ return JZAPPSERVER ? JZAPPSERVER+jz_unslash(url,0) : jz_unslash(url,0); }
 
-find_param_def_ = 
-	function (config,fname){ 
+function find_param_def_(config,fname){ 
 	var fn="find_param_def_: ";
 
 	clog(fn+"fname:"+fname,", config: "+JSON.stringify(config));
@@ -322,34 +310,29 @@ function clog(){
 	console.log(str);
 }
 
-isStrongFalsy = 
-	function (value){ 
+function isStrongFalsy (value){ 
 	return value === undefined 
 	|| value === null
 }
 
-isFalsy = 
-	function (value){ 
+function isFalsy(value){ 
 	return value == undefined 
 	|| value == null
 }
 
-isEmpty = 
-	function (value){ 
+function isEmpty(value){ 
 	return isFalsy(value)
 	|| new RegExp('^\\s*$').test(value)
 	|| value == "null"
 }
 
-isStrongEmpty = 
-	function (value){ 
+function isStrongEmpty(value){ 
 	return isStrongFalsy(value)
 	|| new RegExp('^\\s*$').test(value)
 	|| value == "null"
 }
 
-JEEZInvalidParameterException = 
-	function (fparamName,invalidity,message) {
+function JEEZInvalidParameterException(fparamName,invalidity,message) {
 	this.name = "JEEZInvalidParameterException";
 	this.fparamName=fparamName;
 	this.invalidity = invalidity; //-1:missing , 0:typing , 1:ruling
@@ -357,8 +340,6 @@ JEEZInvalidParameterException =
 }
 JEEZInvalidParameterException.prototype = new Error();
 
-printDivAfter = 
-	function (dom,val){ $("#"+dom).after("<div id=\"jzTag"+dom+"\" class=\"warning-wrapper\">"+val+"</div>\n"); }
+function printDivAfter(dom,val){ $("#"+dom).after("<div id=\"jzTag"+dom+"\" class=\"warning-wrapper\">"+val+"</div>\n"); }
 
-printHTML = 
-	function (dom,htm){ $(dom).html(htm); }
+function printHTML(dom,htm){ $(dom).html(htm); }
