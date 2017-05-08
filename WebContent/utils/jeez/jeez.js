@@ -24,7 +24,7 @@ var JZDEBUG;
 
 	jz_send_ajax_request_(router_url,routes_,default_on_jz_load_failure,{},"get","text",false);
 
-	 function routes_ (routes){
+	function routes_ (routes){
 		clog(fn,"Jeez loaded and ready for use..");
 		JZAPPROUTES=JSON.parse(routes);
 		if(debug)
@@ -65,21 +65,24 @@ function check (url,field,callback=educate,messages){
 }
 
 
-function warn(state,messages){//	TODO msg 
+function warn(state,messages){
 	var fn="warn: ";
 	clog(fn,"state:",JSON.stringify(state));	
 
-	if(state.status) {
+	if(state.status && state.field) {
 		var field = state.field;
 
 		clog(fn,"error:",state.e+".","guilty_field:",field.name);
 
-		var invalidmsg=" field is invalid";
+		var invalidmsg = field.name+" field is invalid";
+
+		if(!isFalsy(messages) && !isFalsy(messages[field.name]))
+			invalidmsg=messages[field.name];
 
 		if(!document.getElementById("jzTag"+field.id))
-			printDivAfter(field.id,"<center><font color='red'> "+field.name +invalidmsg+"</font></center>");
+			printDivAfter(field.id,"<div style='font-family:gotham,\"helvetica neue\",helvetica,arial,sans-serif;font-size:16px;'><b><font color='#FF6347'>"+invalidmsg+"</font></b></div>");
 		else
-			printHTML("#jzTag"+field.id,"<center><font color='red'> "+field.name +invalidmsg+"</font></center>");
+			printHTML("#jzTag"+field.id,"<div style='font-family:gotham,\"helvetica neue\",helvetica,arial,sans-serif;font-size:16px;'><b><font color='#FF6347'>"+invalidmsg+"</font></b></div>");
 	}
 }
 
@@ -143,19 +146,19 @@ connect =
 
 function soft_connect(url,ajax_response_processor,ajax_error_manager,field,immediate_callback=educate,async=true){
 	var fn ="soft_connect: ";
-	
-	
+
+
 	if( isEmpty(field) || isEmpty(field.name) )
 		throw fn+"'field' parameter must be defined and have an valid 'name' attribute";
 
 	if(isEmpty(field.id))
 		throw fn+"field '"+field.name+"' must have an valid 'id' attribute";
-	
+
 	if(isEmpty(field.value)) return clear(field);
-	
+
 	var fields =[];
 	fields.push(field);
-	
+
 	connect(url,ajax_response_processor,ajax_error_manager,fields,immediate_callback,async);
 }
 
@@ -301,6 +304,13 @@ function clog(){
 	var str=JEEZ;
 	for (let i=0; i < arguments.length; i++) 
 		str+=arguments[i]+" ";
+	console.log(str);
+}
+
+function jsonstr(){
+	var str=JEEZ;
+	for (let i=0; i < arguments.length; i++) 
+		str+=JSON.stringify(arguments[i])+" ";
 	console.log(str);
 }
 
