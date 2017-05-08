@@ -219,7 +219,7 @@ function valid_(formal,effval,expected){
 	function checkJSFType(intType,effval){// Get JavaScript Formal Type  
 		switch (intType) { 
 		case 0: return true;//string 
-		case 1:	case 2:	case 3:	case 4: return isNaN(effval);
+		case 1:	case 2:	case 3:	case 4: return !isNaN(effval);
 		case 5: return effval==='true'||effval==='false'||effval===true||effval===false;	
 		default: throw JEEZ+fn+"JEEZError#SNO : InternalTypingError"; 
 		} 
