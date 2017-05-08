@@ -207,7 +207,7 @@ function valid_(formal,effval,expected){
 			throw new JEEZInvalidParameterException(fname,-1,JEEZ+fn+"Missing expected parameter '"+fname+"'");
 		else return;
 
-	if(getJSFType(formal.type) !== typeof effval)
+	if(!checkJSFType(formal.type))
 		throw new JEEZInvalidParameterException(fname,0,JEEZ+fn+"Incompatible type for parameter '"+fname+"', expected was "+ftype);
 
 	for(let ri in frules){
@@ -216,12 +216,11 @@ function valid_(formal,effval,expected){
 			throw new JEEZInvalidParameterException(fname,1,JEEZ+fn+"Parameter '"+fname+"' does not match the rule '"+frule+"'");
 	}
 
-	//TODO USE parse iof
-	function getJSFType(intType){// Get JavaScript Formal Type  
+	function checkJSFType(intType,effval){// Get JavaScript Formal Type  
 		switch (intType) { 
-		case 0: return "string"; 
-		case 1:	case 2:	case 3:	case 4: return "number";
-		case 5: return "boolean";	
+		case 0: return true;//string 
+		case 1:	case 2:	case 3:	case 4: return isNaN(effval);
+		case 5: return effval==='true'||effval==='false'||effval===true||effval===false;	
 		default: throw JEEZ+fn+"JEEZError#SNO : InternalTypingError"; 
 		} 
 	}
