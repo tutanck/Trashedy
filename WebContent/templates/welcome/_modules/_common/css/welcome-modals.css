@@ -1,6 +1,7 @@
 /* Add padding to container elements */
 .container {
 	padding: 16px;
+	width: initial;
 }
 
 /* The Modal (background) */
@@ -18,12 +19,13 @@ input[type=text], input[type=password] {
 /* Set a style for all buttons */
 .signupbtn, .signinbtn, .recoverybtn {
 	background-color: #90EE90;
+	font-size: 120%;
 	color: white;
 	padding: 14px 20px;
 	margin: 8px 0;
 	border: none;
 	width: 50%;
-	opacity: 0.8;
+	opacity: 0.9;
 }
 
 .signupbtn:hover, .signinbtn:hover, .recoverybtn:hover {
