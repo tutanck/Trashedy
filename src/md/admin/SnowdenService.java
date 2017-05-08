@@ -14,8 +14,8 @@ import tools.servletspolicy.OfflinePostServlet;
 
 /**
  * @author AJoan */
-public class AlertMeService {
-	public final static String url="/alertme";
+public class SnowdenService {
+	public final static String url="/snowden";
 
 	@WebService(value=url,policy = OfflinePostServlet.class,
 			requestParams=@Params({ @Param(value="msg") }))
@@ -24,7 +24,7 @@ public class AlertMeService {
 			) throws ShouldNeverOccurException{
 	
 		try {
-			Email.send(Email.username,"Alert me!",params.getString("msg"));
+			Email.send(Email.username,"Snowden wants to talk!",params.getString("msg"));
 		}catch (Exception e) {return Response.issue(ServiceCodes.ALERT_NOT_SENT);}; 
 		
 		return Response.reply();

@@ -27,12 +27,18 @@
         <!-- Jeez -->
         <script type="text/javascript">JZAPPSERVER="http://localhost:8080/Essais0"</script>
 		<script type="text/javascript">JZAPPROUTER="jz/app/routes"</script>
-		<script src="../../utils/jz/js/jzutils.js"></script>
-		<script type="text/javascript" src="../../jeez/jeez.js"></script>
+		<script src="../../utils/jeez/snowden.js"></script>
+		<script src="../../utils/jeez/jeez.js"></script>
+		
+		
+		<!-- toastr : https://github.com/CodeSeven/toastr-->
+	    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+        <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 		
 		<!-- Utils -->
 		<script src="../../utils/tools/js/hs.js"></script>
 		<script src="../../utils/tools/js/countdown.js"></script>
+		<script src="../../utils/servertalk/js/http/httpscm.js"></script>
 		
 		<!-- Business -->	
 		<link type="text/css" rel="stylesheet" href="../../utils/modals/_common/css/jmodal.css" />
@@ -126,7 +132,7 @@
     		loadGhost("#modal-signin-container","_modules/signin/signin.html","signin-modal")
     		loadGhost("#modal-recovery-container","_modules/recovery/recovery.html","recovery-modal")
 	
-    		countdown(new Date(2017,4,25,18,30,0),"daydash","hourdash","mindash","secdash")
+    		countdown(new Date(2017,4,25,18,30,0),"daydash","hourdash","mindash","secdash")    		
 		</script>
         
     </body>

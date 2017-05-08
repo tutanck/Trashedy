@@ -3,7 +3,6 @@ var JZAPPSERVER;
 var JZAPPROUTER;
 var JZAPPROUTES;
 var JZDEBUG;
-var ON_JZ_LOAD_FAILURE;
 
 (function jz_init(debug){
 	var fn="jz_init: ", router_url;
@@ -21,13 +20,9 @@ var ON_JZ_LOAD_FAILURE;
 		clog(fn,"JZAPPSERVER =",JZAPPSERVER)
 		router_url=JZAPPSERVER+JZAPPROUTER;
 	}else 
-		router_url=JZAPPROUTER;
+		router_url=JZAPPROUTER;	 
 
-	var on_load_failure=default_on_jz_load_failure;
-
-	if(ON_JZ_LOAD_FAILURE) on_load_failure=ON_JZ_LOAD_FAILURE;
-
-	jz_send_ajax_request_(router_url,routes_,on_load_failure,{},"get","text",false);
+	jz_send_ajax_request_(router_url,routes_,default_on_jz_load_failure,{},"get","text",false);
 
 	 function routes_ (routes){
 		clog(fn,"Jeez loaded and ready for use..");
