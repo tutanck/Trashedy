@@ -6,10 +6,10 @@
      
     <div class="container">
       
-      <input id="signin-uname-input" type="text" placeholder="Nom d'utilisateur ou email" name="uname" required
+      <input id="signin-uname-input" type="text" placeholder="Nom d'utilisateur ou email" name="uname" required autocomplete="off"
       onkeyup="soft_connect('/check/uname',clog,null,this)">
 
-      <input id="signin-pass-input" type="password" placeholder="Mot de passe" name="pass" required
+      <input id="signin-pass-input" type="password" placeholder="Mot de passe" name="pass" required autocomplete="off"
       onkeyup="check('/signin',this)">
       <div align="center">
       	<button type="submit" class="btn btn-default signinbtn">Connexion</button>
