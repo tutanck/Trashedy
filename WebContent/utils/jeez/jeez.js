@@ -212,7 +212,7 @@ function valid_(formal,effval,expected){
 
 	for(let ri in frules){
 		let frule = frules[ri];
-		if(!new RegExp("\\b"+frule+"\\b").test(effval))
+		if(!new RegExp("^"+frule+"$").test(effval))
 			throw new JEEZInvalidParameterException(fname,1,JEEZ+fn+"Parameter '"+fname+"' does not match the rule '"+frule+"'");
 	}
 
