@@ -1,4 +1,4 @@
-package md.user.profile.service;
+package md.user.state.services;
 
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.AbsentKeyException;
@@ -7,7 +7,7 @@ import com.aj.tools.jr.JR;
 import com.mongodb.DBObject;
 
 import md.user.io.db.SessionDB;
-import md.user.profile.service.core.ProfileCore;
+import md.user.state.services.core.StateCore;
 import tools.db.DBException;
 import tools.services.Response;
 import tools.services.ServiceCodes;
@@ -25,11 +25,11 @@ import com.aj.jeez.annotation.annotations.WebService;
  * Service classes are much more meaningful now , because DB access is automatic
  * This classes will take more significant decision on how their process and dispatch incoming data
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
-public class GetProfileService extends ProfileCore{
-	public final static String url="/user/profile/get";
+public class GetStateService extends StateCore{
+	public final static String url="/user/state/get";
 
 	/** 
-	 * return user's complete profile information 
+	 * return user's complete state information 
 	 * @param params
 	 * @return
 	 * @throws DBException
@@ -38,7 +38,7 @@ public class GetProfileService extends ProfileCore{
 	 * @throws InvalidKeyException */
 	@WebService(value=url,policy=OnlineGetServlet.class,
 			requestParams=@Params(optionals={@Param("uther")}))
-	public static JSONObject getProfile(
+	public static JSONObject getState(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
 		DBObject user=null;
@@ -60,11 +60,8 @@ public class GetProfileService extends ProfileCore{
 				: Response.reply(
 						profile
 						.put("type","user")
-						.put("uname",user.get("uname"))
-						.put("email",user.get("email"))
-						.put("fname",user.get("fname")) //firstName
-						.put("lname",user.get("lname")) //lastName
-						.put("bdate",user.get("bdate")) //birthdate
-						.put("phone",user.get("phone")) );
+						.put("statu",user.get("statu"))
+						.put("pos",user.get("pos"))
+						);
 	}
 }

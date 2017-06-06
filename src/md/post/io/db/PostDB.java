@@ -1,4 +1,4 @@
-package md.user.post.db;
+package md.post.io.db;
 
 import com.mongodb.DBCollection;
 

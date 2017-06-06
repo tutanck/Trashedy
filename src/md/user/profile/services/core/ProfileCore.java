@@ -1,4 +1,4 @@
-package md.user.profile.service.core;
+package md.user.profile.services.core;
 
 import org.json.JSONException;
 import org.json.JSONObject;

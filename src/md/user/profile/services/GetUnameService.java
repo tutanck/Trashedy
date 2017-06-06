@@ -1,4 +1,4 @@
-package md.user.profile.service;
+package md.user.profile.services;
 
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.AbsentKeyException;
@@ -6,7 +6,7 @@ import com.aj.tools.jr.InvalidKeyException;
 import com.aj.tools.jr.JR;
 import com.mongodb.DBObject;
 
-import md.user.profile.service.core.ProfileCore;
+import md.user.profile.services.core.ProfileCore;
 import tools.db.DBException;
 import tools.services.Response;
 import tools.services.ServiceCodes;

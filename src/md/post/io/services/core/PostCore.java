@@ -1,8 +1,8 @@
-package md.user.post.services.core;
+package md.post.io.services.core;
 
 import com.mongodb.DBCollection;
 
-import md.user.post.db.PostDB;
+import md.post.io.db.PostDB;
 
 /**
  * @author AJoan
