@@ -54,6 +54,9 @@ public abstract class JEEZServlet extends HttpServlet{
 	 */
 	private String HTTPMethod=null;
 	
+	/**
+	 * 
+	 */
 	private int HTTPMethodCode=0;
 
 	/**
@@ -233,6 +236,7 @@ public abstract class JEEZServlet extends HttpServlet{
 		//Must be at the beginning to be unchanged
 		JSONObject invalid = new JSONObject().put("valid", false).put("validParams", validParams); 
 		JSONObject unchanged = new JSONObject().put("valid", true).put("validParams", validParams);
+		//TODO passage par ref : replce by a map copy  
 
 		String paramName = formalParam.getName();
 		Class<?> paramType = formalParam.getType();

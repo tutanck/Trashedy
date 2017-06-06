@@ -11,7 +11,7 @@ public enum InputType {
 		@Override
 		  public String toString() {
 		    switch(this) {
-		      case EMAIL: return "email";
+		      case EMAIL: return "mail";
 		      case USERNAME: return "uname";		
 		      case PHONE: return "phone";
 		      case NUMS: return "nums";

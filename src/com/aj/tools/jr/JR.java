@@ -5,6 +5,9 @@ import org.json.JSONObject;
 import java.util.*;
 
 /**JR : JSONRefiner
+ * Revoir entièrement après avoir relu completement : 
+ * http://static.javadoc.io/org.json/json/20160810/org/json/JSONObject.html#toMap--
+ * http://stackoverflow.com/questions/12809779/how-do-i-clone-an-org-json-jsonobject-in-java
  * @author ANAGBLA Joan */
 //TODO relire attentivement tt repose su ca
 public class JR {	

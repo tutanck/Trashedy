@@ -40,8 +40,8 @@ public class UserAccountConfirmationService extends IOCore {
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException, InvalidKeyException{ 
 	
 		DBCommit commit = THINGS.update(
-				JR.renameKeys(params,"ckey->confirmed"), 
-				JR.wrap("$set",JR.wrap("confirmed", true))
+				JR.renameKeys(params,"ckey->verifd"), 
+				JR.wrap("$set",JR.wrap("verifd", true))
 				,collection);
 	
 		WriteResult wr = commit.getWriteResult();

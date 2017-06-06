@@ -57,8 +57,8 @@ public class SigninService extends IOCore {
 
 		user = THINGS.getOne(JR.slice(renamed,format),collection);
 
-		if(!THINGS.exists(JR.wrap("_id",
-				user.get("_id")).put("confirmed", true)
+		if(!THINGS.exists(
+				JR.wrap("_id",user.get("_id")).put("verifd", true)
 				,collection))
 			return Response.issue(ServiceCodes.USER_NOT_CONFIRMED);
 
@@ -78,7 +78,7 @@ public class SigninService extends IOCore {
 	}
 
 	public static void main(String[] args) throws JSONException, DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {
-		login(new JSONObject().put("username", "044747").put("pass","value"));
+		login(new JSONObject().put("uname", "044747").put("pass","value"));
 	}
 
 }

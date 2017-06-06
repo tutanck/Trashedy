@@ -40,7 +40,7 @@ public class SignupService extends IOCore {
 			requestParams=@Params({
 				@Param(value="uname",rules={PatternsHolder.uname}),
 				@Param(value="pass",rules={PatternsHolder.pass}),
-				@Param(value="email",rules={PatternsHolder.email}) }))
+				@Param(value="mail",rules={PatternsHolder.email}) }))
 	public static JSONObject registration(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
@@ -54,8 +54,8 @@ public class SignupService extends IOCore {
 		//--DB WRITE_ACTION
 		String ckey =ToolBox.generateToken();
 		DBCommit commit = THINGS.add(
-				JR.slice(params,"uname","pass","email")
-				.put("confirmed", ckey)
+				JR.slice(params,"uname","pass","mail")
+				.put("verifd", ckey)
 				.put("regdate", new Date())
 				,collection);
 

@@ -47,15 +47,15 @@ public class Response {
 	 * @param status
 	 * @param result
 	 * @param message
-	 * @param issue
+	 * @param issueCode
 	 * @return 
 	 * @throws ShouldNeverOccurException */
 	public static JSONObject issue(
-			int issue
+			int issueCode
 			)throws JSONException, ShouldNeverOccurException{
 		return new JSONObject()
 				.put("status",_ISSUE)
-				.put("issue",issue);
+				.put("issue",issueCode);
 	}
 
 }

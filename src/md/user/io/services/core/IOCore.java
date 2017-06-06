@@ -39,7 +39,7 @@ public class IOCore{
 	public static JSONObject checkEmail(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
-		
+
 		if(THINGS.exists(JR.slice(params,"email"),collection))
 			return Response.issue(ServiceCodes.EMAIL_IS_TAKEN);
 		return null; //all right
@@ -56,7 +56,7 @@ public class IOCore{
 	public static JSONObject checkUsername(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
-		
+
 		if(THINGS.exists(JR.slice(params,"uname"),collection))
 			return Response.issue(ServiceCodes.USERNAME_IS_TAKEN);		
 		return null; //all right
@@ -75,7 +75,7 @@ public class IOCore{
 				).matcher(input).matches())
 			return InputType.EMAIL;
 
-		else if(Pattern.compile(
+		if(Pattern.compile(
 				PatternsHolder.nums
 				).matcher(input).matches())
 			return InputType.PHONE;

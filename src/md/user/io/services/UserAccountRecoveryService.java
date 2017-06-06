@@ -36,24 +36,24 @@ public class UserAccountRecoveryService extends IOCore {
 	 * @throws ShouldNeverOccurException 
 	 * @throws AbsentKeyException */
 	@WebService(value=url,policy=OfflinePostServlet.class,
-			requestParams=@Params({	@Param(value="email",rules={PatternsHolder.email}) }))
+			requestParams=@Params({	@Param(value="mail",rules={PatternsHolder.email}) }))
 	public static JSONObject accessRecovery(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
 	
-		if(!THINGS.exists(JR.slice(params,"email"),collection))
+		if(!THINGS.exists(JR.slice(params,"mail"),collection))
 			return Response.issue(ServiceCodes.UNKNOWN_EMAIL_ADDRESS);
 	
 		//Generate temporary key (sequence of 32 hexadecimal digits)  
 		//reset password temporarily until user redefine it! 
 		String secret = ToolBox.generateToken();
 		THINGS.update(
-				JR.slice(params,"email"),
+				JR.slice(params,"mail"),
 				JR.wrap("$set",JR.wrap("pass", secret))
 				,collection);
 	
 		try {
-			Email.send(params.getString("email"),
+			Email.send(params.getString("mail"),
 					Lingua.get("NewAccessKeySentSubject","fr-FR"),
 					Lingua.get("NewAccessKeySentMessage","fr-FR")+ secret);
 		}catch (Exception e) {__.explode(e);}
