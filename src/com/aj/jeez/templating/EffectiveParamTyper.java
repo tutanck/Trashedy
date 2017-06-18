@@ -2,7 +2,7 @@ package com.aj.jeez.templating;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.exceptions.JEEZError;
+import com.aj.jeez.core.exceptions.JEEZError;
 import com.aj.tools.__;
 
 public class EffectiveParamTyper{

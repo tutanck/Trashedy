@@ -1,4 +1,4 @@
-package com.aj.jeez;
+package com.aj.jeez.core;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -18,16 +18,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.annotations.Checkout;
-import com.aj.jeez.annotation.core.CheckoutsRadar;
-import com.aj.jeez.annotation.core.FormalParamTypeControler;
-import com.aj.jeez.annotation.core.ServletsManager;
-import com.aj.jeez.annotation.exceptions.CheckoutAnnotationMisuseException;
-import com.aj.jeez.annotation.exceptions.ParamNamingException;
-import com.aj.jeez.annotation.exceptions.ParamRulingException;
-import com.aj.jeez.annotation.exceptions.ParamTypingException;
-import com.aj.jeez.checks.CheckExpectedOut;
-import com.aj.jeez.exceptions.JEEZError;
+import com.aj.jeez.annotations.Checkout;
+import com.aj.jeez.core.exceptions.CheckoutAnnotationMisuseException;
+import com.aj.jeez.core.exceptions.JEEZError;
+import com.aj.jeez.core.exceptions.ParamNamingException;
+import com.aj.jeez.core.exceptions.ParamRulingException;
+import com.aj.jeez.core.exceptions.ParamTypingException;
+import com.aj.jeez.defaults.checks.CheckExpectedOut;
 import com.aj.jeez.templating.EffectiveParamTyper;
 import com.aj.jeez.templating.ParamsInflator;
 import com.aj.jeez.templating.TemplateParam;

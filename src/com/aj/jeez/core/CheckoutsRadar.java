@@ -1,4 +1,4 @@
-package com.aj.jeez.annotation.core;
+package com.aj.jeez.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.aj.jeez.annotation.annotations.Checkout;
-import com.aj.jeez.annotation.exceptions.CheckoutAnnotationMisuseException;
+import com.aj.jeez.annotations.Checkout;
+import com.aj.jeez.core.exceptions.CheckoutAnnotationMisuseException;
 import com.aj.jeez.templating.TemplateParams;
 
 /**

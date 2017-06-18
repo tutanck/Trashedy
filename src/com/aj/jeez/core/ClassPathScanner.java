@@ -1,4 +1,4 @@
-package com.aj.jeez.annotation.core;
+package com.aj.jeez.core;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -6,7 +6,7 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
-import com.aj.jeez.annotation.exceptions.ClassPathScannerNotConfiguredException;
+import com.aj.jeez.core.exceptions.ClassPathScannerNotConfiguredException;
 
 /**
  * The ClassPathScanner is a configurable .class files finder.

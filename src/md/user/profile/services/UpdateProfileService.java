@@ -1,5 +1,8 @@
 package md.user.profile.services;
 
+import com.aj.jeez.annotations.Param;
+import com.aj.jeez.annotations.Params;
+import com.aj.jeez.annotations.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;
@@ -13,10 +16,6 @@ import tools.services.ShouldNeverOccurException;
 import tools.servletspolicy.OnlinePostServlet;
 
 import org.json.JSONObject;
-
-import com.aj.jeez.annotation.annotations.Param;
-import com.aj.jeez.annotation.annotations.Params;
-import com.aj.jeez.annotation.annotations.WebService;
 
 /**
  * @author AJoan

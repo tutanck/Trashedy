@@ -1,4 +1,4 @@
-package com.aj.jeez.exceptions;
+package com.aj.jeez.core.exceptions;
 
 public class JEEZError extends Error {
 

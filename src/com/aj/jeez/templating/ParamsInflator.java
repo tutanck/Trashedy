@@ -6,10 +6,10 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.exceptions.ParamNamingException;
-import com.aj.jeez.annotation.exceptions.ParamRulingException;
-import com.aj.jeez.annotation.exceptions.ParamTypingException;
-import com.aj.jeez.exceptions.JEEZError;
+import com.aj.jeez.core.exceptions.JEEZError;
+import com.aj.jeez.core.exceptions.ParamNamingException;
+import com.aj.jeez.core.exceptions.ParamRulingException;
+import com.aj.jeez.core.exceptions.ParamTypingException;
 
 public class ParamsInflator {
 

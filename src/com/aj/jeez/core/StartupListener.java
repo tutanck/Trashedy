@@ -1,4 +1,4 @@
-package com.aj.jeez.annotation.core;
+package com.aj.jeez.core;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,8 +16,9 @@ implements ServletContextListener{
 
 	private final String defaultClassPath="/WEB-INF/classes/";
 	private String classPath=defaultClassPath;
-	public static JSONObject router;
+	private static JSONObject router;
 
+	
 	//Run this before web application is started
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
@@ -60,5 +61,9 @@ implements ServletContextListener{
 		System.out.println("------------------------------------------------------");
 		System.out.println("StartupListener--> ServletContextListener destroyed");
 		System.out.println("-------------------------Bye--------------------------");
+	}
+	
+	public static JSONObject getRouter() {	
+		return router;	
 	}
 }

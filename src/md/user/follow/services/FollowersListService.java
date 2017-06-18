@@ -3,7 +3,7 @@ package md.user.follow.services;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.annotations.WebService;
+import com.aj.jeez.annotations.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;

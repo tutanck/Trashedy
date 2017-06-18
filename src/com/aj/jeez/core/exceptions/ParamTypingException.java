@@ -1,4 +1,4 @@
-package com.aj.jeez.annotation.exceptions;
+package com.aj.jeez.core.exceptions;
 
 public class ParamTypingException extends Exception {
 

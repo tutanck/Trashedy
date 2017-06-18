@@ -1,12 +1,12 @@
-package com.aj.jeez.annotation.core;
+package com.aj.jeez.core;
 
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import com.aj.jeez.annotation.annotations.Param;
-import com.aj.jeez.annotation.exceptions.ParamNamingException;
-import com.aj.jeez.annotation.exceptions.ParamRulingException;
-import com.aj.jeez.annotation.exceptions.ParamTypingException;
+import com.aj.jeez.annotations.Param;
+import com.aj.jeez.core.exceptions.ParamNamingException;
+import com.aj.jeez.core.exceptions.ParamRulingException;
+import com.aj.jeez.core.exceptions.ParamTypingException;
 import com.aj.tools.__;
 
 

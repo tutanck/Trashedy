@@ -2,10 +2,10 @@ package com.aj.jeez.templating;
 
 import java.util.Set;
 
-import com.aj.jeez.annotation.core.FormalParamTypeControler;
-import com.aj.jeez.annotation.exceptions.ParamNamingException;
-import com.aj.jeez.annotation.exceptions.ParamRulingException;
-import com.aj.jeez.annotation.exceptions.ParamTypingException;
+import com.aj.jeez.core.FormalParamTypeControler;
+import com.aj.jeez.core.exceptions.ParamNamingException;
+import com.aj.jeez.core.exceptions.ParamRulingException;
+import com.aj.jeez.core.exceptions.ParamTypingException;
 import com.aj.tools.__;
 
 public class TemplateParam {

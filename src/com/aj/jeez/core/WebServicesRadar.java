@@ -1,4 +1,4 @@
-package com.aj.jeez.annotation.core;
+package com.aj.jeez.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -9,8 +9,8 @@ import java.util.Set;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.annotations.WebService;
-import com.aj.jeez.annotation.exceptions.WebServiceAnnotationMisuseException;
+import com.aj.jeez.annotations.WebService;
+import com.aj.jeez.core.exceptions.WebServiceAnnotationMisuseException;
 
 /**
  * The ServicesRadar is a service finder from built classes (.class extension).

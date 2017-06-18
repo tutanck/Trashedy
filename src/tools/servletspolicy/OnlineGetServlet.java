@@ -5,10 +5,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.exceptions.ParamNamingException;
-import com.aj.jeez.annotation.exceptions.ParamRulingException;
-import com.aj.jeez.annotation.exceptions.ParamTypingException;
-import com.aj.jeez.policy.GetServlet;
+import com.aj.jeez.core.exceptions.ParamNamingException;
+import com.aj.jeez.core.exceptions.ParamRulingException;
+import com.aj.jeez.core.exceptions.ParamTypingException;
+import com.aj.jeez.defaults.policy.GetServlet;
 import com.aj.jeez.templating.TemplateParam;
 import com.aj.tools.__;
 

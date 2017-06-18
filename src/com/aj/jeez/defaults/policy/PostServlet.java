@@ -1,4 +1,4 @@
-package com.aj.jeez.policy;
+package com.aj.jeez.defaults.policy;
 
 import java.io.IOException;
 
@@ -6,7 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.aj.jeez.JEEZServlet;
+import com.aj.jeez.core.JEEZServlet;
 
 
 /**

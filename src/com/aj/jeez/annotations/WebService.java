@@ -1,4 +1,4 @@
-package com.aj.jeez.annotation.annotations;
+package com.aj.jeez.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -8,8 +8,8 @@ import java.lang.annotation.ElementType;
 
 import javax.servlet.annotation.WebInitParam;
 
-import com.aj.jeez.JEEZServlet;
-import com.aj.jeez.policy.GetServlet;
+import com.aj.jeez.core.JEEZServlet;
+import com.aj.jeez.defaults.policy.GetServlet;
 
 /**
  * @author AJoan */

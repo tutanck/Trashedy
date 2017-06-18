@@ -26,7 +26,7 @@ public class TemplateParams {
 	public boolean addOptional(TemplateParam optional){
 		if(optional==null) return false;
 		if(expecteds.contains(optional)) return false;
-		return __.truthy(optionals.add(optional));
+		return __.truthy(optionals.add(optional)); //TODO why return always true
 	}
 
 	public Set<TemplateParam> getOptionals() {return optionals;}

@@ -1,4 +1,4 @@
-package com.aj.jeez.annotation.core;
+package com.aj.jeez.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -16,22 +16,23 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.aj.jeez.JEEZServlet;
-import com.aj.jeez.annotation.annotations.Param;
-import com.aj.jeez.annotation.annotations.Params;
-import com.aj.jeez.annotation.annotations.WebService;
-import com.aj.jeez.annotation.exceptions.ParamNamingException;
-import com.aj.jeez.annotation.exceptions.ParamTypingException;
-import com.aj.jeez.annotation.exceptions.WebInitParameterSettingException;
-import com.aj.jeez.annotation.exceptions.WebServiceAnnotationMisuseException;
-import com.aj.jeez.exceptions.JEEZError;
-import com.aj.jeez.policy.GetServlet;
-import com.aj.jeez.policy.PostServlet;
+import com.aj.jeez.annotations.Param;
+import com.aj.jeez.annotations.Params;
+import com.aj.jeez.annotations.WebService;
+import com.aj.jeez.core.exceptions.JEEZError;
+import com.aj.jeez.core.exceptions.ParamNamingException;
+import com.aj.jeez.core.exceptions.ParamTypingException;
+import com.aj.jeez.core.exceptions.WebInitParameterSettingException;
+import com.aj.jeez.core.exceptions.WebServiceAnnotationMisuseException;
+import com.aj.jeez.defaults.policy.GetServlet;
+import com.aj.jeez.defaults.policy.PostServlet;
 import com.aj.tools.Stretch;
 
 public class ServletsManager {
 
-	public static String JZID=DigestUtils.shaHex("JZ"+new Date()+"JZ");
+	static String JZID=DigestUtils.shaHex("JZ"+new Date()+"JZ");
+	
+	static JSONObject jzsDriver;
 
 	static JSONObject assignServlets(
 			ServletContext sc,
@@ -140,7 +141,7 @@ public class ServletsManager {
 			detectInitParamSettingFailure(sr.setInitParameter(wip.name(),wip.value()),serviceID,wip.name());
 
 		//Service parameters setting
-		JSONObject jzsDriver =  new JSONObject(jzcDriver.toMap())
+		jzsDriver = new JSONObject(jzcDriver.toMap())
 				.put("url",url)
 				.put("ckc",Stretch.stretchClasses(clazzTab))
 				.put("sc", className)

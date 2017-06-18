@@ -2,8 +2,8 @@ package conf;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.annotation.annotations.WebService;
-import com.aj.jeez.annotation.core.StartupListener;
+import com.aj.jeez.annotations.WebService;
+import com.aj.jeez.core.StartupListener;
 
 /**
  * @author Joan */
@@ -14,6 +14,6 @@ public class AppRouterService {
 	public static JSONObject getRouter(
 			JSONObject params
 			)  {
-		return StartupListener.router;
+		return StartupListener.getRouter();
 	}
 }
