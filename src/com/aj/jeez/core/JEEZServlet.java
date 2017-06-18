@@ -37,34 +37,7 @@ public abstract class JEEZServlet extends HttpServlet{
 	private JEEZServletDriver driver = null; 
 
 
-	/*TEMPLATE ATTRIBUTES*/
-
-	/**
-	 * Specify if the underlying service 
-	 * need the user to be authenticated or not */
-	protected Boolean requireAuth = null;
-	Boolean getRequireAuth() {return requireAuth;}
-
-	/**
-	 * The set of incoming parameters required and optional
-	 * known by the underlying service  */
-	protected final TemplateParams requestParams = new TemplateParams(); 
-	TemplateParams getRequestParams() {return requestParams;}
-
-	/**
-	 * The set of outgoing parameters required and optional
-	 * known by the underlying service */
-	protected final TemplateParams jsonOutParams = new TemplateParams();
-	TemplateParams getJsonOutParams() {return jsonOutParams;}
-
-	/**
-	 * The set of test classes where to find 
-	 * the test methods to execute after business */
-	protected final Set<Class<?>> checkClasses = new HashSet<Class<?>>();
-	Set<Class<?>> getCheckClasses() {return checkClasses;}
-
-
-	public void init() throws ServletException {
+	public final void init() throws ServletException {
 		super.init();
 
 		__.outln("JEEZServlet/init:: "+getClass().getCanonicalName()+" : new instance requested...");
@@ -325,9 +298,31 @@ public abstract class JEEZServlet extends HttpServlet{
 
 	/**
 	 * return the JEEZServlet String image */
-	public String toString(){return this.driver.toString();}
+	@Override public String toString(){return this.driver.toString();}
 
 	/** 
 	 * return the driver of the servlet  */
-	public JEEZServletDriver getServletDriver() {return driver;}
+	JEEZServletDriver getServletDriver() {return driver;}
+	
+	
+	/**
+	 * Specify if the underlying service 
+	 * need the user to be authenticated or not */
+	public Boolean requireAuth() {return null;}
+
+	/**
+	 * The set of incoming parameters required and optional
+	 * known by the underlying service  */ 
+	public TemplateParams requestParams() {return new TemplateParams();}
+
+	/**
+	 * The set of outgoing parameters required and optional
+	 * known by the underlying service */
+	public TemplateParams jsonOutParams() {return new TemplateParams();}
+
+	/**
+	 * The set of test classes where to find 
+	 * the test methods to execute after business */
+	public Set<Class<?>> checkClasses() {return new HashSet<Class<?>>();}
+	
 }

@@ -1,5 +1,6 @@
 package com.aj.jeez.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -96,20 +97,73 @@ public class ServicesManager {
 		WebService ws = service.getAnnotation(WebService.class);
 
 		String url = ws.value().trim();
-		
+
 		Class<? extends JEEZServlet>policy = ws.policy();
-		
-		
-		
-		Set<Class<?>> checkClazzs = new HashSet<>(Arrays.asList(ws.checkClasses()));
 
-		boolean requireAuth = ws.requireAuth();
-		
-		TemplateParams rp ,jop;
+		try {
+			Boolean requireAuth = (Boolean) invoke(policy,"requireAuth");
+			if(requireAuth==null)	
+				requireAuth	= ws.requireAuth();
 
-		try {	
-			rp = ParamsTranslator.translate(ws.requestParams());
-			jop = ParamsTranslator.translate(ws.jsonOutParams());
+			Set<Class<?>> checkClazzs = (Set<Class<?>>) invoke(policy,"checkClasses");
+			checkClazzs.addAll(new HashSet<>(Arrays.asList(ws.checkClasses()))); 
+
+			TemplateParams rp = ParamsTranslator.translate((TemplateParams) invoke(policy,"requestParams"),ws.requestParams());
+			TemplateParams	jop = ParamsTranslator.translate((TemplateParams) invoke(policy,"jsonOutParams"),ws.jsonOutParams());
+
+
+			/*** VERIFICATION PHASE */
+
+			//Policy checking 
+			if(Modifier.isAbstract(policy.getModifiers()))
+				throw new WebServiceAnnotationMisuseException(serviceID+" : Dynamic sevlet policy class : '"+className+"' must not be abstract");				
+
+			//JSONOUTParams use --> return type checking
+			if((jop.getExpecteds().size()>0 ||jop.getOptionals().size()>0))
+				if( !JSONObject.class.isAssignableFrom(service.getReturnType()))
+					throw new WebServiceAnnotationMisuseException(serviceID+" : Declaring at least one JSONOUTParam force the WebService return type to be JSONObject or descendant");
+				else 
+					checkClazzs.add(CheckExpectedOut.class); //default checkout
+
+			//Test class existence (check if the class is loaded in the webApp container)
+			for(Class<?> checkClazz : checkClazzs) 
+				Class.forName(checkClazz.getCanonicalName());
+
+
+			/*** REGISTRATION PHASE */
+
+			ServletRegistration.Dynamic sr = sc.addServlet(serviceID,policy);
+			sr.addMapping(url);
+			sr.setAsyncSupported(ws.asyncSupported());
+			sr.setLoadOnStartup(ws.loadOnStartup());		
+			for(WebInitParam wip:ws.initParams())
+				detectInitParamSettingFailure(sr.setInitParameter(wip.name(),wip.value()),serviceID,wip.name());
+			detectInitParamSettingFailure(sr.setInitParameter(JZID,url),serviceID,JZID);
+
+
+			/*** DRIVERS SETTINGS PHASE */
+
+			//Service driver setting
+			server_router.put(url,
+					new JEEZServletDriver(
+							url, className,	service.getName(),
+							determineHTTPMethodCode(policy),
+							requireAuth, policy, rp, jop,
+							CheckoutsRadar.findAnnotatedCheckouts(
+									checkClazzs
+									)));
+
+			//Servlet communication driver settings
+			client_router.put(url,
+					new JSONObject()				
+					.put("auth",requireAuth)
+					.put("httpm",determineHTTPMethod(policy))
+					.put("httpmc",determineHTTPMethodCode(policy))
+					.put("expin",serialize(rp.getExpecteds()))
+					.put("expout",serialize(jop.getExpecteds()))
+					.put("optin",serialize(rp.getOptionals()))
+					.put("optout",serialize(jop.getOptionals())));
+
 		} 
 		catch (ParamNamingException e) {
 			throw new ParamNamingException
@@ -127,64 +181,10 @@ public class ServicesManager {
 			throw new InconsistentParametersException
 			("Parameters name collision in WebService '"+service.getName()+"' in class '"+className+"' : "+e);
 		}	
-
-		Set<TemplateParam> expIN=rp.getExpecteds();
-		Set<TemplateParam> optIN=rp.getOptionals();
-		Set<TemplateParam> expOut=jop.getExpecteds();
-		Set<TemplateParam> optOut=jop.getOptionals();
-
-
-		/*** VERIFICATION PHASE */
-
-		//Policy checking 
-		if(Modifier.isAbstract(policy.getModifiers()))
-			throw new WebServiceAnnotationMisuseException(serviceID+" : Dynamic sevlet policy class : '"+className+"' must not be abstract");				
-
-		//JSONOUTParams use --> return type checking
-		if((expOut.size()>0 ||optOut.size()>0))
-			if( !JSONObject.class.isAssignableFrom(service.getReturnType()))
-				throw new WebServiceAnnotationMisuseException(serviceID+" : Declaring at least one JSONOUTParam force the WebService return type to be JSONObject or descendant");
-			else 
-				checkClazzs.add(CheckExpectedOut.class); //default checkout
-
-		//Test class existence (check if the class is loaded in the webApp container)
-		for(Class<?> checkClazz : checkClazzs) 
-			Class.forName(checkClazz.getCanonicalName());
-
-
-		/*** REGISTRATION PHASE */
-
-		ServletRegistration.Dynamic sr = sc.addServlet(serviceID,policy);
-		sr.addMapping(url);
-		sr.setAsyncSupported(ws.asyncSupported());
-		sr.setLoadOnStartup(ws.loadOnStartup());		
-		for(WebInitParam wip:ws.initParams())
-			detectInitParamSettingFailure(sr.setInitParameter(wip.name(),wip.value()),serviceID,wip.name());
-		detectInitParamSettingFailure(sr.setInitParameter(JZID,url),serviceID,JZID);
-
-
-		/*** DRIVERS SETTINGS PHASE */
-
-		//Service driver setting
-		server_router.put(url,
-				new JEEZServletDriver(
-						url, className,	service.getName(),
-						determineHTTPMethodCode(policy),
-						requireAuth, policy, rp, jop,
-						CheckoutsRadar.findAnnotatedCheckouts(
-								checkClazzs
-								)));
-
-		//Servlet communication driver settings
-		JSONObject jzcDriver = new JSONObject()				
-				.put("auth",requireAuth)
-				.put("httpm",determineHTTPMethod(policy))
-				.put("httpmc",determineHTTPMethodCode(policy))
-				.put("expin",serialize(expIN))
-				.put("expout",serialize(expOut))
-				.put("optin",serialize(optIN))
-				.put("optout",serialize(optOut));
-		client_router.put(url,jzcDriver);
+		catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException
+				| NoSuchMethodException | SecurityException e) {
+			throw new JEEZError("#SNO : At Least on basic template parameter is not defined");
+		} 
 
 		return client_router;
 	}
@@ -227,7 +227,7 @@ public class ServicesManager {
 			("WebService policy must be a descendant of one of the following : "
 					+GetServlet.class.getCanonicalName()+","+PostServlet.class.getCanonicalName());
 	}
-	
+
 
 	private static JSONArray serialize(
 			Set<TemplateParam> params
@@ -247,7 +247,16 @@ public class ServicesManager {
 		}
 		return jar;
 	}
-	
-	 
+
+	private static Object invoke(
+			Class<? extends JEEZServlet> template,
+			String methodName
+			) throws IllegalAccessException, IllegalArgumentException,
+	InvocationTargetException, InstantiationException, 
+	NoSuchMethodException, SecurityException{
+		Method m = template.getMethod(methodName, new Class[]{});
+		__.outln("JEEZServlet/doBusiness:: internal static call of : "+template+"."+m.getName());
+		return m.invoke(template.newInstance(), new Object[]{});
+	}
 
 }
