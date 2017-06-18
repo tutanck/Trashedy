@@ -112,6 +112,6 @@ public final class JEEZServletDriver {
 
 	public TemplateParams getRequestParams() {return requestParams;}
 
-	public Boolean getRequireToBeAuth() {return requireAuth;}
+	public Boolean requireAuth() {return requireAuth;}
 
 }

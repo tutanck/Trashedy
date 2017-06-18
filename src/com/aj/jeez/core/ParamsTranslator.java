@@ -28,7 +28,6 @@ public class ParamsTranslator {
 		for(Param p : expected)
 			base.addExpected(translate(p));
 				
-
 		for(Param p : optional)
 			base.addOptional(translate(p));
 

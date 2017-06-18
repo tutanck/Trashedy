@@ -43,22 +43,25 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * Specify if the underlying service 
 	 * need the user to be authenticated or not */
 	protected Boolean requireAuth = null;
+	Boolean getRequireAuth() {return requireAuth;}
 
 	/**
 	 * The set of incoming parameters required and optional
 	 * known by the underlying service  */
-	protected final TemplateParams requestParams = new TemplateParams() ; 
+	protected final TemplateParams requestParams = new TemplateParams(); 
+	TemplateParams getRequestParams() {return requestParams;}
 
 	/**
 	 * The set of outgoing parameters required and optional
 	 * known by the underlying service */
 	protected final TemplateParams jsonOutParams = new TemplateParams();
+	TemplateParams getJsonOutParams() {return jsonOutParams;}
 
 	/**
 	 * The set of test classes where to find 
 	 * the test methods to execute after business */
 	protected final Set<Class<?>> checkClasses = new HashSet<Class<?>>();
-
+	Set<Class<?>> getCheckClasses() {return checkClasses;}
 
 
 	public void init() throws ServletException {
@@ -70,8 +73,8 @@ public abstract class JEEZServlet extends HttpServlet{
 		while(servletInitParamsNames.hasMoreElements()){ 
 			String paramName = servletInitParamsNames.nextElement();
 
-			if(ServletsManager.JZID.equals(paramName)){
-				driver = ServletsManager.server_router.get(getInitParameter(paramName)); 
+			if(ServicesManager.JZID.equals(paramName)){
+				driver = ServicesManager.server_router.get(getInitParameter(paramName)); 
 				break;
 			}
 		}
@@ -119,9 +122,9 @@ public abstract class JEEZServlet extends HttpServlet{
 
 		Map<String,String>effectiveRequestParams=MapRefiner.refine(request.getParameterMap());
 
-		__.outln("JEEZServlet/beforeBusiness::effectiveRequestParams : "+effectiveRequestParams+" - formalRequestParams : "+requestParams);
+		__.outln("JEEZServlet/beforeBusiness::effectiveRequestParams : "+effectiveRequestParams+" - formalRequestParams : "+driver.getRequestParams());
 
-		for(TemplateParam expected : requestParams.getExpecteds()) {
+		for(TemplateParam expected : driver.getRequestParams().getExpecteds()) {
 			JSONObject res = paramIsValid(effectiveRequestParams,expected,validParams,true);
 			if (!res.getBoolean("valid")){
 				__.outln(" -> Not Valid");
@@ -132,7 +135,7 @@ public abstract class JEEZServlet extends HttpServlet{
 			validParams = JR.merge(validParams,(JSONObject) res.get("validParams"));
 		}
 
-		for(TemplateParam optional : requestParams.getOptionals()){
+		for(TemplateParam optional : driver.getRequestParams().getOptionals()){
 			JSONObject res = paramIsValid(effectiveRequestParams,optional,validParams,false);
 			if (!res.getBoolean("valid")){
 				__.outln(" -> Not Valid");
@@ -145,10 +148,10 @@ public abstract class JEEZServlet extends HttpServlet{
 
 		__.outln("JEEZServlet/beforeBusiness::Finally ValidParams:"+validParams);
 
-		if(requireAuth && !isAuth(request,validParams)){
+		if(driver.requireAuth() && !isAuth(request,validParams)){
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "USER UNAUTHENTICATED");
 			return null;
-		}else if(!requireAuth && isAuth(request,validParams)){
+		}else if(!driver.requireAuth() && isAuth(request,validParams)){
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "USER ALREADY AUTHENTICATED");
 			return null;
 		}
@@ -260,7 +263,7 @@ public abstract class JEEZServlet extends HttpServlet{
 				Checkout chk = checkout.getAnnotation(Checkout.class);
 
 				try{
-					if(!(boolean)checkout.invoke(checkClass.newInstance(), new Object[]{result,this.jsonOutParams})){
+					if(!(boolean)checkout.invoke(checkClass.newInstance(), new Object[]{result,this.driver.getJsonOutParams()})){
 						__.outln("result failed to satisfy checkout '"+chkName+"'");
 						return !chk.value();							
 					}

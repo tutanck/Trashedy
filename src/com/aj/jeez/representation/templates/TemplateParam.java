@@ -78,7 +78,7 @@ public class TemplateParam {
 		if(__.isVoidSpace(name))
 			throw new ParamNamingException("Param name '"+name+"' must not be empty");
 
-		if(!Pattern.compile("\\w+").matcher(name).matches())
+		if(!Pattern.compile("\\w+").matcher(name).matches()) //TODO  what if we begin by a number
 			throw new ParamNamingException("Param name '"+name+"' must only contain alphanumeric characters or/and _");
 
 		if(!typeIsValid(type))

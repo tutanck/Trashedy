@@ -13,7 +13,7 @@ import com.aj.jeez.defaults.policy.GetServlet;
 import com.aj.jeez.representation.templates.TemplateParam;
 import com.aj.tools.__;
 
-import md.user.io.db.SessionDB;
+import business.user.io.db.SessionDB;
 
 /**
  * * @author Anagbla Joan */

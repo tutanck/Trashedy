@@ -46,7 +46,7 @@ implements ServletContextListener{
 
 			//Servlet assignment for each found annotation
 			System.out.println("StartupListener/contextInitialized::assignServlets starting..");//debug
-			router = ServletsManager.assignServlets(sce.getServletContext(),servicesMap);
+			router = ServicesManager.assignServlets(sce.getServletContext(),servicesMap);
 			System.out.println("StartupListener/contextInitialized::assignServlets was sucessfull");//debug
 			 
 			//Routes listing
