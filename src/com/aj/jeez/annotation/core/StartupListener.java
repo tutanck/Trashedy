@@ -21,9 +21,9 @@ implements ServletContextListener{
 	//Run this before web application is started
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
-		System.out.println("-------------------------------------------------");
+		System.out.println("-------------------Hello, I'm JEE-Z------------------------------");
 		System.out.println("StartupListener--> ServletContextListener started");
-		System.out.println("-------------------------------------------------");
+		System.out.println("-----------------------------------------------------------------");
 
 		try {
 			ClassPathScanner.configure(classPath);
@@ -57,8 +57,8 @@ implements ServletContextListener{
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
-		System.out.println("---------------------------------------------------");
+		System.out.println("------------------------------------------------------");
 		System.out.println("StartupListener--> ServletContextListener destroyed");
-		System.out.println("---------------------------------------------------");
+		System.out.println("-------------------------Bye--------------------------");
 	}
 }

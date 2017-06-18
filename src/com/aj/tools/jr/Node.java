@@ -6,11 +6,11 @@ public class Node<T> {
 	private T white;
 	
 	public Node(
-			T left,
-			T right
+			T yellow,
+			T white
 			) {
-		this.yellow=left;
-		this.white=right;
+		this.yellow=yellow;
+		this.white=white;
 	}
 
 	public T yellow() {return yellow;}

@@ -13,6 +13,7 @@ import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebInitParam;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.aj.jeez.JEEZServlet;
@@ -23,6 +24,7 @@ import com.aj.jeez.annotation.exceptions.ParamNamingException;
 import com.aj.jeez.annotation.exceptions.ParamTypingException;
 import com.aj.jeez.annotation.exceptions.WebInitParameterSettingException;
 import com.aj.jeez.annotation.exceptions.WebServiceAnnotationMisuseException;
+import com.aj.jeez.exceptions.JEEZError;
 import com.aj.jeez.policy.GetServlet;
 import com.aj.jeez.policy.PostServlet;
 import com.aj.tools.Stretch;
@@ -40,8 +42,8 @@ public class ServletsManager {
 		for(Entry<Class<?>, Set<Method>> classServices : servicesMap.entrySet())
 			for(Method service : classServices.getValue()){
 				WebService ws = service.getAnnotation(WebService.class);
-				String wsid=ws.value();
-				if(wsid.trim().length() == 0 || !hs.add(wsid))
+				String wsid=ws.value().trim();
+				if(wsid.length() == 0 || !hs.add(wsid))
 					throw new WebServiceAnnotationMisuseException
 					("Invalid service url pattern detected '"+wsid+"' for WebService '"+classServices.getKey().getCanonicalName()+"."+service.getName()+"' : A service url must be unique and not empty");
 			}		
@@ -78,7 +80,7 @@ public class ServletsManager {
 
 		WebService ws = service.getAnnotation(WebService.class);
 
-		String url = ws.value();
+		String url = ws.value().trim();
 		boolean auth=ws.requireAuth();
 		Params rp = ws.requestParams();
 		Params jop = ws.jsonOutParams();
@@ -119,12 +121,12 @@ public class ServletsManager {
 		//Servlet communication driver settings
 		JSONObject jzcDriver = new JSONObject()				
 				.put("auth",auth)
-				.put("httpm", determineHTTPMethod(policy))
-				.put("httpmc", determineHTTPMethodCode(policy))
-				.put("expin",ParamsSerializer.serialize(expIN))
-				.put("expout",ParamsSerializer.serialize(expOut))
-				.put("optin",ParamsSerializer.serialize(optIN))
-				.put("optout",ParamsSerializer.serialize(optOut));
+				.put("httpm",determineHTTPMethod(policy))
+				.put("httpmc",determineHTTPMethodCode(policy))
+				.put("expin",serialize(expIN))
+				.put("expout",serialize(expOut))
+				.put("optin",serialize(optIN))
+				.put("optout",serialize(optOut));
 	
 
 		/*** REGISTRATION PHASE */
@@ -200,5 +202,25 @@ public class ServletsManager {
 			("WebService policy must be a descendant of one of the following : "
 					+GetServlet.class.getCanonicalName()+","+PostServlet.class.getCanonicalName());
 	}
+	
+	private static JSONArray serialize(
+			Param[]params
+			){
+		JSONArray jar = new JSONArray();
+	
+		for(Param param : params){
+			JSONObject jo = new JSONObject();
+				try {
+					jo.put("type", FormalParamTypeControler.typeToInt(param.type()));
+				}catch (ParamTypingException e) {
+					throw new JEEZError("#SNO : internal typing error");
+				}
+			jar.put(jo
+					.put("name", param.value())
+					.put("rules", param.rules()));
+		}
+		return jar;
+	}
+
 
 }
