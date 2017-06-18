@@ -9,8 +9,8 @@ import java.util.Set;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.WebService;
 import com.aj.jeez.core.exceptions.WebServiceAnnotationMisuseException;
+import com.aj.jeez.representation.annotations.WebService;
 
 /**
  * The ServicesRadar is a service finder from built classes (.class extension).

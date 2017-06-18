@@ -4,9 +4,9 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.Param;
-import com.aj.jeez.annotations.Params;
-import com.aj.jeez.annotations.WebService;
+import com.aj.jeez.representation.annotations.Param;
+import com.aj.jeez.representation.annotations.Params;
+import com.aj.jeez.representation.annotations.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.AbsentKeyException;
 import com.aj.tools.jr.JR;

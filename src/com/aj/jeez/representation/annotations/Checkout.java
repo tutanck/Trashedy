@@ -1,4 +1,4 @@
-package com.aj.jeez.annotations;
+package com.aj.jeez.representation.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -8,14 +8,9 @@ import java.lang.annotation.ElementType;
 
 /**
  * @author AJoan */
-
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface Params { 
-      
-   Param[] value() default {}; //expected
-   
-   Param[] optionals() default {};
-   
+@Target(ElementType.METHOD)
+public @interface Checkout {
+	boolean value() default false; //clientsafe
 }

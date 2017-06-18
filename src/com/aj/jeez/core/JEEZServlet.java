@@ -3,10 +3,8 @@ package com.aj.jeez.core;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,22 +13,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.Checkout;
-import com.aj.jeez.core.exceptions.CheckoutAnnotationMisuseException;
 import com.aj.jeez.core.exceptions.JEEZError;
-import com.aj.jeez.core.exceptions.ParamNamingException;
-import com.aj.jeez.core.exceptions.ParamRulingException;
+import com.aj.jeez.core.exceptions.ServletDriverNotFoundException;
 import com.aj.jeez.core.exceptions.ParamTypingException;
-import com.aj.jeez.defaults.checks.CheckExpectedOut;
-import com.aj.jeez.templating.EffectiveParamTyper;
-import com.aj.jeez.templating.ParamsInflator;
-import com.aj.jeez.templating.TemplateParam;
-import com.aj.jeez.templating.TemplateParams;
+import com.aj.jeez.representation.annotations.Checkout;
+import com.aj.jeez.representation.templates.JEEZServletDriver;
+import com.aj.jeez.representation.templates.TemplateParam;
+import com.aj.jeez.representation.templates.TemplateParams;
 import com.aj.tools.MapRefiner;
-import com.aj.tools.Stretch;
 import com.aj.tools.__;
 import com.aj.tools.jr.JR;
 
@@ -40,44 +32,17 @@ import com.aj.tools.jr.JR;
 public abstract class JEEZServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 
-	/*PRIVATE ATTRIBUTES*/
-
 	/**
-	 * The url pattern of the servlet */
-	private String url;
-
-	/**
-	 * HTTP method
-	 */
-	private String HTTPMethod=null;
-	
-	/**
-	 * 
-	 */
-	private int HTTPMethodCode=0;
-
-	/**
-	 * The qualified name of the class where to find 
-	 * the serice's method to call */
-	private String sC; 
-
-	/**
-	 * The qualified name of the serice's method 
-	 * to be called */
-	private String sM;
-
-	/**
-	 * The servlet checkouts by checkClass */
-	private Map<Class<?>,Set<Method>> checkouts;
+	 * The driver that drive the servlet's behavior */
+	private JEEZServletDriver driver = null; 
 
 
-
-	/*PROTECTED ATTRIBUTES*/
+	/*TEMPLATE ATTRIBUTES*/
 
 	/**
 	 * Specify if the underlying service 
 	 * need the user to be authenticated or not */
-	protected Boolean auth = null;
+	protected Boolean requireAuth = null;
 
 	/**
 	 * The set of incoming parameters required and optional
@@ -87,7 +52,7 @@ public abstract class JEEZServlet extends HttpServlet{
 	/**
 	 * The set of outgoing parameters required and optional
 	 * known by the underlying service */
-	protected TemplateParams jsonOutParams = new TemplateParams();
+	protected final TemplateParams jsonOutParams = new TemplateParams();
 
 	/**
 	 * The set of test classes where to find 
@@ -106,40 +71,16 @@ public abstract class JEEZServlet extends HttpServlet{
 			String paramName = servletInitParamsNames.nextElement();
 
 			if(ServletsManager.JZID.equals(paramName)){
-				String paramValue = getInitParameter(paramName);
-
-				JSONObject jzsDriver = new JSONObject(paramValue);
-
-				__.outln("JEEZServlet/init::jzsDriver="+jzsDriver);
-
-				this.url=jzsDriver.getString("url");
-				this.HTTPMethod=jzsDriver.getString("httpm");
-				this.HTTPMethodCode=jzsDriver.getInt("httpmc");
-				this.sC=jzsDriver.getString("sc");
-				this.sM=jzsDriver.getString("sm");
-				
-				if(this.auth==null)
-					this.auth = jzsDriver.getBoolean("auth");
-
-				try { //Order matters : expected first optional then to favor expected parameter in case of collision exp-opt
-					ParamsInflator.inflateParams(requestParams, (JSONArray)jzsDriver.get("expin"), true);
-					ParamsInflator.inflateParams(requestParams, (JSONArray)jzsDriver.get("optin"), false);
-					ParamsInflator.inflateParams(jsonOutParams, (JSONArray)jzsDriver.get("expout"), true);
-					ParamsInflator.inflateParams(jsonOutParams, (JSONArray)jzsDriver.get("optout"), false);
-
-					if(!jsonOutParams.expectedsEmpty() || !jsonOutParams.optionalsEmpty())
-						checkClasses.add(CheckExpectedOut.class);
-
-					Stretch.addClassesToSet(this.checkClasses,jzsDriver.getString("ckc"));
-					checkouts = CheckoutsRadar.findAnnotatedServices(checkClasses);
-
-				} catch (ClassNotFoundException | CheckoutAnnotationMisuseException  | ParamTypingException | ParamNamingException | ParamRulingException e) 
-				{throw new ServletException(e);}
-
-				__.outln("JEEZServlet/init::THIS : '"+toString()+"'");
-			} 
+				driver = ServletsManager.server_router.get(getInitParameter(paramName)); 
+				break;
+			}
 		}
-		__.outln("JEEZServlet/init::"+sC+"."+sM+" initialised and now waiting for call...");
+
+		if(driver==null)
+			throw new ServletDriverNotFoundException("This servlet template is not related to a WebService annotation and may not be used as an entry point");
+
+		__.outln("JEEZServlet/init::THIS : '"+toString()+"'");
+		__.outln("JEEZServlet/init::"+driver.getSC()+"."+driver.getSM()+" initialised and now waiting for call...");
 	}
 
 
@@ -170,7 +111,7 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletResponse response
 			)throws Exception {
 
-		__.outln("JEEZServlet/beforeBusiness::"+sC+"."+sM+" --> before business...");
+		__.outln("JEEZServlet/beforeBusiness::"+this.driver.getSC()+"."+this.driver.getSM()+" --> before business...");
 
 		response.setContentType("text/plain");
 
@@ -204,10 +145,10 @@ public abstract class JEEZServlet extends HttpServlet{
 
 		__.outln("JEEZServlet/beforeBusiness::Finally ValidParams:"+validParams);
 
-		if(auth && !isAuth(request,validParams)){
+		if(requireAuth && !isAuth(request,validParams)){
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "USER UNAUTHENTICATED");
 			return null;
-		}else if(!auth && isAuth(request,validParams)){
+		}else if(!requireAuth && isAuth(request,validParams)){
 			response.sendError(HttpServletResponse.SC_FORBIDDEN, "USER ALREADY AUTHENTICATED");
 			return null;
 		}
@@ -253,7 +194,7 @@ public abstract class JEEZServlet extends HttpServlet{
 				try {//typing test
 					if( EffectiveParamTyper.valid(
 							paramName, 
-							FormalParamTypeControler.typeToInt(paramType),
+							formalParam.typeToInt(),
 							effectiveParams.get(paramName), validParams) )	
 						//parameter added to validParams
 
@@ -283,9 +224,9 @@ public abstract class JEEZServlet extends HttpServlet{
 			Object result
 			)throws Exception {
 
-		__.outln("JEEZServlet/afterBusiness::"+sC+"."+sM+" --> after business...");
+		__.outln("JEEZServlet/afterBusiness::"+this.driver.getSC()+"."+this.driver.getSM()+" --> after business...");
 		__.outln("JEEZServlet/afterBusiness:: result: "+result);
-		
+
 		if(!resultIsOK(result)) {
 			__.outln("result failed to satisfy at least one clientsafe checkouts");
 			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "SERVICE TEMPORARILY UNAVAILABLE");
@@ -310,7 +251,7 @@ public abstract class JEEZServlet extends HttpServlet{
 			Object result
 			) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException{
 
-		for(Map.Entry<Class<?>,Set<Method>> entry: this.checkouts.entrySet()){
+		for(Map.Entry<Class<?>,Set<Method>> entry: this.driver.getCheckouts().entrySet()){
 			Class<?> checkClass=entry.getKey();	
 
 			for(Method checkout : entry.getValue()){
@@ -343,9 +284,9 @@ public abstract class JEEZServlet extends HttpServlet{
 			HttpServletResponse response,
 			JSONObject params
 			)throws Exception {			
-		Class<?> serviceClass=Class.forName(this.sC);	
-		Method m = serviceClass.getMethod(this.sM, new Class[]{JSONObject.class});
-		__.outln("JEEZServlet/doBusiness:: static call of : "+this.sC+"."+m.getName()+"("+params+")  (formal : "+this.sC+"."+m+")");
+		Class<?> serviceClass=Class.forName(this.driver.getSC());	
+		Method m = serviceClass.getMethod(this.driver.getSM(), new Class[]{JSONObject.class});
+		__.outln("JEEZServlet/doBusiness:: static call of : "+this.driver.getSC()+"."+m.getName()+"("+params+")  (formal : "+this.driver.getSM()+"."+m+")");
 		return m.invoke(serviceClass.newInstance(), new Object[]{params});
 	}	 
 
@@ -379,24 +320,11 @@ public abstract class JEEZServlet extends HttpServlet{
 
 
 
-	public String toString(){
-		String jz ="";
-		jz+="service:"+this.sC+"."+this.sM;
-		jz+=" - url:"+this.url;
-		jz+=" - method:"+this.HTTPMethod;
-		jz+=" - methodCode:"+this.HTTPMethodCode;
-		jz+=" - auth:"+this.auth;	
-		List<String> ckList= new ArrayList<>();
-		for(Map.Entry<Class<?>,Set<Method>> entry : checkouts.entrySet())
-			for(Method m : entry.getValue())
-				ckList.add(entry.getKey().getCanonicalName()+"."+m.getName());		
-		jz+=" - checkouts:"+ckList;
-		jz+="\n- reqestParams:{"+requestParams+"}";
-		jz+="\n- jsonOutParams:{"+jsonOutParams+"}";
-		return jz;
-	}
+	/**
+	 * return the JEEZServlet String image */
+	public String toString(){return this.driver.toString();}
 
 	/** 
-	 * @return The url of the servlet exposed to public */
-	public String getUrl() {return url;}
+	 * return the driver of the servlet  */
+	public JEEZServletDriver getServletDriver() {return driver;}
 }

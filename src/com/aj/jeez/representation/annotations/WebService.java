@@ -1,4 +1,4 @@
-package com.aj.jeez.annotations;
+package com.aj.jeez.representation.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

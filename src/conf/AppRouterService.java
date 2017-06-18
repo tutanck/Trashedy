@@ -2,8 +2,8 @@ package conf;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.WebService;
 import com.aj.jeez.core.StartupListener;
+import com.aj.jeez.representation.annotations.WebService;
 
 /**
  * @author Joan */

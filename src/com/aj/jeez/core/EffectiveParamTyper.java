@@ -1,4 +1,4 @@
-package com.aj.jeez.templating;
+package com.aj.jeez.core;
 
 import org.json.JSONObject;
 

@@ -1,4 +1,4 @@
-package com.aj.jeez.annotations;
+package com.aj.jeez.representation.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -12,12 +12,10 @@ import java.lang.annotation.ElementType;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
-public @interface Param { 
+public @interface Params { 
       
-   String value (); //name
+   Param[] value() default {}; //expected
    
-   Class<?> type() default String.class;
-   
-   String[] rules () default {};
+   Param[] optionals() default {};
    
 }

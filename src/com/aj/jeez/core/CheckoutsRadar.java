@@ -7,9 +7,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.aj.jeez.annotations.Checkout;
 import com.aj.jeez.core.exceptions.CheckoutAnnotationMisuseException;
-import com.aj.jeez.templating.TemplateParams;
+import com.aj.jeez.representation.annotations.Checkout;
+import com.aj.jeez.representation.templates.TemplateParams;
 
 /**
  * The CheckoutsRadar is a checkouts finder from built classes (.class extension).
@@ -24,12 +24,12 @@ import com.aj.jeez.templating.TemplateParams;
 	 * @param classesSet
 	 * @return 
 	 * @throws CheckoutAnnotationMisuseException */
-	 public static Map<Class<?>,Set<Method>> findAnnotatedServices (
+	 public static Map<Class<?>,Set<Method>> findAnnotatedCheckouts (
 			Set<Class<?>> classSet
 			) throws CheckoutAnnotationMisuseException{
 		Map<Class<?>,Set<Method>> classesMethods = new HashMap<>();
 		for(Class<?> clazz : classSet)
-			classesMethods.put(clazz,findAnnotatedServices(clazz));
+			classesMethods.put(clazz,findAnnotatedCheckouts(clazz));
 		return classesMethods;
 	}
 
@@ -40,7 +40,7 @@ import com.aj.jeez.templating.TemplateParams;
 	 * @param clazz
 	 * @return
 	 * @throws CheckoutAnnotationMisuseException */
-	 static Set<Method> findAnnotatedServices (
+	 static Set<Method> findAnnotatedCheckouts (
 			Class<?> clazz
 			) throws CheckoutAnnotationMisuseException {
 		String str0="The registred Checkout : 'public static boolean ";

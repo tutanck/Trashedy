@@ -2,9 +2,9 @@ package com.aj.jeez.defaults.checks;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.Checkout;
-import com.aj.jeez.templating.TemplateParam;
-import com.aj.jeez.templating.TemplateParams;
+import com.aj.jeez.representation.annotations.Checkout;
+import com.aj.jeez.representation.templates.TemplateParam;
+import com.aj.jeez.representation.templates.TemplateParams;
 
 public class CheckExpectedOut {
 

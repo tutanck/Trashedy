@@ -5,11 +5,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 
+import com.aj.jeez.core.exceptions.InconsistentParametersException;
 import com.aj.jeez.core.exceptions.ParamNamingException;
 import com.aj.jeez.core.exceptions.ParamRulingException;
 import com.aj.jeez.core.exceptions.ParamTypingException;
 import com.aj.jeez.defaults.policy.GetServlet;
-import com.aj.jeez.templating.TemplateParam;
+import com.aj.jeez.representation.templates.TemplateParam;
 import com.aj.tools.__;
 
 import md.user.io.db.SessionDB;
@@ -21,10 +22,10 @@ public class OnlineGetServlet extends GetServlet{
 
 	@Override
 	public void init() throws ServletException {
-		super.auth=true;
+		super.requireAuth=true;
 		try {
 			super.requestParams.addExpected(new TemplateParam("skey"));
-		} catch (ParamTypingException | ParamNamingException | ParamRulingException e) {
+		} catch (ParamTypingException | ParamNamingException | ParamRulingException | InconsistentParametersException e) {
 			__.explode(e);
 		}
 		super.init();//template mode (annotations does not override templating if init is called last)

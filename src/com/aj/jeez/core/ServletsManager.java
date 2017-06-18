@@ -2,7 +2,9 @@ package com.aj.jeez.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,28 +18,36 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.Param;
-import com.aj.jeez.annotations.Params;
-import com.aj.jeez.annotations.WebService;
+import com.aj.jeez.core.exceptions.CheckoutAnnotationMisuseException;
+import com.aj.jeez.core.exceptions.InconsistentParametersException;
 import com.aj.jeez.core.exceptions.JEEZError;
 import com.aj.jeez.core.exceptions.ParamNamingException;
+import com.aj.jeez.core.exceptions.ParamRulingException;
 import com.aj.jeez.core.exceptions.ParamTypingException;
 import com.aj.jeez.core.exceptions.WebInitParameterSettingException;
 import com.aj.jeez.core.exceptions.WebServiceAnnotationMisuseException;
+import com.aj.jeez.defaults.checks.CheckExpectedOut;
 import com.aj.jeez.defaults.policy.GetServlet;
 import com.aj.jeez.defaults.policy.PostServlet;
-import com.aj.tools.Stretch;
+import com.aj.jeez.representation.annotations.Param;
+import com.aj.jeez.representation.annotations.WebService;
+import com.aj.jeez.representation.templates.JEEZServletDriver;
+import com.aj.jeez.representation.templates.TemplateParam;
+import com.aj.jeez.representation.templates.TemplateParams;
 
 public class ServletsManager {
 
-	static String JZID=DigestUtils.shaHex("JZ"+new Date()+"JZ");
-	
-	static JSONObject jzsDriver;
+	static final String JZID=DigestUtils.shaHex("JZ"+new Date()+"JZ");
+
+	static final Map<String,JEEZServletDriver> server_router =  new HashMap<>();
 
 	static JSONObject assignServlets(
 			ServletContext sc,
 			Map<Class<?>, Set<Method>> servicesMap
-			) throws WebServiceAnnotationMisuseException, ParamTypingException, ClassNotFoundException, ParamNamingException, WebInitParameterSettingException{
+			) throws WebServiceAnnotationMisuseException, 
+	ParamTypingException, ClassNotFoundException, ParamNamingException,
+	WebInitParameterSettingException, ParamRulingException,
+	CheckoutAnnotationMisuseException, InconsistentParametersException{
 
 		HashSet<String> hs = new HashSet<>();
 		for(Entry<Class<?>, Set<Method>> classServices : servicesMap.entrySet())
@@ -49,50 +59,72 @@ public class ServletsManager {
 					("Invalid service url pattern detected '"+wsid+"' for WebService '"+classServices.getKey().getCanonicalName()+"."+service.getName()+"' : A service url must be unique and not empty");
 			}		
 
-		JSONObject router = new JSONObject();
+		JSONObject client_router = new JSONObject();
 		for(Entry<Class<?>, Set<Method>> classServices : servicesMap.entrySet())
-			assignClassServlets(sc,classServices,router);
-		return router;
+			assignClassServlets(sc,classServices,client_router);
+		return client_router;
 	}
 
 
 	static JSONObject assignClassServlets(
 			ServletContext sc,
 			Entry<Class<?>,Set<Method>> classServices,
-			JSONObject router
-			) throws WebServiceAnnotationMisuseException, ParamTypingException, ClassNotFoundException, ParamNamingException, WebInitParameterSettingException{
+			JSONObject client_router
+			) throws WebServiceAnnotationMisuseException,
+	ParamTypingException, ClassNotFoundException, ParamNamingException,
+	WebInitParameterSettingException, ParamRulingException,
+	CheckoutAnnotationMisuseException, InconsistentParametersException{
 		Class<?> clazz = classServices.getKey();
 		String className = clazz.getCanonicalName();
 
 		for(Method service : classServices.getValue())
-			assignClassServlet(sc,className,service,router);
-		return router;
+			assignServiceServlet(sc,className,service,client_router);
+		return client_router;
 	}
 
 
-	static JSONObject assignClassServlet(
+	static JSONObject assignServiceServlet(
 			ServletContext sc,
 			String className,
 			Method service,
-			JSONObject router
-			) throws WebServiceAnnotationMisuseException, ParamTypingException, ClassNotFoundException, ParamNamingException, WebInitParameterSettingException {
+			JSONObject client_router
+			) throws WebServiceAnnotationMisuseException, 
+	ParamTypingException, ClassNotFoundException, ParamNamingException, 
+	WebInitParameterSettingException, ParamRulingException, 
+	CheckoutAnnotationMisuseException, InconsistentParametersException {
 
 		String serviceID = className+"."+service.getName();
 
 		WebService ws = service.getAnnotation(WebService.class);
 
 		String url = ws.value().trim();
-		boolean auth=ws.requireAuth();
-		Params rp = ws.requestParams();
-		Params jop = ws.jsonOutParams();
+		boolean requireAuth = ws.requireAuth();
+		Class<? extends JEEZServlet>policy = ws.policy();
+		Set<Class<?>> checkClazzs = new HashSet<>(Arrays.asList(ws.checkClasses()));
+		
+		TemplateParams rp ,jop;
 
-		Param [] expIN=rp.value();
-		Param [] optIN=rp.optionals();
-		Param [] expOut=jop.value();
-		Param [] optOut=jop.optionals();
+		try {	
+			 rp = ParamsTranslator.translate(ws.requestParams());
+			 jop = ParamsTranslator.translate(ws.jsonOutParams());
+		} 
+		catch (ParamNamingException e) {
+			throw new ParamNamingException
+			("WebService '"+service.getName()+"' in class '"+className+"' specifies an invalid parameter name : "+e);
+		}
+		catch (ParamTypingException e) {
+			throw new ParamTypingException
+			("WebService '"+service.getName()+"' in class '"+className+"' specifies invalid type : "+e);
+		} 
+		catch (ParamRulingException e) {
+			throw new ParamRulingException
+			("WebService '"+service.getName()+"' in class '"+className+"' specifies an invalid rule : "+e);
+		}		
 
-		Class<? extends JEEZServlet>policy=ws.policy();
-		Class<?>[]clazzTab = ws.checkClasses();
+		Set<TemplateParam> expIN=rp.getExpecteds();
+		Set<TemplateParam> optIN=rp.getOptionals();
+		Set<TemplateParam> expOut=jop.getExpecteds();
+		Set<TemplateParam> optOut=jop.getOptionals();
 
 
 		/*** VERIFICATION PHASE */
@@ -102,53 +134,52 @@ public class ServletsManager {
 			throw new WebServiceAnnotationMisuseException(serviceID+" : Dynamic sevlet policy class : '"+className+"' must not be abstract");				
 
 		//JSONOUTParams use --> return type checking
-		if((expOut.length>0 ||optOut.length>0) && !JSONObject.class.isAssignableFrom(service.getReturnType()))
-			throw new WebServiceAnnotationMisuseException(serviceID+" : Declaring at least one JSONOUTParam force the WebService return type to be JSONObject or descendant");				
-
-		//Static parameters typing test 
-		FormalParamTypeControler.paramsAreValid(className,serviceID,expIN,expOut,optIN,optOut);
-
-		//Parameter name collisions detection
-		detectParamNameCollision(serviceID,"request",expIN,optIN);
-		detectParamNameCollision(serviceID,"jsonout",optOut,expOut);
+		if((expOut.size()>0 ||optOut.size()>0))
+			if( !JSONObject.class.isAssignableFrom(service.getReturnType()))
+				throw new WebServiceAnnotationMisuseException(serviceID+" : Declaring at least one JSONOUTParam force the WebService return type to be JSONObject or descendant");
+			else 
+				checkClazzs.add(CheckExpectedOut.class); //default checkout
 
 		//Test class existence (check if the class is loaded in the webApp container)
-		for(Class<?> checkClazz : clazzTab) 
+		for(Class<?> checkClazz : checkClazzs) 
 			Class.forName(checkClazz.getCanonicalName());
 
 
-		/*** DRIVER SETTINGS PHASE */
-
-		//Servlet communication driver settings
-		JSONObject jzcDriver = new JSONObject()				
-				.put("auth",auth)
-				.put("httpm",determineHTTPMethod(policy))
-				.put("httpmc",determineHTTPMethodCode(policy))
-				.put("expin",serialize(expIN))
-				.put("expout",serialize(expOut))
-				.put("optin",serialize(optIN))
-				.put("optout",serialize(optOut));
-	
-
 		/*** REGISTRATION PHASE */
 
-		//Servlet parameters setting
 		ServletRegistration.Dynamic sr = sc.addServlet(serviceID,policy);
 		sr.addMapping(url);
 		sr.setAsyncSupported(ws.asyncSupported());
 		sr.setLoadOnStartup(ws.loadOnStartup());		
 		for(WebInitParam wip:ws.initParams())
 			detectInitParamSettingFailure(sr.setInitParameter(wip.name(),wip.value()),serviceID,wip.name());
+		detectInitParamSettingFailure(sr.setInitParameter(JZID,url),serviceID,JZID);
 
-		//Service parameters setting
-		jzsDriver = new JSONObject(jzcDriver.toMap())
-				.put("url",url)
-				.put("ckc",Stretch.stretchClasses(clazzTab))
-				.put("sc", className)
-				.put("sm", service.getName());
-		detectInitParamSettingFailure(sr.setInitParameter(JZID,jzsDriver.toString()),serviceID,JZID);
 
-		return router.put(url,jzcDriver);
+		/*** DRIVERS SETTINGS PHASE */
+
+		//Service driver setting
+		server_router.put(url,
+				new JEEZServletDriver(
+						url, className,	service.getName(),
+						determineHTTPMethodCode(policy),
+						requireAuth, policy, rp, jop,
+						CheckoutsRadar.findAnnotatedCheckouts(
+								checkClazzs
+								)));
+
+		//Servlet communication driver settings
+		JSONObject jzcDriver = new JSONObject()				
+				.put("auth",requireAuth)
+				.put("httpm",determineHTTPMethod(policy))
+				.put("httpmc",determineHTTPMethodCode(policy))
+				.put("expin",serialize(expIN))
+				.put("expout",serialize(expOut))
+				.put("optin",serialize(optIN))
+				.put("optout",serialize(optOut));
+		client_router.put(url,jzcDriver);
+
+		return client_router;
 	}
 
 
@@ -190,7 +221,7 @@ public class ServletsManager {
 					+GetServlet.class.getCanonicalName()+","+PostServlet.class.getCanonicalName());
 	}
 
-	
+
 	private static int determineHTTPMethodCode(
 			Class<?> policy
 			) throws WebServiceAnnotationMisuseException {
@@ -203,22 +234,22 @@ public class ServletsManager {
 			("WebService policy must be a descendant of one of the following : "
 					+GetServlet.class.getCanonicalName()+","+PostServlet.class.getCanonicalName());
 	}
-	
+
 	private static JSONArray serialize(
-			Param[]params
+			Set<TemplateParam> params
 			){
 		JSONArray jar = new JSONArray();
-	
-		for(Param param : params){
+
+		for(TemplateParam param : params){
 			JSONObject jo = new JSONObject();
-				try {
-					jo.put("type", FormalParamTypeControler.typeToInt(param.type()));
-				}catch (ParamTypingException e) {
-					throw new JEEZError("#SNO : internal typing error");
-				}
+			try {
+				jo.put("type", param.typeToInt());
+			}catch (ParamTypingException e) {
+				throw new JEEZError("#SNO : internal typing error");
+			}
 			jar.put(jo
-					.put("name", param.value())
-					.put("rules", param.rules()));
+					.put("name", param.getName())
+					.put("rules", param.getRules()));
 		}
 		return jar;
 	}

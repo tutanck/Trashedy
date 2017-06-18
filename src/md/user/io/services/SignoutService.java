@@ -2,7 +2,7 @@ package md.user.io.services;
 
 import org.json.JSONObject;
 
-import com.aj.jeez.annotations.WebService;
+import com.aj.jeez.representation.annotations.WebService;
 import com.aj.regina.THINGS;
 import com.aj.tools.jr.JR;
 
