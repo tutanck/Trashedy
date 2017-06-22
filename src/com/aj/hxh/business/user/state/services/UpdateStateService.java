@@ -1,0 +1,47 @@
+package com.aj.hxh.business.user.state.services;
+
+import com.aj.hxh.business.user.io.db.SessionDB;
+import com.aj.hxh.business.user.profile.services.core.ProfileCore;
+import com.aj.hxh.conf.servletspolicy.OnlinePostServlet;
+import com.aj.hxh.tools.db.DBException;
+import com.aj.hxh.tools.services.Response;
+import com.aj.hxh.tools.services.ShouldNeverOccurException;
+import com.aj.jeez.gate.representation.annotations.Param;
+import com.aj.jeez.gate.representation.annotations.Params;
+import com.aj.jeez.gate.representation.annotations.WebService;
+import com.aj.jeez.jr.JR;
+import com.aj.jeez.jr.exceptions.AbsentKeyException;
+import com.aj.jeez.regina.THINGS;
+
+import org.json.JSONObject;
+
+/**
+ * @author AJoan
+ * Service classes are much more meaningful now , because DB access is automatic
+ * This classes will take more significant decision on how their process and dispatch incoming data
+ * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
+public class UpdateStateService extends ProfileCore{
+	public final static String url="/user/state/update";
+
+	/**
+	 * update user's state
+	 * @param params
+	 * @return
+	 * @throws DBException 
+	 * @throws ShouldNeverOccurException 
+	 * @throws AbsentKeyException */
+	@WebService(value=url,policy = OnlinePostServlet.class,
+			requestParams=@Params({
+					 		@Param(value="statu",type=boolean.class),
+							@Param(value="pos") }))
+	public static JSONObject updateState(
+			JSONObject params
+			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
+		JSONObject decrypted = SessionDB.decrypt(params,"uid");
+ 
+		THINGS.update(JR.wrap("_id",decrypted.get("uid")),decrypted,true,collection);
+
+		return Response.reply();
+	}
+
+}
