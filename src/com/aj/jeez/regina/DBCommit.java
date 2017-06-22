@@ -2,11 +2,12 @@ package com.aj.jeez.regina;
 
 import org.bson.types.ObjectId;
 
-import com.aj.hxh.tools.db.DBException;
 import com.aj.jeez.jr.JR;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
+
+import hxh.tools.db.DBException;
 
 public class DBCommit {
 
