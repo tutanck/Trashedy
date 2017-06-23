@@ -23,8 +23,8 @@ import com.aj.jeez.gate.representation.templates.JEEZServletDriver;
 import com.aj.jeez.gate.representation.templates.TemplateParam;
 import com.aj.jeez.gate.representation.templates.TemplateParams;
 import com.aj.jeez.jr.JR;
+import com.aj.jeez.tools.MapRefiner;
 import com.aj.jeez.tools.__;
-import com.aj.lab.MapRefiner;
 
 
 /**
@@ -295,10 +295,14 @@ public abstract class JEEZServlet extends HttpServlet{
 	}
 
 
+	
+	/**
+	 * DEFAULT TEMPLATING */
+	
 
 	/**
 	 * return the JEEZServlet String image */
-	@Override public String toString(){return this.driver.toString();}
+	@Override public String toString(){return driver==null? "Driver not found" : this.driver.toString();}
 
 	/** 
 	 * return the driver of the servlet  */
@@ -307,7 +311,10 @@ public abstract class JEEZServlet extends HttpServlet{
 	
 	/**
 	 * Specify if the underlying service 
-	 * need the user to be authenticated or not */
+	 * need the user to be authenticated or not. 
+	 * Null as default value to explicitly 
+	 * say that this information is not provided by 
+	 * template and will be set to false by annotation */
 	public Boolean requireAuth() {return null;}
 
 	/**
