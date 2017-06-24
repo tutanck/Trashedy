@@ -1,8 +1,8 @@
-package tproject.business.post.io.services.core;
+package tproject.business.need.services.core;
 
 import com.mongodb.DBCollection;
 
-import tproject.business.post.io.db.PostDB;
+import tproject.business.need.db.PostDB;
 
 /**
  * @author AJoan

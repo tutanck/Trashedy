@@ -1,4 +1,4 @@
-package tproject.business.user.state.services;
+package tproject.business.user.status.services;
 
 import com.aj.jeez.gate.representation.annotations.Param;
 import com.aj.jeez.gate.representation.annotations.Params;
@@ -10,7 +10,7 @@ import com.aj.jeez.regina.THINGS;
 import com.mongodb.DBObject;
 
 import tproject.business.user.io.db.SessionDB;
-import tproject.business.user.state.services.core.StateCore;
+import tproject.business.user.status.services.core.StateCore;
 import tproject.conf.servletspolicy.OnlineGetServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
@@ -24,7 +24,7 @@ import org.json.JSONObject;
  * Service classes are much more meaningful now , because DB access is automatic
  * This classes will take more significant decision on how their process and dispatch incoming data
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
-public class GetStateService extends StateCore{
+public class GetStatusService extends StateCore{
 	public final static String url="/user/state/get";
 
 	/** 

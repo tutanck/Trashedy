@@ -1,4 +1,4 @@
-package tproject.business.post.io.services;
+package tproject.business.need.services;
 
 import org.json.JSONObject;
 
@@ -10,7 +10,7 @@ import com.aj.jeez.jr.exceptions.AbsentKeyException;
 import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 
-import tproject.business.post.io.services.core.PostCore;
+import tproject.business.need.services.core.PostCore;
 import tproject.business.user.io.db.SessionDB;
 import tproject.conf.servletspolicy.OnlinePostServlet;
 import tproject.tools.db.DBException;

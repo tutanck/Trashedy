@@ -1,4 +1,4 @@
-package tproject.business.user.state.services;
+package tproject.business.user.status.services;
 
 import com.aj.jeez.gate.representation.annotations.Param;
 import com.aj.jeez.gate.representation.annotations.Params;
@@ -21,7 +21,7 @@ import org.json.JSONObject;
  * Service classes are much more meaningful now , because DB access is automatic
  * This classes will take more significant decision on how their process and dispatch incoming data
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
-public class UpdateStateService extends ProfileCore{
+public class UpdateStatusService extends ProfileCore{
 	public final static String url="/user/state/update";
 
 	/**

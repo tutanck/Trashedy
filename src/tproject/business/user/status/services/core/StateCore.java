@@ -1,8 +1,8 @@
-package tproject.business.user.state.services.core;
+package tproject.business.user.status.services.core;
 
 import com.mongodb.DBCollection;
 
-import tproject.business.user.state.db.StateDB;
+import tproject.business.user.status.db.StateDB;
 
 /**
  * @author AJoan*/

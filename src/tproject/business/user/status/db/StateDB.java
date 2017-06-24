@@ -1,4 +1,4 @@
-package tproject.business.user.state.db;
+package tproject.business.user.status.db;
 
 import com.mongodb.DBCollection;
 
