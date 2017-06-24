@@ -105,6 +105,7 @@ public class ServicesManager {
 			if(requireAuth==null)	
 				requireAuth	= ws.requireAuth();
 
+			@SuppressWarnings("unchecked")
 			Set<Class<?>> checkClazzs = (Set<Class<?>>) invoke(policy,"checkClasses");
 			checkClazzs.addAll(new HashSet<>(Arrays.asList(ws.checkClasses()))); 
 
@@ -255,7 +256,7 @@ public class ServicesManager {
 	InvocationTargetException, InstantiationException, 
 	NoSuchMethodException, SecurityException{
 		Method m = template.getMethod(methodName, new Class[]{});
-		__.outln("JEEZServlet/doBusiness:: internal static call of : "+template+"."+m.getName());
+		__.outln("JEEZServlet/doBusiness:: internal static call of : "+template+"."+m.getName());//debug todo rem
 		return m.invoke(template.newInstance(), new Object[]{});
 	}
 

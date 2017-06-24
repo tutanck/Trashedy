@@ -82,7 +82,7 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * @param response
 	 * @return
 	 * @throws Exception */
-	protected final JSONObject beforeBusiness(
+	private final JSONObject beforeBusiness(
 			HttpServletRequest request,
 			HttpServletResponse response
 			)throws Exception {
@@ -194,7 +194,7 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * @param result
 	 * @param debug
 	 * @throws Exception */
-	protected final void afterBusiness(
+	private final void afterBusiness(
 			HttpServletRequest request, //just a precaution (useless for now)
 			HttpServletResponse response,
 			Object result
@@ -255,7 +255,7 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * @param params
 	 * @return
 	 * @throws Exception */
-	protected Object doBusiness(
+	private final Object doBusiness(
 			HttpServletRequest request,
 			HttpServletResponse response,
 			JSONObject params
@@ -283,11 +283,13 @@ public abstract class JEEZServlet extends HttpServlet{
 			) throws IOException  {
 		try{
 			JSONObject params = beforeBusiness(request,response);
-			if(params!=null)
+			if(params!=null){
+				doBeforeBusiness(request,response,params);
 				afterBusiness(
 						request,response,
 						doBusiness(request,response,params)
 						);
+			}
 		}catch (Throwable t){
 			t.printStackTrace();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "AN INTERNAL SERVER ERROR OCCURRED");
@@ -298,15 +300,6 @@ public abstract class JEEZServlet extends HttpServlet{
 	
 	/**
 	 * DEFAULT TEMPLATING */
-	
-
-	/**
-	 * return the JEEZServlet String image */
-	@Override public String toString(){return driver==null? "Driver not found" : this.driver.toString();}
-
-	/** 
-	 * return the driver of the servlet  */
-	JEEZServletDriver getServletDriver() {return driver;}
 	
 	
 	/**
@@ -331,5 +324,27 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * The set of test classes where to find 
 	 * the test methods to execute after business */
 	public Set<Class<?>> checkClasses() {return new HashSet<Class<?>>();}
+	
+	
+	/**
+	 * Say what to do just before business (service call)
+	 * You are in the servlet (service caller) 'fais toi plaiz' */
+	public void doBeforeBusiness(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			JSONObject params
+			){__.outln("---Nothing to do before business---");}
+	
+	
+	/**
+	 * ADDITIONAL METHODS */
+	
+	/**
+	 * return the JEEZServlet String image */
+	@Override public String toString(){return driver==null? "Driver not found" : this.driver.toString();}
+
+	/** 
+	 * return the driver of the servlet  */
+	public JEEZServletDriver getServletDriver() {return driver;}
 	
 }
