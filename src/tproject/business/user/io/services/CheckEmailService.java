@@ -5,7 +5,9 @@ import org.json.JSONObject;
 import com.aj.jeez.gate.representation.annotations.Param;
 import com.aj.jeez.gate.representation.annotations.Params;
 import com.aj.jeez.gate.representation.annotations.WebService;
+import com.aj.jeez.jr.JR;
 import com.aj.jeez.jr.exceptions.AbsentKeyException;
+import com.aj.jeez.regina.THINGS;
 
 import tproject.business.user.io.db.UserDB;
 import tproject.business.user.io.services.core.IOCore;
@@ -19,7 +21,7 @@ import tproject.tools.services.ShouldNeverOccurException;
  * @author Joan */
 public class CheckEmailService extends IOCore {
 	public final static String url="/check/email";
-	
+
 	/**
 	 * Check if email's input is valid 
 	 * @param params
@@ -29,13 +31,10 @@ public class CheckEmailService extends IOCore {
 	 * @throws AbsentKeyException */
 	@WebService(value=url,policy=OfflineGetServlet.class,
 			requestParams=@Params({ @Param(value=UserDB._email,rules={PatternsHolder.email}) }))
-	public static JSONObject checkEmail(
+	public static JSONObject isEmailTaken(
 			JSONObject params
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{
-		
-		JSONObject emailCheck = IOCore.checkEmail(params);	
-		
-		return emailCheck!=null ? emailCheck : Response.reply();
+		return Response.reply(THINGS.exists(JR.slice(params,UserDB._email),userdb));
 	}
 
 }

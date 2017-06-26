@@ -22,6 +22,7 @@ import tproject.tools.general.PatternsHolder;
 import tproject.tools.lingua.Lingua;
 import tproject.tools.mailing.Email;
 import tproject.tools.services.Response;
+import tproject.tools.services.ServiceCodes;
 import tproject.tools.services.ShouldNeverOccurException;
 import tproject.tools.services.ToolBox;
 
@@ -47,9 +48,9 @@ public class SignupService extends IOCore {
 	public static JSONObject registration(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException,JSONException {
-
-		JSONObject emailCheck = checkEmail(params);
-		if(emailCheck!=null) return emailCheck;
+		
+		if(CheckEmailService.isEmailTaken(params).getBoolean(Response.result)==true)
+			return Response.issue(ServiceCodes.EMAIL_IS_TAKEN);
 
 		int vkey = ToolBox.generateIntToken(4);
 		DBCommit commit = THINGS.add(

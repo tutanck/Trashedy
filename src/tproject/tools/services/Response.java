@@ -9,6 +9,10 @@ public class Response {
 	 * STATUS CODES */
 	private static int _ISSUE=-1;
 	private static int _KANPEKI=0;
+	
+	public static String status="status";
+	public static String result="result";
+	public static String issue="issue";
 
 	/** 
 	 * Return a predefined JSONObject containing
@@ -26,15 +30,15 @@ public class Response {
 			Object result
 			)throws JSONException, ShouldNeverOccurException{
 		return new JSONObject()
-				.put("status",_KANPEKI)
-				.put("result",result);
+				.put(status,_KANPEKI)
+				.put(Response.result,result);
 	}
 
 	
 	public static JSONObject reply(
 			)throws JSONException, ShouldNeverOccurException{
 		return new JSONObject()
-				.put("status",_KANPEKI);
+				.put(status,_KANPEKI);
 	}
 
 
@@ -54,8 +58,8 @@ public class Response {
 			int issueCode
 			)throws JSONException, ShouldNeverOccurException{
 		return new JSONObject()
-				.put("status",_ISSUE)
-				.put("issue",issueCode);
+				.put(status,_ISSUE)
+				.put(issue,issueCode);
 	}
 
 }
