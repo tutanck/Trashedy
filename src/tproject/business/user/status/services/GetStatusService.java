@@ -9,7 +9,6 @@ import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 import com.mongodb.DBObject;
 
-import tproject.business.user.status.db.StateDB;
 import tproject.business.user.status.services.core.StateCore;
 import tproject.conf.servletspolicy.Common;
 import tproject.conf.servletspolicy.OnlineGetServlet;
@@ -73,10 +72,8 @@ public class GetStatusService extends StateCore{
 		return (userState == null) ?
 				Response.issue(ServiceCodes.UNKNOWN_USER) 
 				: Response.reply (
-						profile
-						.put(_entity,_state)
-						.put(_status,userState.get(StateDB._status))
-						.put(_position,userState.get(StateDB._position))
+						JR.merge(profile,JR.jsonify(userState)
+								).put(_entity,_state)
 						);
 	}
 }

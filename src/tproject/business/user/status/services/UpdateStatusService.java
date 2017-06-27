@@ -34,12 +34,12 @@ public class UpdateStatusService extends StateCore{
 	 * @throws AbsentKeyException */
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params({
-					 		@Param(value=StateDB._status,rules={"(READY|AVAILABLE|BUSY|OFFLINE)"}),
-							@Param(value=StateDB._position, type=int.class) }))
+				@Param(value=StateDB._status,rules={"(READY|AVAILABLE|BUSY|OFFLINE)"}),
+				@Param(value=StateDB._position, type=int.class) }))
 	public static JSONObject updateState(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
-		
+
 		THINGS.update(JR.wrap("_id",params.get(Common._userID))
 				,params
 				,true,statedb);

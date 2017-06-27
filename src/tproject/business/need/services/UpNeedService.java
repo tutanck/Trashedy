@@ -38,6 +38,7 @@ public class UpNeedService extends NeedCore{
 			requestParams=@Params(
 					value={
 							@Param(value=_nid),	
+							@Param(value=NeedDB._title), 
 							@Param(value=NeedDB._query),//search key words 
 							@Param(value=NeedDB._description),
 							@Param(value=NeedDB._type,rules={"(PRODUCTION|TRAINING|ADVICE)"}),

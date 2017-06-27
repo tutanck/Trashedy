@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import com.aj.jeez.jr.exceptions.AbsentKeyException;
 import com.aj.jeez.jr.exceptions.InvalidKeyException;
+import com.mongodb.util.JSON;
 
 import java.util.*;
 
@@ -22,7 +23,17 @@ public class JR {
 	public static JSONObject jsonify(
 			Map<?,?> map
 			){
-		return new JSONObject(map);
+		return new JSONObject(JSON.serialize(map));
+	}
+	
+	/** 
+	 * Return an JSONObject equivalent of the {map}
+	 * @param map
+	 * @return */
+	public static JSONObject jsonify(
+			Object object
+			){
+		return new JSONObject(JSON.serialize(object));
 	}
 	
 	
@@ -33,7 +44,7 @@ public class JR {
 	public static JSONObject clone(
 			JSONObject json
 			){
-		return jsonify(json.toMap());
+		return new JSONObject(JSON.serialize(json));
 	}
 	
 	

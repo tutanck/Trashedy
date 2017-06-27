@@ -9,7 +9,6 @@ import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 import com.mongodb.DBObject;
 
-import tproject.business.user.io.db.UserDB;
 import tproject.business.user.profile.services.core.ProfileCore;
 import tproject.conf.servletspolicy.Common;
 import tproject.conf.servletspolicy.OnlineGetServlet;
@@ -73,19 +72,10 @@ public class GetProfileService extends ProfileCore{
 
 		return (user==null) ?
 				Response.issue(ServiceCodes.UNKNOWN_USER) 
-				: Response.reply(
-						profile
+				: 
+					Response.reply(
+						JR.merge(profile,JR.jsonify(user))
 						.put(_entity,_user)
-						.put(_type,user.get(UserDB._type))
-						.put(_email,user.get(UserDB._email))
-						.put(_firstName,user.get(UserDB._firstName))//TODO check if null or excpt
-						.put(_lastName,user.get(UserDB._lastName))//TODO check if null or excpt
-						.put(_lastName,user.get(UserDB._societyName))//TODO check if null or excpt
-						.put(_birthDate,user.get(UserDB._birthDate)) 
-						.put(_phone,user.get(UserDB._phone))
-						.put(_skills,user.get(UserDB._skills))
-						.put(_description,user.get(UserDB._description))
-						.put(_unqualilified,user.get(UserDB._unqualilified))
 						);
 	}
 }

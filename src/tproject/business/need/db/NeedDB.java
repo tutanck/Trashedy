@@ -20,5 +20,6 @@ public class NeedDB {
 	public final static String _place="place";
 	public final static String _pay="pay";
 	public final static String _activityDuration="dur";
+	public final static String _title = "title";
 	
 }
