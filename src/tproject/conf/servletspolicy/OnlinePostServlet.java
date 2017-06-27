@@ -30,7 +30,6 @@ public class OnlinePostServlet extends PostServlet{
 		try {
 			TemplateParams tp =	new TemplateParams();
 			tp.addExpected(new TemplateParam(SessionDB._sessionKey));
-			tp.addExpected(new TemplateParam(SessionDB._deviceID));
 			return tp;
 		} catch (ParamTypingException | ParamNamingException | ParamRulingException | InconsistentParametersException e) {
 			__.explode(e);

@@ -9,8 +9,9 @@ import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 import com.mongodb.DBObject;
 
-import tproject.business.user.io.db.SessionDB;
+import tproject.business.user.status.db.StateDB;
 import tproject.business.user.status.services.core.StateCore;
+import tproject.conf.servletspolicy.Common;
 import tproject.conf.servletspolicy.OnlineGetServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
@@ -20,12 +21,23 @@ import tproject.tools.services.ShouldNeverOccurException;
 import org.json.JSONObject;
 
 /**
- * @author AJoan
- * Service classes are much more meaningful now , because DB access is automatic
- * This classes will take more significant decision on how their process and dispatch incoming data
- * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
+ * @author AJoan */
 public class GetStatusService extends StateCore{
+
 	public final static String url="/user/state/get";
+
+	/*In*/
+	public final static String _uther="uther";
+
+	/*Out*/
+	public final static String _status ="status"; 
+	public final static String _state ="state"; 
+	public final static String _position ="pos";
+	public final static String _entity="entity";
+	public final static String _self="self";
+	public final static String _user="user";
+
+
 
 	/** 
 	 * return user's complete state information 
@@ -36,31 +48,35 @@ public class GetStatusService extends StateCore{
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
 	@WebService(value=url,policy=OnlineGetServlet.class,
-			requestParams=@Params(optionals={@Param("uther")}))
+			requestParams=@Params(optionals={@Param(_uther)}))
 	public static JSONObject getState(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
-		DBObject user=null;
-		JSONObject profile=new JSONObject();
+		DBObject userState = null;
+		JSONObject profile = new JSONObject();
 
 		//Trick : like fb, an user can see his profile as someone else
 		//uther as a contraction of user-other (other user)
-		if(params.has("uther")) 
-			user = THINGS.getOne(JR.renameKeys(
-					JR.slice(params,"uther"),"uther->_id"), 
-					collection);
+		if(params.has(_uther)) 
+			userState = THINGS.getOne(
+					JR.renameKeys(
+							JR.slice(params,_uther),_uther+"->_id"), 
+					statedb);
 		else {
-			user = THINGS.getOne(JR.slice(SessionDB.decrypt(params, "uid"),"uid"),collection);
+			userState = THINGS.getOne(
+					JR.renameKeys(
+							JR.slice(params, Common._userID),Common._userID+"->_id")
+					,statedb);
 			profile.put("self",true);
 		}
 
-		return (user==null) ?
+		return (userState==null) ?
 				Response.issue(ServiceCodes.UNKNOWN_USER) 
-				: Response.reply(
+				: Response.reply (
 						profile
-						.put("type","user")
-						.put("statu",user.get("statu"))
-						.put("pos",user.get("pos"))
+						.put(_entity,_state)
+						.put(_status,userState.get(StateDB._status))
+						.put(_position,userState.get(StateDB._position))
 						);
 	}
 }

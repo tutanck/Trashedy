@@ -8,7 +8,7 @@ import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import java.util.*;
 
 /**JR : JSONRefiner
- * Revoir entièrement après avoir relu completement : 
+ * Revoir entiï¿½rement aprï¿½s avoir relu completement : 
  * http://static.javadoc.io/org.json/json/20160810/org/json/JSONObject.html#toMap--
  * http://stackoverflow.com/questions/12809779/how-do-i-clone-an-org-json-jsonobject-in-java
  * @author ANAGBLA Joan */
@@ -151,6 +151,17 @@ public class JR {
 			AbsentKeyException("The key '"+key+"' does not exist in '"+trunk+"'");
 
 		return new Node<JSONObject>(yellow,white);
+	}
+	
+	
+	public static JSONObject evict(
+			JSONObject params
+			,String ...keysToRemove
+			) {
+		JSONObject clean = clone(params);
+		for(String key : keysToRemove)
+			clean.remove(key);
+		return clean;
 	}
 
 

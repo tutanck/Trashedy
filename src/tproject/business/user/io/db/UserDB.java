@@ -12,10 +12,12 @@ public class UserDB {
 	public static DBCollection collection = DBManager.collection("users");	
 	
 	/** Collection's attributes */
+	/*User*/
 	public final static String _pass="pass";
 	public final static String _email="mail";
 	public final static String _verified="verifd";
 	public final static String _registrationDate="regdate";
+	/*Profile*/
 	public final static String _firstName="fname";
 	public final static String _lastName="lname";
 	public final static String _societyName="sname";

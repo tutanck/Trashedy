@@ -25,9 +25,11 @@ import org.json.JSONObject;
 public class GetProfileService extends ProfileCore{
 	public final static String url="/user/profile/get";
 
+	/*In*/
+	public final static String _uther="uther";
+	
 	/*Out*/
 	public final static String _entity="entity";
-	public final static String _uther="uther";
 	public final static String _self="self";
 	public final static String _user="user";
 	public final static String _type="type";

@@ -8,5 +8,9 @@ import tproject.tools.db.DBManager;
  * @author AJoan */
 public class StateDB {
 
-	public static DBCollection collection = DBManager.collection("state");
+	public static DBCollection collection = DBManager.collection("status");
+
+	public final static String _status ="status"; 
+	public final static String _position ="pos"; 
+
 }

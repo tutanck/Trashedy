@@ -6,13 +6,17 @@ import com.aj.jeez.gate.representation.annotations.WebService;
 import com.aj.jeez.jr.JR;
 import com.aj.jeez.jr.exceptions.AbsentKeyException;
 import com.aj.jeez.regina.THINGS;
+import com.aj.jeez.tools.__;
 
 import tproject.business.user.io.db.SessionDB;
+import tproject.business.user.io.db.UserDB;
 import tproject.business.user.profile.services.core.ProfileCore;
+import tproject.conf.servletspolicy.Common;
 import tproject.conf.servletspolicy.OnlinePostServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.general.PatternsHolder;
 import tproject.tools.services.Response;
+import tproject.tools.services.ServiceCodes;
 import tproject.tools.services.ShouldNeverOccurException;
 
 import org.json.JSONObject;
@@ -32,12 +36,12 @@ public class UpdateProfileService extends ProfileCore{
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params(
 					value={
-							@Param(value="uname",rules={PatternsHolder.uname}),
-							@Param(value="mail",rules={PatternsHolder.email}),
-							@Param(value="unqlf",type=boolean.class) //TODO TEST //ready to do unqualified work (not in relation with skills)
+							@Param(value=UserDB._email,rules={PatternsHolder.email}),
+							@Param(value=UserDB._unqualilified,type=boolean.class) //TODO TEST //ready to do unqualified work (not in relation with skills)
 							},
 					optionals={
 							@Param(value="phone",rules={PatternsHolder.nums}), //TODO change pattern to better +33...
+							@Param("sname"),//TODO rules if needed
 							@Param("lname"),//TODO rules if needed
 							@Param("fname"),//TODO rules  if needed
 							@Param("bdate"),//TODO rules if needed
@@ -48,20 +52,20 @@ public class UpdateProfileService extends ProfileCore{
 	public static JSONObject updateProfile(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
-		JSONObject decrypted = SessionDB.decrypt(params,"uid");
+		
+		if(CheckEmailService.isEmailOwned(params).getBoolean(Response.result)!=true)
+			return Response.issue(ServiceCodes.EMAIL_IS_TAKEN);
 
-		JSONObject usernameCheck = checkUsername(params);
-		if(usernameCheck!=null) return usernameCheck;
+		if(params.has(UserDB._phone))
+			if(CheckPhoneService.isPhoneOwned(params).getBoolean(Response.result)!=true)
+				return Response.issue(ServiceCodes.PHONE_IS_TAKEN);
+		
+		__.outln("params : "+params);//debug
 
-		JSONObject emailCheck = checkEmail(params);
-		if(emailCheck!=null) return emailCheck;
-
-		if(decrypted.has("phone")){
-			JSONObject phoneCheck = checkPhone(params);
-			if(phoneCheck!=null) return emailCheck;
-		}
-
-		THINGS.update(JR.wrap("_id",decrypted.get("uid")),decrypted,true,userdb);
+		THINGS.update(JR.wrap(
+				"_id",params.get(Common._userID))
+				,JR.evict(params,SessionDB._sessionKey)
+				,true,userdb);
 
 		return Response.reply();
 	}
