@@ -18,7 +18,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 /**
  * @author AJoan*/
 public class ProfileCore{
-	public static DBCollection collection = UserDB.collection;
+	public static DBCollection userdb = UserDB.collection;
 	
 	
 	/**
@@ -34,7 +34,7 @@ public class ProfileCore{
 		JSONObject decrypted = SessionDB.decrypt(params,"uid");
 		
 		if(THINGS.exists(JR.slice(decrypted,"email")
-				.put("_id",JR.wrap("$ne",decrypted.get("uid"))),collection))
+				.put("_id",JR.wrap("$ne",decrypted.get("uid"))),userdb))
 			return Response.issue(ServiceCodes.EMAIL_IS_TAKEN);
 
 		return null; //all right
@@ -55,7 +55,7 @@ public class ProfileCore{
 		JSONObject decrypted = SessionDB.decrypt(params,"uid");
 		
 		if(THINGS.exists(JR.slice(decrypted,"uname")
-				.put("_id",JR.wrap("$ne",decrypted.get("uid"))),collection))
+				.put("_id",JR.wrap("$ne",decrypted.get("uid"))),userdb))
 			return Response.issue(ServiceCodes.USERNAME_IS_TAKEN);
 		
 		return null; //all right
@@ -76,7 +76,7 @@ public class ProfileCore{
 		JSONObject decrypted = SessionDB.decrypt(params,"uid");
 		
 		if(THINGS.exists(JR.slice(decrypted,"phone")
-				.put("_id",JR.wrap("$ne",decrypted.get("uid"))),collection))
+				.put("_id",JR.wrap("$ne",decrypted.get("uid"))),userdb))
 			return Response.issue(ServiceCodes.PHONE_IS_TAKEN);	
 		
 		return null; //all right

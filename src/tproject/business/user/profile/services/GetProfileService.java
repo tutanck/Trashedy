@@ -9,8 +9,9 @@ import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 import com.mongodb.DBObject;
 
-import tproject.business.user.io.db.SessionDB;
+import tproject.business.user.io.db.UserDB;
 import tproject.business.user.profile.services.core.ProfileCore;
+import tproject.conf.servletspolicy.Common;
 import tproject.conf.servletspolicy.OnlineGetServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
@@ -20,12 +21,26 @@ import tproject.tools.services.ShouldNeverOccurException;
 import org.json.JSONObject;
 
 /**
- * @author AJoan
- * Service classes are much more meaningful now , because DB access is automatic
- * This classes will take more significant decision on how their process and dispatch incoming data
- * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
+ * @author AJoan */
 public class GetProfileService extends ProfileCore{
 	public final static String url="/user/profile/get";
+
+	/*Out*/
+	public final static String _entity="entity";
+	public final static String _uther="uther";
+	public final static String _self="self";
+	public final static String _user="user";
+	public final static String _type="type";
+	public final static String _firstName="firstname";
+	public final static String _lastName="lastname";
+	public final static String _societyName="societyname";
+	public final static String _birthDate="birthdate";
+	public final static String _phone="phone";
+	public final static String _skills="skills";
+	public final static String _description="description";
+	public final static String _unqualilified="unqualified";
+	public final static String _email="email";
+
 
 	/** 
 	 * return user's complete profile information 
@@ -36,7 +51,7 @@ public class GetProfileService extends ProfileCore{
 	 * @throws AbsentKeyException 
 	 * @throws InvalidKeyException */
 	@WebService(value=url,policy=OnlineGetServlet.class,
-			requestParams=@Params(optionals={@Param("uther")}))
+			requestParams=@Params(optionals={@Param(_uther)}))
 	public static JSONObject getProfile(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
@@ -45,29 +60,30 @@ public class GetProfileService extends ProfileCore{
 
 		//Trick : like fb, an user can see his profile as someone else
 		//uther as a contraction of user-other (other user)
-		if(params.has("uther")) 
+		if(params.has(_uther)) 
 			user = THINGS.getOne(JR.renameKeys(
-					JR.slice(params,"uther"),"uther->_id"), 
-					collection);
+					JR.slice(params,_uther),_uther+"->_id"), 
+					userdb);
 		else {
-			user = THINGS.getOne(JR.slice(SessionDB.decrypt(params, "uid"),"uid"),collection);
-			profile.put("self",true);
+			user = THINGS.getOne(JR.slice(params,Common._userID),userdb);
+			profile.put(_self,true);
 		}
 
 		return (user==null) ?
 				Response.issue(ServiceCodes.UNKNOWN_USER) 
 				: Response.reply(
 						profile
-						.put("type","user")
-						.put("uname",user.get("uname"))
-						.put("mail",user.get("mail"))
-						.put("fname",user.get("fname")) //firstName
-						.put("lname",user.get("lname")) //lastName
-						.put("bdate",user.get("bdate")) //birthdate
-						.put("phone",user.get("phone"))
-						.put("skils",user.get("skils"))
-						.put("desc",user.get("desc"))
-						.put("unqlf",user.get("unqlf"))
+						.put(_entity,_user)
+						.put(_type,user.get(UserDB._type))
+						.put(_email,user.get(UserDB._email))
+						.put(_firstName,user.get(UserDB._firstName))//TODO check if null or excpt
+						.put(_lastName,user.get(UserDB._lastName))//TODO check if null or excpt
+						.put(_lastName,user.get(UserDB._societyName))//TODO check if null or excpt
+						.put(_birthDate,user.get(UserDB._birthDate)) 
+						.put(_phone,user.get(UserDB._phone))
+						.put(_skills,user.get(UserDB._skills))
+						.put(_description,user.get(UserDB._description))
+						.put(_unqualilified,user.get(UserDB._unqualilified))
 						);
 	}
 }

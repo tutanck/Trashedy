@@ -24,7 +24,7 @@ import tproject.tools.services.ToolBox;
 
 
 /**
- * @author Joan */
+ * @author AJoan */
 public class AccountRecoveryService extends IOCore {
 	public final static String url="/account/recover";
 

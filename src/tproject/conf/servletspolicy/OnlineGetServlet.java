@@ -1,6 +1,7 @@
 package tproject.conf.servletspolicy;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -14,6 +15,7 @@ import com.aj.jeez.gate.representation.templates.TemplateParams;
 import com.aj.jeez.tools.__;
 
 import tproject.business.user.io.db.SessionDB;
+import tproject.tools.db.DBException;
 
 /**
  * * @author Anagbla Joan */
@@ -28,7 +30,6 @@ public class OnlineGetServlet extends GetServlet{
 		try {
 			TemplateParams tp =	new TemplateParams();
 			tp.addExpected(new TemplateParam(SessionDB._sessionKey));
-			tp.addExpected(new TemplateParam(SessionDB._deviceID));
 			return tp;
 		} catch (ParamTypingException | ParamNamingException | ParamRulingException | InconsistentParametersException e) {
 			__.explode(e);
@@ -41,6 +42,18 @@ public class OnlineGetServlet extends GetServlet{
 			HttpServletRequest request,
 			JSONObject params
 			)throws Exception{
-		return Common.exists(params);
+		return Common.sessionExists(params);
+	}
+	
+	@Override
+	public JSONObject doBeforeBusiness(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			JSONObject params
+			){
+		try {
+			return Common.decrypt(params,Common._userID);
+		} catch (DBException e) {__.explode(e);}
+		return params;
 	}
 }

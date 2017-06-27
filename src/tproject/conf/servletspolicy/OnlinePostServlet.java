@@ -1,6 +1,7 @@
 package tproject.conf.servletspolicy;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -14,6 +15,7 @@ import com.aj.jeez.gate.representation.templates.TemplateParams;
 import com.aj.jeez.tools.__;
 
 import tproject.business.user.io.db.SessionDB;
+import tproject.tools.db.DBException;
 
 /**
  * * @author Anagbla Joan */
@@ -36,13 +38,23 @@ public class OnlinePostServlet extends PostServlet{
 		}
 	}
 
-	
-	
 	@Override
 	public boolean isAuth(
 			HttpServletRequest request,
 			JSONObject params
 			)throws Exception{	
-		return Common.exists(params);
+		return Common.sessionExists(params);
+	}
+		
+	@Override
+	public JSONObject doBeforeBusiness(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			JSONObject params
+			){
+		try {
+			return Common.decrypt(params,Common._userID);
+		} catch (DBException e) {__.explode(e);}
+		return params;
 	}
 }

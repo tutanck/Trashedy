@@ -40,7 +40,7 @@ public class UpdateStatusService extends ProfileCore{
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
 		JSONObject decrypted = SessionDB.decrypt(params,"uid");
  
-		THINGS.update(JR.wrap("_id",decrypted.get("uid")),decrypted,true,collection);
+		THINGS.update(JR.wrap("_id",decrypted.get("uid")),decrypted,true,userdb);
 
 		return Response.reply();
 	}

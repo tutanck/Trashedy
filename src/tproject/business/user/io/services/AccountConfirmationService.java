@@ -20,7 +20,7 @@ import tproject.tools.services.ServiceCodes;
 import tproject.tools.services.ShouldNeverOccurException;
 
 /**
- * @author Joan */
+ * @author AJoan */
 public class AccountConfirmationService extends IOCore {
 	public final static String url="/account/confirm";
 

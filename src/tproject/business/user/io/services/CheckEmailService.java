@@ -18,7 +18,7 @@ import tproject.tools.services.Response;
 import tproject.tools.services.ShouldNeverOccurException;
 
 /**
- * @author Joan */
+ * @author AJoan */
 public class CheckEmailService extends IOCore {
 	public final static String url="/check/email";
 

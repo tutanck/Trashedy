@@ -283,13 +283,15 @@ public abstract class JEEZServlet extends HttpServlet{
 			) throws IOException  {
 		try{
 			JSONObject params = beforeBusiness(request,response);
-			if(params!=null){
-				doBeforeBusiness(request,response,params);
+			if(params!=null)
 				afterBusiness(
 						request,response,
-						doBusiness(request,response,params)
+						doBusiness(
+								request,
+								response,
+								doBeforeBusiness(request,response,params)
+								)
 						);
-			}
 		}catch (Throwable t){
 			t.printStackTrace();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "AN INTERNAL SERVER ERROR OCCURRED");
@@ -297,11 +299,11 @@ public abstract class JEEZServlet extends HttpServlet{
 	}
 
 
-	
+
 	/**
 	 * DEFAULT TEMPLATING */
-	
-	
+
+
 	/**
 	 * Specify if the underlying service 
 	 * need the user to be authenticated or not. 
@@ -324,21 +326,21 @@ public abstract class JEEZServlet extends HttpServlet{
 	 * The set of test classes where to find 
 	 * the test methods to execute after business */
 	public Set<Class<?>> checkClasses() {return new HashSet<Class<?>>();}
-	
-	
+
+
 	/**
 	 * Say what to do just before business (service call)
 	 * You are in the servlet (service caller) 'fais toi plaiz' */
-	public void doBeforeBusiness(
+	public JSONObject doBeforeBusiness(
 			HttpServletRequest request,
 			HttpServletResponse response,
 			JSONObject params
-			){__.outln("---Nothing to do before business---");}
-	
-	
+			){return params;}
+
+
 	/**
 	 * ADDITIONAL METHODS */
-	
+
 	/**
 	 * return the JEEZServlet String image */
 	@Override public String toString(){return driver==null? "Driver not found" : this.driver.toString();}
@@ -346,5 +348,5 @@ public abstract class JEEZServlet extends HttpServlet{
 	/** 
 	 * return the driver of the servlet  */
 	public JEEZServletDriver getServletDriver() {return driver;}
-	
+
 }

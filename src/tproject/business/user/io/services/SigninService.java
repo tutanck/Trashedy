@@ -25,11 +25,13 @@ import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 
 /**
- * @author Joan */
+ * @author AJoan */
 public class SigninService extends IOCore {
 	
 	public final static String url="/signin";
 	
+	/*Out*/
+	public final static String _sessionKey="skey";
 
 	/**
 	 * User login service : Sign user in online mode
@@ -75,7 +77,7 @@ public class SigninService extends IOCore {
 				.put(SessionDB._deviceID,params.getString(SessionDB._deviceID))
 				,sessiondb);
 
-		return Response.reply(JR.wrap("himitsu", sessionKey));
+		return Response.reply(JR.wrap(_sessionKey, sessionKey));
 	}
 
 }

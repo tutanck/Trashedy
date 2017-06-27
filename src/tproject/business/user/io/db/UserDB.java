@@ -16,6 +16,14 @@ public class UserDB {
 	public final static String _email="mail";
 	public final static String _verified="verifd";
 	public final static String _registrationDate="regdate";
-
+	public final static String _firstName="fname";
+	public final static String _lastName="lname";
+	public final static String _societyName="sname";
+	public final static String _type="typ";
+	public final static String _birthDate="bdate";
+	public final static String _phone="phone";
+	public final static String _skills="skils";
+	public final static String _description="desc";
+	public final static String _unqualilified="unqlf";
 	
 }

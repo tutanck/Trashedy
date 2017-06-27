@@ -40,7 +40,7 @@ import org.json.JSONObject;
 		
 		DBObject user =  THINGS.getOne(
 				JR.wrap("_id",new ObjectId(params.getString("uther"))), 
-				collection);
+				userdb);
 		
 		return (user==null) ?
 				Response.issue(ServiceCodes.UNKNOWN_USER) 

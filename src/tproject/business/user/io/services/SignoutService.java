@@ -14,7 +14,7 @@ import tproject.tools.services.Response;
 import tproject.tools.services.ShouldNeverOccurException;
 
 /**
- * @author Joan */
+ * @author AJoan */
 public class SignoutService extends IOCore{
 	public final static String url="/signout";
 
