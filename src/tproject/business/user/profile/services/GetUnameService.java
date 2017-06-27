@@ -64,6 +64,7 @@ import org.json.JSONObject;
 				:
 				Response.reply(
 						res.put(_uname, user.get("lname")+" "+user.get("fname"))
+						.put(_entity,_user)
 						);
 	}
 

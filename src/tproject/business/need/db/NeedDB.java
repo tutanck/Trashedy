@@ -13,7 +13,7 @@ public class NeedDB {
 	
 	public final static String _query="query";
 	public final static String _description="desc";
-	public final static String _type="typ";
+	public final static String _type="type";
 	public final static String _unqualified="unqlf";
 	public final static String _beginDate="start";
 	public final static String _endDate="end";

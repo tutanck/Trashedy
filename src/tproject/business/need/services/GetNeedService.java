@@ -26,6 +26,9 @@ public class GetNeedService extends NeedCore{
 	public final static String url="/need/up";
 
 	public final static String _nid="nid";
+	
+	public final static String _entity="entity";
+	public final static String _need="need";
 
 	/**
 	 * update user's profile
@@ -50,6 +53,6 @@ public class GetNeedService extends NeedCore{
 		return need == null ? 
 				Response.issue(ServiceCodes.UNKNOWN_RESOURCE)
 				:
-					Response.reply(need);
+					Response.reply(need.put(_entity,_need));
 	}
 }
