@@ -8,7 +8,6 @@ import com.aj.jeez.jr.exceptions.AbsentKeyException;
 import com.aj.jeez.regina.THINGS;
 import com.aj.jeez.tools.__;
 
-import tproject.business.user.io.db.SessionDB;
 import tproject.business.user.io.db.UserDB;
 import tproject.business.user.profile.services.core.ProfileCore;
 import tproject.conf.servletspolicy.Common;
@@ -64,7 +63,7 @@ public class UpdateProfileService extends ProfileCore{
 
 		THINGS.update(JR.wrap(
 				"_id",params.get(Common._userID))
-				,JR.evict(params,SessionDB._sessionKey)
+				,JR.evict(params,Common._userID)
 				,true,userdb);
 
 		return Response.reply();

@@ -10,8 +10,7 @@ import com.aj.jeez.jr.exceptions.AbsentKeyException;
 import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 
-import tproject.business.need.services.core.PostCore;
-import tproject.business.user.io.db.SessionDB;
+import tproject.business.need.services.core.NeedCore;
 import tproject.conf.servletspolicy.OnlinePostServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
@@ -21,9 +20,11 @@ import tproject.tools.services.ShouldNeverOccurException;
  * 
  * @author AJoan
  * Post are need search representation */
-public class AddPostService extends PostCore{
-	public final static String url="/post/add";
+public class DelNeedService extends NeedCore{
+	public final static String url="/need/del";
 	
+	public final static String _nid="nid";
+
 	/**
 	 * update user's profile
 	 * @param params
@@ -34,21 +35,14 @@ public class AddPostService extends PostCore{
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params(
 					value={
-							@Param(value="txt"),//job search key words 
-							@Param(value="desc"),
-							@Param(value="unqlf",type=boolean.class) //TODO TEST //ready to do unqualified work (not in relation with skills)
-							},
-					optionals={
-							@Param(value="now",type=boolean.class),//immediate work
-							@Param(value="whr"),//place where the job is {lat,lon}
-							@Param(value="dur"),//estimated duration
-							@Param(value="sal"),//salary (string)
+							@Param(value=_nid),		
 					}))
-	public static JSONObject addPost(
+	public static JSONObject del(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
-		JSONObject decrypted = SessionDB.decrypt(params,"uid");
-		THINGS.update(JR.wrap("_id",decrypted.get("uid")),decrypted,true,collection);
+
+		THINGS.remove(JR.renameKeys(JR.slice(params,_nid),_nid+"->_id"),needdb);
+
 		return Response.reply();
 	}
 }

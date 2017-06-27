@@ -70,7 +70,7 @@ public class GetStatusService extends StateCore{
 			profile.put("self",true);
 		}
 
-		return (userState==null) ?
+		return (userState == null) ?
 				Response.issue(ServiceCodes.UNKNOWN_USER) 
 				: Response.reply (
 						profile
