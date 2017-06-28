@@ -33,7 +33,7 @@ public class THINGS{
 		WriteResult wr = null;
 		DBAction action = DBAction.ADD;
 
-		BasicDBObject doc = dressJSON(things).append("_date",new Date());
+		BasicDBObject doc = wrap(things).append("_date",new Date());
 
 		try{ wr = collection.insert(doc); }
 		catch(Exception e){DBException.forward(e);}
@@ -62,8 +62,8 @@ public class THINGS{
 		WriteResult wr = null;
 		DBAction action = updateAction(upsert,multi);
 
-		BasicDBObject whr = dressJSON(where);
-		BasicDBObject thngs = dressJSON(things);
+		BasicDBObject whr = wrap(where);
+		BasicDBObject thngs = wrap(things);
 
 		try{ wr = collection.update(whr,thngs,upsert,multi); }
 		catch(Exception e){DBException.forward(e);}
@@ -123,7 +123,7 @@ public class THINGS{
 			) throws DBException{
 		boolean response = false; 
 
-		try{ response = collection.find(dressJSON(things)).limit(1).hasNext(); }		//limit 1 is for optimization : https://blog.serverdensity.com/checking-if-a-document-exists-mongodb-slow-findone-vs-find/
+		try{ response = collection.find(wrap(things)).limit(1).hasNext(); }		//limit 1 is for optimization : https://blog.serverdensity.com/checking-if-a-document-exists-mongodb-slow-findone-vs-find/
 		catch(Exception e){DBException.forward(e);}
 
 		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.EXISTS);
@@ -145,7 +145,7 @@ public class THINGS{
 			) throws DBException{
 		DBObject dbo = null;
 
-		try{ dbo=collection.findOne(dressJSON(things)); }
+		try{ dbo=collection.findOne(wrap(things)); }
 		catch(Exception e){DBException.forward(e);}
 
 		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.GETONE);
@@ -168,7 +168,7 @@ public class THINGS{
 			) throws DBException{
 		DBCursor dbc = null;
 
-		try{ dbc = collection.find(dressJSON(things)); }
+		try{ dbc = collection.find(wrap(things)); }
 		catch(Exception e){DBException.forward(e);}
 
 		logDBAction(things,collection,Caller.whoIsAsking(),DBAction.GETALL);
@@ -192,7 +192,7 @@ public class THINGS{
 		WriteResult wr =null;
 		DBAction action = DBAction.REMOVE;
 
-		BasicDBObject doc = dressJSON(things);
+		BasicDBObject doc = wrap(things);
 
 		try{ wr = collection.remove(doc); }
 		catch(Exception e){DBException.forward(e);}
@@ -207,8 +207,21 @@ public class THINGS{
 	 * Reformat a JSONObject into a BasicDBObject
 	 * @param json
 	 * @return */
-	public static BasicDBObject dressJSON(JSONObject json){
+	public static BasicDBObject wrap(
+			JSONObject json
+			){
 		return new BasicDBObject(json.toMap());
+	}
+
+	/**
+	 * Reformat a key-value into a BasicDBObject
+	 * @param json
+	 * @return */
+	public static BasicDBObject wrap(
+			String key,
+			Object val
+			){
+		return new BasicDBObject(key,val);
 	}
 
 	

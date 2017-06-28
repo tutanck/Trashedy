@@ -1,5 +1,8 @@
 package tproject.business.talk.services;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -9,9 +12,12 @@ import com.aj.jeez.jr.exceptions.AbsentKeyException;
 import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 
-import tproject.business.user.need.core.NeedCore;
-import tproject.business.user.need.db.NeedDB;
+import tproject.business.talk.core.TalkCore;
+import tproject.business.talk.db.TalkDB;
+import tproject.business.user.profile.services.GetUnameService;
+import tproject.conf.servletspolicy.Common;
 import tproject.conf.servletspolicy.OnlinePostServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
@@ -19,12 +25,12 @@ import tproject.tools.services.ShouldNeverOccurException;
 
 /**
  * 
- * @author AJoan
- * Post are need search representation */
-public class TalkListService extends NeedCore{
+ * @author AJoan */
+public class TalkListService extends TalkCore{
 	public final static String url="/talk/list";
 
-	public final static String _nid="nid";
+	public final static String _entity="entity";
+	public final static String _speaker="talk";
 
 	/**
 	 * update user's profile
@@ -38,16 +44,38 @@ public class TalkListService extends NeedCore{
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
 
-		DBCursor dbc = THINGS.get(
-				JR.renameKeys(JR.slice(params,_nid),_nid+"->_id")
-				,needdb);
-
 		JSONArray jar = new JSONArray();
-		while(dbc.hasNext())
+		DBCursor dbc = THINGS.get(
+				_A_(params.getString(Common._userID))
+				,talkdb);
+
+		dbc.sort(THINGS.wrap(TalkDB._at,-1));
+		
+		Set<String>unicqids=new HashSet<>();
+		
+		while(dbc.hasNext()){
+			JSONObject msg = JR.jsonify(dbc.next());
+			
+			unicqids.add(msg.getString(TalkDB._from).equals(params.getString(TalkDB._to))==true?
+					(String)dbo.get("recipient")
+					:
+						(String)dbo.get("sender"));
+			
 			jar.put(
-					JR.slice(JR.jsonify(dbc.next()),
-							_nid,NeedDB._title)
+					JR.slice(
+							JR.jsonify(msg)
+							,TalkDB._to
+							)
+					.put(_entity, _speaker)
+					.put(
+							GetUnameService._uname, 
+							JR.renameKeys(
+									GetUnameService.getUname(JR.slice(msg,TalkDB._to))
+									,TalkDB._to+"->"+GetUnameService._uther
+									)
+							)
 					);
+		}
 
 		return Response.reply(jar);
 	}

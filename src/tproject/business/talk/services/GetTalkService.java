@@ -23,8 +23,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 
 /**
  * 
- * @author AJoan
- * Post are need search representation */
+ * @author AJoan */
 public class GetTalkService extends TalkCore{
 	public final static String url="/talk/get";
 
