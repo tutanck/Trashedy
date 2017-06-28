@@ -15,25 +15,33 @@ import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
 import tproject.tools.services.ShouldNeverOccurException;
 
+import java.util.Date;
+
 import org.json.JSONObject;
 
 /**
  * @author AJoan */
-public class UpGradeService extends GradeCore{
+public class AddGradeService extends GradeCore{
 	public final static String url="/user/grade/update";
 
 	
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params(
 					value={
-							@Param(value=UserDB._grade,type=int.class,rules={"0|1|2|3|4|5"})
+							@Param(value=UserDB._grade,type=int.class,rules={"0|1|2|3|4|5"}),
+							@Param(value=UserDB._nid)
 					}))
-	public static JSONObject upgrade(
+	public static JSONObject addGrade(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException {
 
-		THINGS.update(JR.slice(params,Common._userID),
-				JR.wrap("$inc",JR.slice(params,UserDB._grade))
+		THINGS.update(
+				JR.slice(params,Common._userID),
+				JR.wrap(
+						"$push"
+						,JR.slice(params,UserDB._grade,UserDB._nid)
+						.put(UserDB._gradeDate, new Date())
+						)
 				,userdb);
 
 		return Response.reply();

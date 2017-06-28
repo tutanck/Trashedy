@@ -9,7 +9,8 @@ import tproject.tools.db.DBManager;
  * @author AJoan */
 public class UserDB {
 
-	public static DBCollection collection = DBManager.collection("users");	
+	public static DBCollection collection = DBManager.collection("users");
+
 	
 	/** Collection's attributes */
 	/*User*/
@@ -27,7 +28,12 @@ public class UserDB {
 	public final static String _skills="skills";
 	public final static String _description="desc";
 	public final static String _unqualilified="unqlf";
-	public static final String _grade = "grade";
+	/*Grades*/
+	public final static String _grades = "grades";
+	public final static String _grade = "grade";
+	public final static String _gradeDate = "gdate";
+	public final static String _nid = "nid";//need id 
+	//TODO maybe mid (mission id) as a new instance of a need 
 	/*Contacts*/
 	public static final String _contacts = "contacts";
 	public static final String _cid = "cid";

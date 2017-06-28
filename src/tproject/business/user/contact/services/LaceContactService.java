@@ -24,7 +24,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 /**
  * 
  * @author AJoan */
-public class AddContactService extends ContactCore{
+public class LaceContactService extends ContactCore{
 
 	public final static String url="/contact/add";
 
@@ -44,11 +44,31 @@ public class AddContactService extends ContactCore{
 						,Common._userID+"->"+"_id"
 						);
 
+		JSONObject uther = 
+				JR.renameKeys(
+						JR.slice(params,UserDB._cid)
+						,UserDB._cid+"->"+"_id"
+						);
+
 		if(!THINGS.exists(user, userdb))
 			return Response.issue(ServiceCodes.UNKNOWN_USER);
 
+		//add new contact to this user
 		THINGS.update(
 				user
+				,JR.wrap(
+						"$addToSet"
+						,JR.renameKeys(
+								JR.slice(params,Common._userID)
+								,Common._userID+"->"+UserDB._cid
+								)
+						.put(UserDB._contactDate,new Date())
+						)
+				,userdb);
+
+		//add this user to new contact as his new contact 
+		THINGS.update(
+				uther
 				,JR.wrap(
 						"$addToSet"
 						,JR.slice(params,UserDB._cid)
