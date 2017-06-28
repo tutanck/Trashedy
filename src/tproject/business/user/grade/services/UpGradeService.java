@@ -22,13 +22,7 @@ import org.json.JSONObject;
 public class UpGradeService extends GradeCore{
 	public final static String url="/user/grade/update";
 
-	/**
-	 * update user's profile
-	 * @param params
-	 * @return
-	 * @throws DBException 
-	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException */
+	
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params(
 					value={

@@ -33,13 +33,6 @@ public class SignupService extends IOCore {
 	public final static String url="/signup";
 		
 
-	/** 
-	 * Users registration service : register a new user
-	 * @param params
-	 * @return
-	 * @throws DBException 
-	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException */
 	@WebService(
 			value=url,policy = OfflinePostServlet.class,
 			requestParams=@Params({

@@ -34,14 +34,7 @@ import org.json.JSONObject;
 	 public final static String _user="user";
 
 	 
-	/** 
-	 * return uname
-	 * @param params
-	 * @return
-	 * @throws DBException
-	 * @throws ShouldNeverOccurException 
-	 * @throws InvalidKeyException 
-	 * @throws AbsentKeyException */
+	 
 	 @WebService(value=url,policy = OnlineGetServlet.class,
 				requestParams=@Params({@Param(_uther)}))
 	public static JSONObject getUname(
@@ -64,7 +57,6 @@ import org.json.JSONObject;
 				:
 				Response.reply(
 						res.put(_uname, user.get("lname")+" "+user.get("fname"))
-						.put(_entity,_user)
 						);
 	}
 

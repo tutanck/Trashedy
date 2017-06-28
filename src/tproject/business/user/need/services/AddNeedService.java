@@ -24,13 +24,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 public class AddNeedService extends NeedCore{
 	public final static String url="/need/add";
 
-	/**
-	 * update user's profile
-	 * @param params
-	 * @return
-	 * @throws DBException 
-	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException */
+	
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params(
 					value={

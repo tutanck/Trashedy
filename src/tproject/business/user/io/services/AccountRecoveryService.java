@@ -28,13 +28,7 @@ import tproject.tools.services.ToolBox;
 public class AccountRecoveryService extends IOCore {
 	public final static String url="/account/recover";
 
-	/**
-	 * Send an email with MD5 generated temporary access key for access recover to the user
-	 * @param params
-	 * @return
-	 * @throws DBException
-	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException */
+	
 	@WebService(value=url,policy=OfflinePostServlet.class,
 			requestParams=@Params({
 				@Param(value=UserDB._email,rules={PatternsHolder.email}) }))

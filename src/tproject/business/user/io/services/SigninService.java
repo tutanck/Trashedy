@@ -33,16 +33,7 @@ public class SigninService extends IOCore {
 	/*Out*/
 	public final static String _sessionKey="skey";
 
-	/**
-	 * User login service : Sign user in online mode
-	 * @param params
-	 * @return
-	 * @throws DBException 
-	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException 
-	 * @throws InvalidKeyException 
-	 * @throws UnknownFormatException 
-	 * @throws JSONException */
+	
 	@WebService(
 			value=url,policy=OfflinePostServlet.class,
 			requestParams=@Params({

@@ -18,12 +18,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 public class SignoutService extends IOCore{
 	public final static String url="/signout";
 
-	/**
-	 * Users logout service : Disconnects user from online mode
-	 * @param params
-	 * @return
-	 * @throws DBException 
-	 * @throws ShouldNeverOccurException */
+	
 	@WebService(value=url,policy=OnlinePostServlet.class)
 	public static JSONObject logout(
 			JSONObject params

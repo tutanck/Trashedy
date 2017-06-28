@@ -32,13 +32,7 @@ public class GetTalkService extends TalkCore{
 	public final static String _fromName="fromname";
 	public final static String _toName="toname";
 
-	/**
-	 * update user's profile
-	 * @param params
-	 * @return
-	 * @throws DBException 
-	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException */
+	
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params( 
 					value={
@@ -65,6 +59,7 @@ public class GetTalkService extends TalkCore{
 							_fromName, 
 							JR.renameKeys(
 									GetUnameService.getUname(JR.slice(msg,TalkDB._from))
+									.getJSONObject(Response.result)
 									,TalkDB._from+"->"+GetUnameService._uther
 									)
 							)
@@ -72,6 +67,7 @@ public class GetTalkService extends TalkCore{
 							_toName, 
 							JR.renameKeys(
 									GetUnameService.getUname(JR.slice(msg,TalkDB._to))
+									.getJSONObject(Response.result)
 									,TalkDB._to+"->"+GetUnameService._uther
 									)
 							)

@@ -29,13 +29,7 @@ public class GetNeedService extends NeedCore{
 	public final static String _entity="entity";
 	public final static String _need="need";
 
-	/**
-	 * update user's profile
-	 * @param params
-	 * @return
-	 * @throws DBException 
-	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException */
+	
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params( 
 					value={

@@ -18,14 +18,6 @@ public class TalkCore{
 	public static DBCollection userdb = UserDB.collection;
 
 
-	/**
-	 * 
-	 * @param A
-	 * @param B
-	 * @return
-	 * @throws ShouldNeverOccurException
-	 * @throws DBException
-	 * @throws AbsentKeyException */
 	public static JSONObject A_B(
 			String A, 
 			String B
@@ -40,13 +32,7 @@ public class TalkCore{
 	}
 	
 	
-	/**
-	 * 
-	 * @param AID
-	 * @return
-	 * @throws ShouldNeverOccurException
-	 * @throws DBException
-	 * @throws AbsentKeyException */
+	
 	public static JSONObject _A_(
 			String AID
 			) throws ShouldNeverOccurException, DBException, AbsentKeyException{

@@ -22,13 +22,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 public class CheckEmailService extends IOCore {
 	public final static String url="/check/email";
 
-	/**
-	 * Check if email's input is valid 
-	 * @param params
-	 * @return
-	 * @throws ShouldNeverOccurException
-	 * @throws DBException
-	 * @throws AbsentKeyException */
+	
 	@WebService(value=url,policy=OfflineGetServlet.class,
 			requestParams=@Params({ @Param(value=UserDB._email,rules={PatternsHolder.email}) }))
 	public static JSONObject isEmailTaken(

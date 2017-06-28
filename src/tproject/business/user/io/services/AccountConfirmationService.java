@@ -26,14 +26,7 @@ public class AccountConfirmationService extends IOCore {
 
 	public final static String _confirmationKey="ckey";
 
-	/** 
-	 * confirm a user account (email is verified)
-	 * @param params
-	 * @return 
-	 * @throws ShouldNeverOccurException
-	 * @throws DBException 
-	 * @throws InvalidKeyException 
-	 * @throws AbsentKeyException */
+	
 	@WebService(value=url,policy=OfflinePostServlet.class,
 			requestParams=@Params({
 				@Param(_confirmationKey),

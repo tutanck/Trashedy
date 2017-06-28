@@ -18,20 +18,11 @@ import tproject.tools.services.ShouldNeverOccurException;
 import org.json.JSONObject;
 
 /**
- * @author AJoan
- * Service classes are much more meaningful now , because DB access is automatic
- * This classes will take more significant decision on how their process and dispatch incoming data
- * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
+ * @author AJoan */
 public class UpdateStatusService extends StateCore{
 	public final static String url="/user/state/update";
 
-	/**
-	 * update user's state
-	 * @param params
-	 * @return
-	 * @throws DBException 
-	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException */
+
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params({
 				@Param(value=StateDB._status,rules={"(READY|AVAILABLE|BUSY|OFFLINE)"}),

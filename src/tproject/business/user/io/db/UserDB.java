@@ -28,5 +28,10 @@ public class UserDB {
 	public final static String _description="desc";
 	public final static String _unqualilified="unqlf";
 	public static final String _grade = "grade";
+	/*Contacts*/
+	public static final String _contacts = "contacts";
+	public static final String _cid = "cid";
+	public static final String _contactDate = "cdate";
+	
 	
 }

@@ -23,13 +23,7 @@ import org.json.JSONObject;
 public class UpdatePasswordService extends ProfileCore{
 	public final static String url="/user/profile/update";
 
-	/**
-	 * update user's profile
-	 * @param params
-	 * @return
-	 * @throws DBException 
-	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException */
+	
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params(
 					value={

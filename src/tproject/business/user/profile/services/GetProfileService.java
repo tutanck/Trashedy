@@ -33,15 +33,6 @@ public class GetProfileService extends ProfileCore{
 	public final static String _user="user";
 	
 
-
-	/** 
-	 * return user's complete profile information 
-	 * @param params
-	 * @return
-	 * @throws DBException
-	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException 
-	 * @throws InvalidKeyException */
 	@WebService(value=url,policy=OnlineGetServlet.class,
 			requestParams=@Params(optionals={@Param(_uther)}))
 	public static JSONObject getProfile(

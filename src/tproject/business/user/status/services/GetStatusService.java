@@ -37,15 +37,6 @@ public class GetStatusService extends StateCore{
 	public final static String _user="user";
 
 
-
-	/** 
-	 * return user's complete state information 
-	 * @param params
-	 * @return
-	 * @throws DBException
-	 * @throws ShouldNeverOccurException 
-	 * @throws AbsentKeyException 
-	 * @throws InvalidKeyException */
 	@WebService(value=url,policy=OnlineGetServlet.class,
 			requestParams=@Params(optionals={@Param(_uther)}))
 	public static JSONObject getState(
