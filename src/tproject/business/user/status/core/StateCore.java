@@ -1,4 +1,4 @@
-package tproject.business.user.status.services.core;
+package tproject.business.user.status.core;
 
 import com.mongodb.DBCollection;
 

@@ -10,7 +10,7 @@ import com.aj.jeez.regina.THINGS;
 import com.mongodb.DBObject;
 
 import tproject.business.user.io.db.UserDB;
-import tproject.business.user.profile.services.core.ProfileCore;
+import tproject.business.user.profile.core.ProfileCore;
 import tproject.conf.servletspolicy.OnlineGetServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
@@ -44,7 +44,7 @@ import org.json.JSONObject;
 	 * @throws AbsentKeyException */
 	 @WebService(value=url,policy = OnlineGetServlet.class,
 				requestParams=@Params({@Param(_uther)}))
-	public static JSONObject getShortInfos(
+	public static JSONObject getUname(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {		 
 		

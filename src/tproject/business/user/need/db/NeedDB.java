@@ -1,4 +1,4 @@
-package tproject.business.need.db;
+package tproject.business.user.need.db;
 
 import com.mongodb.DBCollection;
 
@@ -10,7 +10,7 @@ import tproject.tools.db.DBManager;
 public class NeedDB {
 
 	public static DBCollection collection = DBManager.collection("need");
-	
+
 	public final static String _query="query";
 	public final static String _description="desc";
 	public final static String _type="type";
@@ -21,5 +21,6 @@ public class NeedDB {
 	public final static String _pay="pay";
 	public final static String _activityDuration="dur";
 	public final static String _title = "title";
+	public final static String _owner="owner";
 	
 }

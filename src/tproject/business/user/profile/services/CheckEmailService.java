@@ -10,7 +10,7 @@ import com.aj.jeez.jr.exceptions.AbsentKeyException;
 import com.aj.jeez.regina.THINGS;
 
 import tproject.business.user.io.db.UserDB;
-import tproject.business.user.io.services.core.IOCore;
+import tproject.business.user.profile.core.ProfileCore;
 import tproject.conf.servletspolicy.Common;
 import tproject.conf.servletspolicy.OfflineGetServlet;
 import tproject.tools.db.DBException;
@@ -20,7 +20,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 
 /**
  * @author AJoan */
-public class CheckEmailService extends IOCore {
+public class CheckEmailService extends ProfileCore {
 	public final static String url="/check/email";
 
 	/**

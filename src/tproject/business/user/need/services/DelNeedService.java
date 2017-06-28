@@ -1,4 +1,4 @@
-package tproject.business.need.services;
+package tproject.business.user.need.services;
 
 import org.json.JSONObject;
 
@@ -10,7 +10,7 @@ import com.aj.jeez.jr.exceptions.AbsentKeyException;
 import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 
-import tproject.business.need.services.core.NeedCore;
+import tproject.business.user.need.core.NeedCore;
 import tproject.conf.servletspolicy.OnlinePostServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
@@ -18,8 +18,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 
 /**
  * 
- * @author AJoan
- * Post are need search representation */
+ * @author AJoan */
 public class DelNeedService extends NeedCore{
 	public final static String url="/need/del";
 	

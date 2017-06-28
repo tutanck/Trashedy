@@ -1,16 +1,18 @@
-package tproject.business.need.services;
+package tproject.business.user.need.services;
 
 import org.json.JSONObject;
 
 import com.aj.jeez.gate.representation.annotations.Param;
 import com.aj.jeez.gate.representation.annotations.Params;
 import com.aj.jeez.gate.representation.annotations.WebService;
+import com.aj.jeez.jr.JR;
 import com.aj.jeez.jr.exceptions.AbsentKeyException;
 import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 
-import tproject.business.need.db.NeedDB;
-import tproject.business.need.services.core.NeedCore;
+import tproject.business.user.need.core.NeedCore;
+import tproject.business.user.need.db.NeedDB;
+import tproject.conf.servletspolicy.Common;
 import tproject.conf.servletspolicy.OnlinePostServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
@@ -18,8 +20,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 
 /**
  * 
- * @author AJoan
- * Post are need search representation */
+ * @author AJoan */
 public class AddNeedService extends NeedCore{
 	public final static String url="/need/add";
 
@@ -51,7 +52,7 @@ public class AddNeedService extends NeedCore{
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
 
-		THINGS.add(params,needdb);
+		THINGS.add(JR.renameKeys(params,Common._userID+"->"+NeedDB._owner),needdb);
 
 		return Response.reply();
 	}

@@ -1,19 +1,15 @@
-package tproject.business.user.io.services.core;
+package tproject.business.user.need.core;
 
 import com.mongodb.DBCollection;
 
-import tproject.business.user.io.db.SessionDB;
-import tproject.business.user.io.db.UserDB;
-
+import tproject.business.user.need.db.NeedDB;
 
 /**
  * @author AJoan
  * Service classes are much more meaningful now , because DB access is automatic
  * This classes will take more significant decision on how their process and dispatch incoming data
  * to DB instead of just forwarding the DataBus as fast as possible without proper inspection.*/
-public class IOCore{
+public class NeedCore{
 
-	public static DBCollection userdb = UserDB.collection;
-	public static DBCollection sessiondb = SessionDB.collection;
-
+	public static DBCollection needdb = NeedDB.collection;
 }

@@ -9,8 +9,8 @@ import com.aj.jeez.jr.JR;
 import com.aj.jeez.jr.exceptions.AbsentKeyException;
 import com.aj.jeez.regina.THINGS;
 
+import tproject.business.user.io.core.IOCore;
 import tproject.business.user.io.db.UserDB;
-import tproject.business.user.io.services.core.IOCore;
 import tproject.conf.servletspolicy.OfflineGetServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.general.PatternsHolder;

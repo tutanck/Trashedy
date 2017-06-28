@@ -9,7 +9,7 @@ import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 import com.mongodb.DBObject;
 
-import tproject.business.user.status.services.core.StateCore;
+import tproject.business.user.status.core.StateCore;
 import tproject.conf.servletspolicy.Common;
 import tproject.conf.servletspolicy.OnlineGetServlet;
 import tproject.tools.db.DBException;
@@ -52,7 +52,7 @@ public class GetStatusService extends StateCore{
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
 		DBObject userState = null;
-		JSONObject profile = new JSONObject();
+		JSONObject status=JR.wrap(_entity,_user);
 
 		//Trick : like fb, an user can see his profile as someone else
 		//uther as a contraction of user-other (other user)
@@ -66,14 +66,13 @@ public class GetStatusService extends StateCore{
 					JR.renameKeys(
 							JR.slice(params, Common._userID),Common._userID+"->_id")
 					,statedb);
-			profile.put("self",true);
+			status.put(_self,true);
 		}
 
 		return (userState == null) ?
 				Response.issue(ServiceCodes.UNKNOWN_USER) 
 				: Response.reply (
-						JR.merge(profile,JR.jsonify(userState)
-								).put(_entity,_state)
+						JR.merge(status,JR.jsonify(userState))
 						);
 	}
 }

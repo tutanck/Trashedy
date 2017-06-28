@@ -14,8 +14,8 @@ import com.aj.jeez.regina.DBCommit;
 import com.aj.jeez.regina.THINGS;
 import com.aj.jeez.tools.__;
 
+import tproject.business.user.io.core.IOCore;
 import tproject.business.user.io.db.UserDB;
-import tproject.business.user.io.services.core.IOCore;
 import tproject.conf.servletspolicy.OfflinePostServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.general.PatternsHolder;

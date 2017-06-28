@@ -10,8 +10,8 @@ import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 import com.mongodb.DBCursor;
 
-import tproject.business.need.db.NeedDB;
-import tproject.business.need.services.core.NeedCore;
+import tproject.business.user.need.core.NeedCore;
+import tproject.business.user.need.db.NeedDB;
 import tproject.conf.servletspolicy.OnlinePostServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
@@ -22,7 +22,7 @@ import tproject.tools.services.ShouldNeverOccurException;
  * @author AJoan
  * Post are need search representation */
 public class TalkListService extends NeedCore{
-	public final static String url="/need/up";
+	public final static String url="/talk/list";
 
 	public final static String _nid="nid";
 

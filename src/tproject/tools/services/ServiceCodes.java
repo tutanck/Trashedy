@@ -16,6 +16,7 @@ public interface ServiceCodes {
 	int UNKNOWN_EMAIL_ADDRESS=-21;
 	int WRONG_LOGIN_PASSWORD=-22;
 	int UNKNOWN_USER = -23;
+	int UNKNOWN_INTERLOCUTOR = -24;
 	
 	/* bad context -3* */
 	int USER_NOT_CONFIRMED = -33;
@@ -29,6 +30,5 @@ public interface ServiceCodes {
 	
 	/*admin error*/
 	int ALERT_NOT_SENT=-112;
-
 	
 }

@@ -1,5 +1,6 @@
 package tproject.business.talk.services;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.aj.jeez.gate.representation.annotations.Param;
@@ -9,26 +10,28 @@ import com.aj.jeez.jr.JR;
 import com.aj.jeez.jr.exceptions.AbsentKeyException;
 import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
-import com.mongodb.DBObject;
+import com.mongodb.DBCursor;
 
-import tproject.business.need.services.core.NeedCore;
+import tproject.business.talk.core.TalkCore;
+import tproject.business.talk.db.TalkDB;
+import tproject.business.user.profile.services.GetUnameService;
+import tproject.conf.servletspolicy.Common;
 import tproject.conf.servletspolicy.OnlinePostServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
-import tproject.tools.services.ServiceCodes;
 import tproject.tools.services.ShouldNeverOccurException;
 
 /**
  * 
  * @author AJoan
  * Post are need search representation */
-public class GetTalkService extends NeedCore{
-	public final static String url="/need/up";
+public class GetTalkService extends TalkCore{
+	public final static String url="/talk/get";
 
-	public final static String _nid="nid";
-	
 	public final static String _entity="entity";
-	public final static String _need="need";
+	public final static String _msg="msg";
+	public final static String _fromName="fromname";
+	public final static String _toName="toname";
 
 	/**
 	 * update user's profile
@@ -40,19 +43,41 @@ public class GetTalkService extends NeedCore{
 	@WebService(value=url,policy = OnlinePostServlet.class,
 			requestParams=@Params( 
 					value={
-							@Param(value=_nid)
+							@Param(value=TalkDB._to)
 					}))
 	public static JSONObject get(
 			JSONObject params
 			) throws DBException, ShouldNeverOccurException, AbsentKeyException, InvalidKeyException {	
 
-		DBObject need = THINGS.getOne(
-				JR.renameKeys(JR.slice(params,_nid),_nid+"->_id")
-				,needdb);
+		JSONArray jar = new JSONArray();
+		DBCursor dbc = THINGS.get(
+				A_B(
+						params.getString(Common._userID)
+						,params.getString(TalkDB._to)
+						)
+				,talkdb);
 
-		return need == null ? 
-				Response.issue(ServiceCodes.UNKNOWN_RESOURCE)
-				:
-					Response.reply(need.put(_entity,_need));
+		while(dbc.hasNext()){
+			JSONObject msg = JR.jsonify(dbc.next());
+			jar.put(
+					msg
+					.put(_entity, _msg)
+					.put(
+							_fromName, 
+							JR.renameKeys(
+									GetUnameService.getUname(JR.slice(msg,TalkDB._from))
+									,TalkDB._from+"->"+GetUnameService._uther
+									)
+							)
+					.put(
+							_toName, 
+							JR.renameKeys(
+									GetUnameService.getUname(JR.slice(msg,TalkDB._to))
+									,TalkDB._to+"->"+GetUnameService._uther
+									)
+							)
+					);
+		}
+		return Response.reply(jar);
 	}
 }

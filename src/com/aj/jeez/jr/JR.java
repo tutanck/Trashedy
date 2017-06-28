@@ -25,7 +25,7 @@ public class JR {
 			){
 		return new JSONObject(JSON.serialize(map));
 	}
-	
+
 	/** 
 	 * Return an JSONObject equivalent of the {map}
 	 * @param map
@@ -35,8 +35,8 @@ public class JR {
 			){
 		return new JSONObject(JSON.serialize(object));
 	}
-	
-	
+
+
 	/**
 	 * Return an JSONObject similar to {json}
 	 * @param json
@@ -46,8 +46,8 @@ public class JR {
 			){
 		return new JSONObject(JSON.serialize(json));
 	}
-	
-	
+
+
 
 
 	/**
@@ -58,7 +58,7 @@ public class JR {
 	public static JSONObject wrap(String key, Object value){
 		return new JSONObject().put(key, value);
 	}
-	
+
 
 	/**
 	 * Wrap a key-value string list into a JSONObject and return it
@@ -77,6 +77,20 @@ public class JR {
 			jo.put(entry[0].trim(),entry[1].trim());
 		}
 		return jo;
+	}
+
+	
+	/**
+	 * Wrap a suite of JSONObject into a list JSONObject
+	 * @param jsonSuite
+	 * @return */
+	public static List<JSONObject> list(
+			JSONObject...jsonSuite 
+			){
+		List<JSONObject> list = new ArrayList<>();
+		for(JSONObject json : jsonSuite)
+			list.add(json);
+		return list;
 	}
 
 
@@ -163,8 +177,8 @@ public class JR {
 
 		return new Node<JSONObject>(yellow,white);
 	}
-	
-	
+
+
 	public static JSONObject evict(
 			JSONObject params
 			,String ...keysToRemove
@@ -237,16 +251,16 @@ public class JR {
 			String...keyMapString
 			) throws AbsentKeyException, InvalidKeyException{
 		JSONObject aliasJSON = new JSONObject(json.toMap());
-	
+
 		for(String keyEntry : keyMapString){
 			if(!keyEntry.contains("->")) 
 				throw new 
 				InvalidKeyException("The key entry '"+keyEntry+"' does not contains the universal seprator '->'");
-			
+
 			String [] entry= keyEntry.split("->");
 			String oldKey = entry[0].trim();
 			String newKey = entry[1].trim();
-			
+
 			if(json.has(oldKey)){
 				aliasJSON.remove(oldKey);
 				aliasJSON.put(newKey, json.get(oldKey));

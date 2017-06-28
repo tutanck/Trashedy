@@ -9,7 +9,7 @@ import com.aj.jeez.regina.THINGS;
 import com.aj.jeez.tools.__;
 
 import tproject.business.user.io.db.UserDB;
-import tproject.business.user.profile.services.core.ProfileCore;
+import tproject.business.user.profile.core.ProfileCore;
 import tproject.conf.servletspolicy.Common;
 import tproject.conf.servletspolicy.OnlinePostServlet;
 import tproject.tools.db.DBException;

@@ -1,4 +1,4 @@
-package tproject.business.need.services;
+package tproject.business.user.need.services;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -10,8 +10,8 @@ import com.aj.jeez.jr.exceptions.InvalidKeyException;
 import com.aj.jeez.regina.THINGS;
 import com.mongodb.DBCursor;
 
-import tproject.business.need.db.NeedDB;
-import tproject.business.need.services.core.NeedCore;
+import tproject.business.user.need.core.NeedCore;
+import tproject.business.user.need.db.NeedDB;
 import tproject.conf.servletspolicy.OnlinePostServlet;
 import tproject.tools.db.DBException;
 import tproject.tools.services.Response;
@@ -19,8 +19,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 
 /**
  * 
- * @author AJoan
- * Post are need search representation */
+ * @author AJoan */
 public class NeedListService extends NeedCore{
 	public final static String url="/need/up";
 

@@ -27,5 +27,6 @@ public class UserDB {
 	public final static String _skills="skills";
 	public final static String _description="desc";
 	public final static String _unqualilified="unqlf";
+	public static final String _grade = "grade";
 	
 }
