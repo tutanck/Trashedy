@@ -40,8 +40,7 @@ public class UpNeedService extends NeedCore{
 					},
 					optionals={
 							@Param(value=NeedDB._endDate),//date of the end of the need
-							@Param(value=NeedDB._place),//place where the activity is {lat,lon}
-							@Param(value=NeedDB._beginDate), //TODO should shout err 
+							@Param(value=NeedDB._place),//place where the activity is {lat,lon} 
 							@Param(value=NeedDB._pay),
 							@Param(value=NeedDB._activityDuration),//estimated activity duration 
 					}))

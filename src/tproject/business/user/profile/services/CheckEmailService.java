@@ -21,7 +21,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 /**
  * @author AJoan */
 public class CheckEmailService extends ProfileCore {
-	public final static String url="/check/email";
+	public final static String url="/email/owned";
 
 	
 	@WebService(value=url,policy=OfflineGetServlet.class,

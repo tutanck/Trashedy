@@ -21,7 +21,7 @@ import org.json.JSONObject;
 /**
  * @author AJoan */
 public class UpdatePasswordService extends ProfileCore{
-	public final static String url="/user/profile/update";
+	public final static String url="/user/pwd/update";
 
 	
 	@WebService(value=url,policy = OnlinePostServlet.class,

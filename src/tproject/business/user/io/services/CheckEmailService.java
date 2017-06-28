@@ -20,7 +20,7 @@ import tproject.tools.services.ShouldNeverOccurException;
 /**
  * @author AJoan */
 public class CheckEmailService extends IOCore {
-	public final static String url="/check/email";
+	public final static String url="/email/free";
 
 	
 	@WebService(value=url,policy=OfflineGetServlet.class,

@@ -21,7 +21,7 @@ import tproject.tools.services.ShouldNeverOccurException;
  * 
  * @author AJoan */
 public class NeedListService extends NeedCore{
-	public final static String url="/need/up";
+	public final static String url="/need/list";
 
 	public final static String _nid="nid";
 
